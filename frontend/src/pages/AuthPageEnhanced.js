@@ -281,26 +281,9 @@ export default function AuthPageEnhanced({ onLogin }) {
                     </form>
                   </TabsContent>
 
-                  {/* Register Tab with OTP */}
+                  {/* Register Tab with OTP - SIMPLIFIED */}
                   <TabsContent value="register" className="space-y-4 mt-6">
                     <form onSubmit={handleRegister} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="register-name" className="text-slate-200">نام و نام خانوادگی</Label>
-                        <div className="relative">
-                          <User className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                          <Input
-                            id="register-name"
-                            data-testid="register-name-input"
-                            type="text"
-                            placeholder="علی رضایی"
-                            value={registerData.full_name}
-                            onChange={(e) => setRegisterData({...registerData, full_name: e.target.value})}
-                            className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
-                            required
-                          />
-                        </div>
-                      </div>
-
                       <div className="space-y-2">
                         <Label htmlFor="register-email" className="text-slate-200">ایمیل</Label>
                         <div className="relative">
@@ -382,40 +365,6 @@ export default function AuthPageEnhanced({ onLogin }) {
                       )}
 
                       <div className="space-y-2">
-                        <Label htmlFor="register-national-code" className="text-slate-200">کد ملی</Label>
-                        <div className="relative">
-                          <CreditCard className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                          <Input
-                            id="register-national-code"
-                            data-testid="register-national-code-input"
-                            type="text"
-                            maxLength={10}
-                            placeholder="1234567890"
-                            value={registerData.national_code}
-                            onChange={(e) => setRegisterData({...registerData, national_code: e.target.value.replace(/\D/g, '')})}
-                            className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="register-birthdate" className="text-slate-200">تاریخ تولد (اختیاری)</Label>
-                        <div className="relative">
-                          <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                          <Input
-                            id="register-birthdate"
-                            data-testid="register-birthdate-input"
-                            type="text"
-                            placeholder="1370/05/15"
-                            value={registerData.birth_date}
-                            onChange={(e) => setRegisterData({...registerData, birth_date: e.target.value})}
-                            className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 text-left"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
                         <Label htmlFor="register-password" className="text-slate-200">رمز عبور</Label>
                         <div className="relative">
                           <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
@@ -441,6 +390,10 @@ export default function AuthPageEnhanced({ onLogin }) {
                         {loading ? "در حال ثبت‌نام..." : "ثبت‌نام"}
                         {!loading && <ArrowRight className="mr-2 w-5 h-5" />}
                       </Button>
+                      
+                      <p className="text-xs text-slate-400 text-center">
+                        با ثبت‌نام، می‌توانید قیمت‌ها را مشاهده کنید. برای معامله باید احراز هویت کنید.
+                      </p>
                     </form>
                   </TabsContent>
                 </Tabs>
