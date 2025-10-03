@@ -151,7 +151,7 @@ export default function Dashboard({ user, onLogout }) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Button 
                 onClick={() => navigate('/market')}
                 className="h-20 bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800"
@@ -159,6 +159,17 @@ export default function Dashboard({ user, onLogout }) {
                 <div className="text-center">
                   <TrendingUp className="w-6 h-6 mx-auto mb-1" />
                   <span className="text-base font-semibold">بازار ارزها</span>
+                </div>
+              </Button>
+
+              <Button 
+                onClick={() => navigate('/trade')}
+                className="h-20 bg-gradient-to-br from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800"
+                disabled={user.kyc_level < 2}
+              >
+                <div className="text-center">
+                  <TrendingUp className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">معاملات</span>
                 </div>
               </Button>
               
