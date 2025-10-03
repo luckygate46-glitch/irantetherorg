@@ -106,16 +106,16 @@ user_problem_statement: "Complete the Iranian crypto exchange with trading funct
 
 backend:
   - task: "Trading Order System (Buy/Sell/Trade)"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
         - agent: "main"
-        - comment: "Starting implementation of crypto trading orders with admin approval system"
+        - comment: "Implemented trading order models, API routes for buy/sell/trade with admin approval system"
 
   - task: "AI Integration Fix (emergentintegrations)"
     implemented: false
