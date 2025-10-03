@@ -221,5 +221,116 @@ class CryptoPriceService:
                 "error": str(e)
             }
 
+    def _get_mock_prices(self, coin_ids: List[str]):
+        """Return mock price data for testing when API is rate limited"""
+        mock_data = {}
+        
+        # Mock prices for common coins
+        mock_prices = {
+            "bitcoin": {"usd": 43000, "usd_24h_change": 2.5, "usd_24h_vol": 15000000000, "usd_market_cap": 850000000000},
+            "ethereum": {"usd": 2600, "usd_24h_change": 1.8, "usd_24h_vol": 8000000000, "usd_market_cap": 310000000000},
+            "tether": {"usd": 1.0, "usd_24h_change": 0.1, "usd_24h_vol": 25000000000, "usd_market_cap": 95000000000},
+            "binancecoin": {"usd": 310, "usd_24h_change": -0.5, "usd_24h_vol": 1200000000, "usd_market_cap": 47000000000},
+            "ripple": {"usd": 0.52, "usd_24h_change": 3.2, "usd_24h_vol": 1100000000, "usd_market_cap": 28000000000},
+            "cardano": {"usd": 0.48, "usd_24h_change": 1.1, "usd_24h_vol": 450000000, "usd_market_cap": 17000000000},
+            "solana": {"usd": 98, "usd_24h_change": 4.5, "usd_24h_vol": 2100000000, "usd_market_cap": 42000000000},
+            "dogecoin": {"usd": 0.08, "usd_24h_change": -1.2, "usd_24h_vol": 650000000, "usd_market_cap": 11000000000},
+        }
+        
+        for coin_id in coin_ids:
+            if coin_id in mock_prices:
+                mock_data[coin_id] = mock_prices[coin_id]
+            else:
+                # Generate random mock data for unknown coins
+                import random
+                mock_data[coin_id] = {
+                    "usd": round(random.uniform(0.1, 1000), 2),
+                    "usd_24h_change": round(random.uniform(-10, 10), 2),
+                    "usd_24h_vol": random.randint(1000000, 1000000000),
+                    "usd_market_cap": random.randint(10000000, 100000000000)
+                }
+        
+        return {
+            "success": True,
+            "data": mock_data
+        }
+    
+    def _get_mock_coin_details(self, coin_id: str):
+        """Return mock coin details for testing"""
+        mock_coins = {
+            "bitcoin": {
+                "id": "bitcoin",
+                "symbol": "BTC",
+                "name": "Bitcoin",
+                "image": "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
+                "market_data": {
+                    "current_price": {"usd": 43000},
+                    "market_cap": 850000000000,
+                    "total_volume": 15000000000,
+                    "high_24h": 44000,
+                    "low_24h": 42000,
+                    "price_change_percentage_24h": 2.5,
+                    "price_change_percentage_7d": 5.2,
+                    "price_change_percentage_30d": 12.8,
+                    "circulating_supply": 19700000,
+                    "total_supply": 21000000,
+                    "ath": 69000,
+                    "atl": 67.81
+                }
+            },
+            "ethereum": {
+                "id": "ethereum",
+                "symbol": "ETH",
+                "name": "Ethereum",
+                "image": "https://assets.coingecko.com/coins/images/279/large/ethereum.png",
+                "market_data": {
+                    "current_price": {"usd": 2600},
+                    "market_cap": 310000000000,
+                    "total_volume": 8000000000,
+                    "high_24h": 2650,
+                    "low_24h": 2550,
+                    "price_change_percentage_24h": 1.8,
+                    "price_change_percentage_7d": 3.5,
+                    "price_change_percentage_30d": 8.2,
+                    "circulating_supply": 120000000,
+                    "total_supply": 120000000,
+                    "ath": 4878,
+                    "atl": 0.43
+                }
+            }
+        }
+        
+        if coin_id in mock_coins:
+            return {
+                "success": True,
+                "data": mock_coins[coin_id]
+            }
+        else:
+            # Generate random mock data
+            import random
+            return {
+                "success": True,
+                "data": {
+                    "id": coin_id,
+                    "symbol": coin_id.upper()[:3],
+                    "name": coin_id.title(),
+                    "image": f"https://assets.coingecko.com/coins/images/1/large/{coin_id}.png",
+                    "market_data": {
+                        "current_price": {"usd": round(random.uniform(0.1, 1000), 2)},
+                        "market_cap": random.randint(10000000, 100000000000),
+                        "total_volume": random.randint(1000000, 1000000000),
+                        "high_24h": round(random.uniform(0.1, 1100), 2),
+                        "low_24h": round(random.uniform(0.1, 900), 2),
+                        "price_change_percentage_24h": round(random.uniform(-10, 10), 2),
+                        "price_change_percentage_7d": round(random.uniform(-20, 20), 2),
+                        "price_change_percentage_30d": round(random.uniform(-50, 50), 2),
+                        "circulating_supply": random.randint(1000000, 1000000000),
+                        "total_supply": random.randint(1000000, 1000000000),
+                        "ath": round(random.uniform(1, 10000), 2),
+                        "atl": round(random.uniform(0.001, 1), 4)
+                    }
+                }
+            }
+
 # Initialize service
 price_service = CryptoPriceService()
