@@ -23,9 +23,11 @@ export default function AuthPageEnhanced({ onLogin }) {
   
   // Register state with OTP (simplified)
   const [registerData, setRegisterData] = useState({
+    first_name: "",
+    last_name: "",
     email: "",
-    password: "",
-    phone: ""
+    phone: "",
+    password: ""
   });
 
   const [otpSent, setOtpSent] = useState(false);
