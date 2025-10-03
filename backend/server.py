@@ -65,10 +65,13 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     id: str
     email: str
-    full_name: str
-    phone: Optional[str] = None
+    phone: str
+    full_name: Optional[str] = None
+    national_code: Optional[str] = None
     is_active: bool
-    is_verified: bool
+    is_phone_verified: bool
+    kyc_level: int
+    kyc_status: str
     is_admin: bool
     wallet_balance_tmn: float
     created_at: datetime
