@@ -95,6 +95,10 @@ function App() {
             element={user ? <Wallet user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/trade" 
+            element={user ? <Trade user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/admin" 
             element={user?.is_admin ? <AdminDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
