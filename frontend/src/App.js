@@ -5,6 +5,8 @@ import axios from "axios";
 import AuthPage from "./pages/AuthPageEnhanced";
 import Dashboard from "./pages/Dashboard";
 import KYCPage from "./pages/KYCPage";
+import Market from "./pages/Market";
+import Wallet from "./pages/Wallet";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminCards from "./pages/admin/AdminCards";
