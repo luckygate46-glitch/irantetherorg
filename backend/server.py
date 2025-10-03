@@ -167,6 +167,21 @@ class AdminStats(BaseModel):
     pending_deposits: int
     total_cards: int
 
+class SendOTPRequest(BaseModel):
+    phone: str
+    
+class VerifyOTPRequest(BaseModel):
+    phone: str
+    code: str
+
+class OTPVerification(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    phone: str
+    code: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(minutes=5))
+    verified: bool = False
+
 # ==================== HELPER FUNCTIONS ====================
 
 def hash_password(password: str) -> str:
