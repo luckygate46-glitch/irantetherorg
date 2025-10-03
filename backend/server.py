@@ -80,9 +80,11 @@ class UserLogin(BaseModel):
 
 class UserResponse(BaseModel):
     id: str
+    first_name: str
+    last_name: str
     email: str
     phone: str
-    full_name: Optional[str] = None
+    full_name: Optional[str] = None  # Computed from first_name + last_name
     national_code: Optional[str] = None
     is_active: bool
     is_phone_verified: bool
