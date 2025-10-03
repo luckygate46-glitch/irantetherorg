@@ -82,13 +82,16 @@ class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: str
     password_hash: str
-    full_name: str
     phone: str
-    national_code: str
-    birth_date: Optional[str] = None
+    full_name: Optional[str] = None  # Added in KYC Level 1
+    national_code: Optional[str] = None  # Added in KYC Level 1
+    birth_date: Optional[str] = None  # Added in KYC Level 1
+    bank_card_number: Optional[str] = None  # Added in KYC Level 1
     is_active: bool = True
-    is_verified: bool = False  # KYC verified
     is_phone_verified: bool = False  # Phone OTP verified
+    kyc_level: int = 0  # 0=registered, 1=basic KYC, 2=advanced KYC
+    kyc_status: str = "pending"  # pending, approved, rejected
+    kyc_documents: Optional[dict] = None  # ID photo, selfie/video
     is_admin: bool = False
     wallet_balance_tmn: float = 0.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
