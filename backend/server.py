@@ -176,6 +176,8 @@ class DepositApproval(BaseModel):
     admin_note: Optional[str] = None
 
 class UserUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     full_name: Optional[str] = None
     phone: Optional[str] = None
     is_active: Optional[bool] = None
