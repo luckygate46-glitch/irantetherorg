@@ -142,35 +142,76 @@ export default function Dashboard({ user, onLogout }) {
           </Card>
         </div>
 
-        {/* Welcome Message */}
+        {/* Quick Actions */}
+        <Card className="bg-slate-900/50 border-slate-800 mb-6">
+          <CardHeader>
+            <CardTitle className="text-white">دسترسی سریع</CardTitle>
+            <CardDescription className="text-slate-400">
+              به امکانات مختلف دسترسی داشته باشید
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button 
+                onClick={() => navigate('/market')}
+                className="h-20 bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800"
+              >
+                <div className="text-center">
+                  <TrendingUp className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">بازار ارزها</span>
+                </div>
+              </Button>
+              
+              <Button 
+                onClick={() => navigate('/wallet')}
+                className="h-20 bg-gradient-to-br from-blue-600 to-cyan-700 hover:from-blue-700 hover:to-cyan-800"
+                disabled={user.kyc_level < 1}
+              >
+                <div className="text-center">
+                  <Wallet className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">کیف پول</span>
+                </div>
+              </Button>
+              
+              <Button 
+                onClick={() => navigate('/kyc')}
+                className="h-20 bg-gradient-to-br from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-800"
+              >
+                <div className="text-center">
+                  <User className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">احراز هویت</span>
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Features Overview */}
         <Card className="bg-slate-900/50 border-slate-800">
           <CardHeader>
-            <CardTitle className="text-white">به داشبورد خود خوش آمدید</CardTitle>
-            <CardDescription className="text-slate-400">
-              سیستم احراز هویت با موفقیت راه‌اندازی شد. بزودی امکانات بیشتری اضافه خواهد شد:
-            </CardDescription>
+            <CardTitle className="text-white">امکانات صرافی</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-slate-300">
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                <CheckCircle className="w-5 h-5 text-emerald-500" />
                 سیستم واریز و برداشت (کارت به کارت)
               </li>
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                <CheckCircle className="w-5 h-5 text-emerald-500" />
                 خرید و فروش ارزهای دیجیتال
               </li>
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                نمودارهای معاملاتی زنده
+                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                قیمت‌های زنده بازار
               </li>
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                سیستم KYC و احراز هویت
+                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                سیستم KYC با شاهکار
               </li>
               <li className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                ربات سیگنال‌های معاملاتی
+                <div className="w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center text-xs">AI</div>
+                هوش مصنوعی و سیگنال‌های معاملاتی (به زودی)
               </li>
             </ul>
           </CardContent>
