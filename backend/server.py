@@ -44,9 +44,23 @@ api_router = APIRouter(prefix="/api")
 # ==================== MODELS ====================
 
 class UserCreate(BaseModel):
+    first_name: str
+    last_name: str
     email: EmailStr
-    password: str
     phone: str  # Mandatory for OTP
+    password: str
+    
+    @validator('first_name')
+    def validate_first_name(cls, v):
+        if len(v.strip()) < 2:
+            raise ValueError('نام باید حداقل 2 کاراکتر باشد')
+        return v.strip()
+    
+    @validator('last_name')
+    def validate_last_name(cls, v):
+        if len(v.strip()) < 2:
+            raise ValueError('نام خانوادگی باید حداقل 2 کاراکتر باشد')
+        return v.strip()
     
     @validator('password')
     def validate_password(cls, v):
