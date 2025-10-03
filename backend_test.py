@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend Testing for Iranian Crypto Exchange Trading System
-Tests all trading APIs, authentication, KYC, and admin functionality
+Comprehensive Backend Testing for Iranian Crypto Exchange Registration System
+Tests updated registration API with new fields (first_name, last_name, email, phone, password)
 """
 
 import asyncio
@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional
 BACKEND_URL = "https://tehcrypto.preview.emergentagent.com/api"
 TEST_TIMEOUT = 30.0
 
-class TradingSystemTester:
+class RegistrationSystemTester:
     def __init__(self):
         self.client = httpx.AsyncClient(timeout=TEST_TIMEOUT)
         self.test_users = {}
