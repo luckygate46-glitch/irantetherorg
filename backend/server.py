@@ -333,6 +333,68 @@ async def get_card_info(card_number: str) -> dict:
         logger.error(f"API.IR CardInfo Error: {str(e)}")
         return {"success": False, "error": str(e)}
 
+# ==================== OTP ROUTES ====================
+
+@api_router.post("/otp/send")
+async def send_otp(request: SendOTPRequest):
+    """Send OTP code via SMS using API.IR"""
+    # Generate 5-digit code
+    code = str(random.randint(10000, 99999))
+    
+    # Send via API.IR
+    success = await send_sms_otp_apir(request.phone, code)
+    
+    if not success:
+        raise HTTPException(
+            status_code=500,
+            detail="خطا در ارسال پیامک. لطفا دوباره تلاش کنید"
+        )
+    
+    # Store OTP in database
+    otp = OTPVerification(phone=request.phone, code=code)
+    await db.otp_verifications.insert_one(otp.dict())
+    
+    return {"success": True, "message": "کد تایید با موفقیت ارسال شد"}
+
+@api_router.post("/otp/verify")
+async def verify_otp(request: VerifyOTPRequest):
+    """Verify OTP code"""
+    # Find latest OTP for this phone
+    otp_data = await db.otp_verifications.find_one(
+        {"phone": request.phone, "verified": False},
+        sort=[("created_at", -1)]
+    )
+    
+    if not otp_data:
+        raise HTTPException(
+            status_code=404,
+            detail="کد تایید یافت نشد"
+        )
+    
+    otp = OTPVerification(**otp_data)
+    
+    # Check expiration
+    if datetime.now(timezone.utc) > otp.expires_at:
+        raise HTTPException(
+            status_code=400,
+            detail="کد تایید منقضی شده است. کد جدید درخواست کنید"
+        )
+    
+    # Verify code
+    if otp.code != request.code:
+        raise HTTPException(
+            status_code=400,
+            detail="کد تایید اشتباه است"
+        )
+    
+    # Mark as verified
+    await db.otp_verifications.update_one(
+        {"id": otp.id},
+        {"$set": {"verified": True}}
+    )
+    
+    return {"success": True, "message": "شماره موبایل تایید شد"}
+
 # ==================== AUTH ROUTES ====================
 
 @api_router.post("/auth/register", response_model=TokenResponse)
