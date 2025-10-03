@@ -712,25 +712,7 @@ class RegistrationSystemTester:
         except Exception as e:
             await self.log_test("Admin User Management", False, f"Exception: {str(e)}")
     
-    async def test_crypto_prices(self):
-        """Test crypto price endpoints"""
-        try:
-            # Test get prices
-            response = await self.client.get(f"{BACKEND_URL}/crypto/prices")
-            if response.status_code == 200:
-                await self.log_test("Get Crypto Prices", True, "Successfully retrieved crypto prices")
-            else:
-                await self.log_test("Get Crypto Prices", False, f"Failed: {response.text}")
-            
-            # Test get coin details
-            response = await self.client.get(f"{BACKEND_URL}/crypto/bitcoin")
-            if response.status_code == 200:
-                await self.log_test("Get Bitcoin Details", True, "Successfully retrieved Bitcoin details")
-            else:
-                await self.log_test("Get Bitcoin Details", False, f"Failed: {response.text}")
-                
-        except Exception as e:
-            await self.log_test("Crypto Price APIs", False, f"Exception: {str(e)}")
+    # Removed unused trading methods to focus on registration testing
     
     async def print_summary(self):
         """Print test summary"""
