@@ -86,9 +86,12 @@ class User(BaseModel):
     email: str
     password_hash: str
     full_name: str
-    phone: Optional[str] = None
+    phone: str
+    national_code: str
+    birth_date: Optional[str] = None
     is_active: bool = True
-    is_verified: bool = False
+    is_verified: bool = False  # KYC verified
+    is_phone_verified: bool = False  # Phone OTP verified
     is_admin: bool = False
     wallet_balance_tmn: float = 0.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
