@@ -101,10 +101,12 @@ class TokenResponse(BaseModel):
 
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    first_name: str
+    last_name: str
     email: str
     password_hash: str
     phone: str
-    full_name: Optional[str] = None  # Added in KYC Level 1
+    full_name: Optional[str] = None  # Added in KYC Level 1 (can override computed name)
     national_code: Optional[str] = None  # Added in KYC Level 1
     birth_date: Optional[str] = None  # Added in KYC Level 1
     bank_card_number: Optional[str] = None  # Added in KYC Level 1
