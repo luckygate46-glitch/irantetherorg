@@ -182,6 +182,37 @@ class OTPVerification(BaseModel):
     expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(minutes=5))
     verified: bool = False
 
+class KYCLevel1Request(BaseModel):
+    full_name: str
+    national_code: str
+    birth_date: str  # Format: 1370/05/15
+    bank_card_number: str
+    
+    @validator('national_code')
+    def validate_national_code(cls, v):
+        if len(v) != 10:
+            raise ValueError('کد ملی باید 10 رقم باشد')
+        return v
+    
+    @validator('bank_card_number')
+    def validate_card(cls, v):
+        # Remove spaces and dashes
+        v = v.replace(' ', '').replace('-', '')
+        if len(v) != 16:
+            raise ValueError('شماره کارت باید 16 رقم باشد')
+        return v
+
+class KYCLevel2Request(BaseModel):
+    id_card_photo: str  # Base64 or URL
+    selfie_type: str  # "photo" or "video"
+    selfie_data: str  # Base64 or URL
+
+class KYCApprovalRequest(BaseModel):
+    user_id: str
+    kyc_level: int  # 1 or 2
+    action: str  # "approve" or "reject"
+    admin_note: Optional[str] = None
+
 # ==================== HELPER FUNCTIONS ====================
 
 def hash_password(password: str) -> str:
