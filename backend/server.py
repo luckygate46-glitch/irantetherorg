@@ -849,9 +849,126 @@ async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_cu
         "admin_note": approval.admin_note
     }
 
+# ==================== CRYPTO PRICE ROUTES ====================
+
+@api_router.get("/crypto/prices")
+async def get_crypto_prices():
+    """Get current prices for top cryptocurrencies"""
+    result = await price_service.get_prices()
+    if not result["success"]:
+        raise HTTPException(status_code=500, detail=result.get("error"))
+    return result
+
+@api_router.get("/crypto/{coin_id}")
+async def get_coin_details(coin_id: str):
+    """Get detailed information about a specific coin"""
+    result = await price_service.get_coin_details(coin_id)
+    if not result["success"]:
+        raise HTTPException(status_code=404, detail=result.get("error"))
+    return result
+
+@api_router.get("/crypto/{coin_id}/chart")
+async def get_coin_chart(coin_id: str, days: int = 7):
+    """Get historical chart data"""
+    result = await price_service.get_market_chart(coin_id, days)
+    if not result["success"]:
+        raise HTTPException(status_code=500, detail=result.get("error"))
+    return result
+
+@api_router.get("/crypto/trending/coins")
+async def get_trending():
+    """Get trending cryptocurrencies"""
+    result = await price_service.get_trending_coins()
+    if not result["success"]:
+        raise HTTPException(status_code=500, detail=result.get("error"))
+    return result
+
+@api_router.get("/crypto/search/{query}")
+async def search_crypto(query: str):
+    """Search for cryptocurrencies"""
+    result = await price_service.search_coins(query)
+    if not result["success"]:
+        raise HTTPException(status_code=500, detail=result.get("error"))
+    return result
+
+# ==================== AI CHATBOT ROUTES ====================
+
+class ChatMessage(BaseModel):
+    message: str
+    session_id: Optional[str] = None
+
+@api_router.post("/ai/chat")
+async def ai_chat(chat_msg: ChatMessage, current_user: User = Depends(get_current_user)):
+    """Chat with AI assistant"""
+    session_id = chat_msg.session_id or f"user_{current_user.id}"
+    result = await chatbot.chat(chat_msg.message, session_id)
+    return result
+
+# ==================== AI MARKET ANALYSIS ROUTES ====================
+
+@api_router.get("/ai/analyze/{coin_id}")
+async def analyze_coin(coin_id: str, current_user: User = Depends(get_current_user)):
+    """Get AI analysis for a specific coin"""
+    # Get coin data first
+    coin_data = await price_service.get_coin_details(coin_id)
+    if not coin_data["success"]:
+        raise HTTPException(status_code=404, detail="Coin not found")
+    
+    # Analyze with AI
+    analysis = await market_analyst.analyze_market(coin_data["data"])
+    return analysis
+
+@api_router.get("/ai/signals")
+async def get_trading_signals(current_user: User = Depends(get_current_user)):
+    """Get AI-generated trading signals"""
+    # Get market data
+    prices = await price_service.get_prices()
+    if not prices["success"]:
+        raise HTTPException(status_code=500, detail="Failed to fetch market data")
+    
+    # Convert to list format for analysis
+    market_data = []
+    for coin_id, data in list(prices["data"].items())[:10]:
+        market_data.append({
+            "symbol": coin_id.upper(),
+            "current_price": data.get("usd", 0),
+            "price_change_24h": data.get("usd_24h_change", 0),
+            "volume": data.get("usd_24h_vol", 0)
+        })
+    
+    signals = await market_analyst.generate_trading_signals(market_data)
+    return signals
+
+@api_router.post("/ai/portfolio/analyze")
+async def analyze_portfolio(current_user: User = Depends(get_current_user)):
+    """Analyze user's portfolio with AI"""
+    # Mock portfolio for now - in real app, fetch from database
+    portfolio = {
+        "total_value": current_user.wallet_balance_tmn * 0.000027,  # Convert TMN to USD roughly
+        "total_pnl_percent": 5.2,
+        "holdings": [
+            {"symbol": "BTC", "amount": 0.5, "value": 15000},
+            {"symbol": "ETH", "amount": 2, "value": 3000}
+        ]
+    }
+    
+    advice = await portfolio_advisor.analyze_portfolio(portfolio)
+    return advice
+
+@api_router.get("/ai/predict/{coin_id}")
+async def predict_price(coin_id: str, timeframe: str = "24h", current_user: User = Depends(get_current_user)):
+    """Get AI price prediction"""
+    # Get coin data
+    coin_data = await price_service.get_coin_details(coin_id)
+    if not coin_data["success"]:
+        raise HTTPException(status_code=404, detail="Coin not found")
+    
+    prediction = await price_predictor.predict_price(coin_data["data"], timeframe)
+    return prediction
+
 @api_router.get("/")
 async def root():
-    return {"message": "Persian Crypto Exchange API", "version": "1.0.0"}
+    return {"message": "Persian Crypto Exchange API with AI", "version": "2.0.0"}
 
 # Include the router in the main app
 app.include_router(api_router)
