@@ -29,6 +29,10 @@ SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'persian-crypto-exchange-secret-ke
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
+# API.IR Configuration
+APIR_BASE_URL = "https://s.api.ir/api"
+APIR_API_KEY = "Bearer hEDOyeYLEalDw/zGbLnyZ3V4XrsFA8+57LaeB2dJYovHDMybuxE3bTMBvC0FPaPAZRG34SOttlW19ItO6fuNql/6xJ4ajwIRuFfthX1hG88="
+
 # Create the main app without a prefix
 app = FastAPI()
 
