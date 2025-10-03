@@ -639,7 +639,7 @@ class RegistrationSystemTester:
         successful_users = []
         
         for user_data in test_users:
-            result = await self.test_registration_with_new_fields(
+            result = await self.test_registration_api_structure(
                 user_data["first_name"],
                 user_data["last_name"],
                 user_data["email"],
@@ -649,6 +649,9 @@ class RegistrationSystemTester:
             
             if result.get("success"):
                 successful_users.append(result)
+        
+        # Test direct database approach
+        await self.test_direct_database_user_creation()
         
         if not successful_users:
             print("❌ No users were successfully registered. Trying to login existing users...")
