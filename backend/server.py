@@ -445,21 +445,23 @@ async def register(user_data: UserCreate):
         {"phone": user_data.phone, "verified": True}
     )
     
-    # Create new user
+    if not otp_verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="لطفا ابتدا شماره موبایل خود را تایید کنید"
+        )
+    
+    # Create new user with Level 0 (only phone verified)
     user = User(
         email=user_data.email,
         password_hash=hash_password(user_data.password),
-        full_name=user_data.full_name,
         phone=user_data.phone,
-        national_code=user_data.national_code,
-        birth_date=user_data.birth_date,
-        is_phone_verified=bool(otp_verified)
+        is_phone_verified=True,
+        kyc_level=0,  # Can only view market
+        kyc_status="pending"
     )
     
     await db.users.insert_one(user.dict())
-    
-    # Verify Shahkar in background (optional - can be done during KYC)
-    # shahkar_result = await verify_shahkar(user_data.national_code, user_data.phone)
     
     # Create access token
     access_token = create_access_token(data={"sub": user.id})
