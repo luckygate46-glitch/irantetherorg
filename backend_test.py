@@ -465,82 +465,252 @@ class RegistrationSystemTester:
             await self.log_test("Insufficient Balance Check", False, f"Exception: {str(e)}")
             return False
     
-    async def run_comprehensive_tests(self):
-        """Run all trading system tests"""
-        print("🚀 Starting Comprehensive Trading System Tests")
-        print("=" * 60)
+    async def test_field_validation(self):
+        """Test field validation for registration"""
+        print("\n🔍 Testing Field Validation...")
         
-        # Test 1: Create test users
-        print("\n📝 Creating Test Users...")
-        regular_user = await self.create_test_user("testuser@example.com", "09123456789")
-        admin_user = await self.create_test_user("admin@example.com", "09123456788")
+        # Test first_name validation (minimum 2 chars)
+        test_data = {
+            "first_name": "A",  # Too short
+            "last_name": "احمدی",
+            "email": "validation1@test.com",
+            "phone": "09123456780",
+            "password": "testpass123"
+        }
         
-        if not regular_user or not admin_user:
-            print("❌ Failed to create test users. Trying login instead...")
-            regular_user = await self.login_user("testuser@example.com", "testpass123")
-            admin_user = await self.login_user("admin@example.com", "testpass123")
+        try:
+            response = await self.client.post(f"{BACKEND_URL}/auth/register", json=test_data)
+            if response.status_code == 422:  # Validation error
+                await self.log_test("First Name Validation (Too Short)", True, "Correctly rejected first_name with < 2 chars")
+            else:
+                await self.log_test("First Name Validation (Too Short)", False, f"Should have rejected short first_name: {response.text}")
+        except Exception as e:
+            await self.log_test("First Name Validation", False, f"Exception: {str(e)}")
         
-        if not regular_user.get("token"):
-            await self.log_test("Test Setup", False, "Could not create or login regular user")
-            return
+        # Test last_name validation (minimum 2 chars)
+        test_data["first_name"] = "علی"
+        test_data["last_name"] = "ا"  # Too short
+        test_data["email"] = "validation2@test.com"
         
-        # Test 2: Test KYC restrictions (Level 0)
-        print("\n🔒 Testing KYC Level 0 Restrictions...")
-        await self.test_kyc_restrictions(regular_user["token"], 0)
+        try:
+            response = await self.client.post(f"{BACKEND_URL}/auth/register", json=test_data)
+            if response.status_code == 422:  # Validation error
+                await self.log_test("Last Name Validation (Too Short)", True, "Correctly rejected last_name with < 2 chars")
+            else:
+                await self.log_test("Last Name Validation (Too Short)", False, f"Should have rejected short last_name: {response.text}")
+        except Exception as e:
+            await self.log_test("Last Name Validation", False, f"Exception: {str(e)}")
         
-        # Test 3: Complete KYC Level 1
-        print("\n📋 Completing KYC Level 1...")
-        await self.complete_kyc_level1(regular_user["token"], regular_user["email"])
+        # Test phone validation (must start with 09 and be 11 digits)
+        test_data["last_name"] = "احمدی"
+        test_data["phone"] = "0812345678"  # Wrong format
+        test_data["email"] = "validation3@test.com"
         
-        # Test 4: Test KYC restrictions (Level 1)
-        print("\n🔒 Testing KYC Level 1 Restrictions...")
-        await self.test_kyc_restrictions(regular_user["token"], 1)
-        
-        # Test 5: Complete KYC Level 2
-        print("\n📋 Completing KYC Level 2...")
-        await self.complete_kyc_level2(regular_user["token"], regular_user["email"])
-        
-        # Test 6: Admin approval of KYC Level 2 (if admin exists)
-        if admin_user.get("token"):
-            print("\n👨‍💼 Admin Approving KYC Level 2...")
-            await self.approve_kyc_as_admin(admin_user["token"], regular_user.get("user_id", ""), 2)
+        try:
+            response = await self.client.post(f"{BACKEND_URL}/auth/register", json=test_data)
+            if response.status_code == 422:  # Validation error
+                await self.log_test("Phone Validation (Wrong Format)", True, "Correctly rejected invalid phone format")
+            else:
+                await self.log_test("Phone Validation (Wrong Format)", False, f"Should have rejected invalid phone: {response.text}")
+        except Exception as e:
+            await self.log_test("Phone Validation", False, f"Exception: {str(e)}")
+    
+    async def test_user_profile_display(self, token: str, expected_user_data: Dict[str, Any]):
+        """Test user profile display with /auth/me endpoint"""
+        try:
+            headers = {"Authorization": f"Bearer {token}"}
+            response = await self.client.get(f"{BACKEND_URL}/auth/me", headers=headers)
             
-            # Add wallet balance for testing
-            print("\n💰 Adding Wallet Balance...")
-            await self.add_wallet_balance(admin_user["token"], regular_user.get("user_id", ""), 5000000.0)
-        
-        # Test 7: Test trading with KYC Level 2
-        print("\n💱 Testing Trading Orders...")
-        buy_order_id = await self.test_trading_order_creation(regular_user["token"], "buy", "Create Buy Order")
-        sell_order_id = await self.test_trading_order_creation(regular_user["token"], "sell", "Create Sell Order")
-        trade_order_id = await self.test_trading_order_creation(regular_user["token"], "trade", "Create Trade Order")
-        
-        # Test 8: Test insufficient balance
-        print("\n💸 Testing Insufficient Balance...")
-        await self.test_insufficient_balance(regular_user["token"])
-        
-        # Test 9: Test user order retrieval
-        print("\n📋 Testing Order Retrieval...")
-        await self.test_get_user_orders(regular_user["token"], regular_user["email"])
-        await self.test_get_user_holdings(regular_user["token"], regular_user["email"])
-        
-        # Test 10: Admin order management
-        if admin_user.get("token"):
-            print("\n👨‍💼 Testing Admin Order Management...")
-            await self.test_admin_get_orders(admin_user["token"])
+            if response.status_code == 200:
+                user_data = response.json()
+                
+                # Verify all fields are present and correct
+                success = True
+                details = []
+                
+                expected_fields = ["id", "first_name", "last_name", "email", "phone", "full_name", "is_active", "is_phone_verified", "kyc_level", "kyc_status", "is_admin", "wallet_balance_tmn", "created_at"]
+                
+                for field in expected_fields:
+                    if field not in user_data:
+                        success = False
+                        details.append(f"Missing field: {field}")
+                
+                # Check full_name computation
+                expected_full_name = f"{expected_user_data.get('first_name', '')} {expected_user_data.get('last_name', '')}"
+                if user_data.get("full_name") != expected_full_name:
+                    success = False
+                    details.append(f"full_name error: expected '{expected_full_name}', got '{user_data.get('full_name')}'")
+                
+                # Check other key fields
+                for field in ["first_name", "last_name", "email", "phone"]:
+                    if user_data.get(field) != expected_user_data.get(field):
+                        success = False
+                        details.append(f"{field} mismatch: expected {expected_user_data.get(field)}, got {user_data.get(field)}")
+                
+                if success:
+                    await self.log_test("User Profile Display", True, "All user profile fields displayed correctly")
+                else:
+                    await self.log_test("User Profile Display", False, "; ".join(details))
+                
+                return {"success": success, "user_data": user_data}
+            else:
+                await self.log_test("User Profile Display", False, f"Failed to get user profile: {response.text}")
+                return {"success": False}
+                
+        except Exception as e:
+            await self.log_test("User Profile Display", False, f"Exception: {str(e)}")
+            return {"success": False}
+    
+    async def test_kyc_flow_with_updated_model(self, token: str, user_email: str):
+        """Test KYC flow still works with updated user model"""
+        try:
+            headers = {"Authorization": f"Bearer {token}"}
             
-            if buy_order_id:
-                await self.test_admin_approve_order(admin_user["token"], buy_order_id, "approve")
-            if sell_order_id:
-                await self.test_admin_approve_order(admin_user["token"], sell_order_id, "reject")
+            # Test KYC Level 1
+            kyc_data = {
+                "full_name": "علی احمدی تست",
+                "national_code": "1234567890",
+                "birth_date": "1370/05/15",
+                "bank_card_number": "1234567890123456"
+            }
+            
+            response = await self.client.post(f"{BACKEND_URL}/kyc/level1", headers=headers, json=kyc_data)
+            
+            if response.status_code == 200:
+                await self.log_test("KYC Level 1 with Updated Model", True, "KYC Level 1 works with updated user model")
+                
+                # Test KYC status endpoint
+                status_response = await self.client.get(f"{BACKEND_URL}/kyc/status", headers=headers)
+                if status_response.status_code == 200:
+                    status_data = status_response.json()
+                    if status_data.get("full_name") == kyc_data["full_name"]:
+                        await self.log_test("KYC Status with Updated Model", True, "KYC status correctly shows updated full_name")
+                    else:
+                        await self.log_test("KYC Status with Updated Model", False, f"KYC status full_name mismatch: expected {kyc_data['full_name']}, got {status_data.get('full_name')}")
+                else:
+                    await self.log_test("KYC Status with Updated Model", False, f"KYC status failed: {status_response.text}")
+                
+                return True
+            else:
+                await self.log_test("KYC Level 1 with Updated Model", False, f"KYC Level 1 failed: {response.text}")
+                return False
+                
+        except Exception as e:
+            await self.log_test("KYC with Updated Model", False, f"Exception: {str(e)}")
+            return False
+    
+    async def run_registration_tests(self):
+        """Run comprehensive registration system tests"""
+        print("🚀 Starting Updated Registration System Tests")
+        print("=" * 70)
         
-        # Test 11: Test crypto price endpoints
-        print("\n📈 Testing Crypto Price APIs...")
-        await self.test_crypto_prices()
+        # Test 1: Field validation
+        await self.test_field_validation()
         
-        print("\n" + "=" * 60)
-        print("🏁 Testing Complete!")
+        # Test 2: Registration with new fields
+        print("\n📝 Testing Registration with New Fields...")
+        
+        test_users = [
+            {
+                "first_name": "علی",
+                "last_name": "احمدی",
+                "email": "ali.ahmadi@test.com",
+                "phone": "09123456789",
+                "password": "testpass123"
+            },
+            {
+                "first_name": "فاطمه",
+                "last_name": "محمدی",
+                "email": "fateme.mohammadi@test.com",
+                "phone": "09123456788",
+                "password": "testpass456"
+            }
+        ]
+        
+        successful_users = []
+        
+        for user_data in test_users:
+            result = await self.test_registration_with_new_fields(
+                user_data["first_name"],
+                user_data["last_name"],
+                user_data["email"],
+                user_data["phone"],
+                user_data["password"]
+            )
+            
+            if result.get("success"):
+                successful_users.append(result)
+        
+        if not successful_users:
+            print("❌ No users were successfully registered. Trying to login existing users...")
+            # Try to login existing users to continue testing
+            for user_data in test_users:
+                login_result = await self.test_login_with_updated_model(user_data["email"], user_data["password"])
+                if login_result.get("success"):
+                    login_result.update(user_data)
+                    successful_users.append(login_result)
+        
+        # Test 3: Login flow with updated model
+        print("\n🔐 Testing Login Flow with Updated Model...")
+        for user in successful_users:
+            if user.get("email") and user.get("password"):
+                await self.test_login_with_updated_model(user["email"], user["password"])
+        
+        # Test 4: User profile display
+        print("\n👤 Testing User Profile Display...")
+        for user in successful_users:
+            if user.get("token"):
+                await self.test_user_profile_display(user["token"], user)
+        
+        # Test 5: KYC flow with updated model
+        print("\n📋 Testing KYC Flow with Updated Model...")
+        for user in successful_users:
+            if user.get("token"):
+                await self.test_kyc_flow_with_updated_model(user["token"], user.get("email", ""))
+                break  # Test with one user is sufficient
+        
+        # Test 6: Admin user management with new fields (if admin exists)
+        print("\n👨‍💼 Testing Admin User Management...")
+        await self.test_admin_user_management()
+        
+        print("\n" + "=" * 70)
+        print("🏁 Registration Testing Complete!")
         await self.print_summary()
+    
+    async def test_admin_user_management(self):
+        """Test admin user management with new fields"""
+        try:
+            # Try to login as admin (assuming admin exists)
+            admin_login = await self.test_login_with_updated_model("admin@example.com", "testpass123")
+            
+            if admin_login.get("success") and admin_login.get("token"):
+                headers = {"Authorization": f"Bearer {admin_login['token']}"}
+                
+                # Test get all users
+                response = await self.client.get(f"{BACKEND_URL}/admin/users", headers=headers)
+                
+                if response.status_code == 200:
+                    users = response.json()
+                    
+                    # Check if users have new fields
+                    if users:
+                        user = users[0]
+                        required_fields = ["first_name", "last_name", "full_name"]
+                        missing_fields = [field for field in required_fields if field not in user]
+                        
+                        if not missing_fields:
+                            await self.log_test("Admin Get Users with New Fields", True, f"Retrieved {len(users)} users with all new fields")
+                        else:
+                            await self.log_test("Admin Get Users with New Fields", False, f"Users missing fields: {missing_fields}")
+                    else:
+                        await self.log_test("Admin Get Users", True, "Retrieved users list (empty)")
+                else:
+                    await self.log_test("Admin Get Users", False, f"Failed: {response.text}")
+            else:
+                await self.log_test("Admin Login for User Management", False, "Could not login as admin")
+                
+        except Exception as e:
+            await self.log_test("Admin User Management", False, f"Exception: {str(e)}")
     
     async def test_crypto_prices(self):
         """Test crypto price endpoints"""
