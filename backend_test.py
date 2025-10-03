@@ -681,7 +681,11 @@ class RegistrationSystemTester:
                 await self.test_kyc_flow_with_updated_model(user["token"], user.get("email", ""))
                 break  # Test with one user is sufficient
         
-        # Test 6: Admin user management with new fields (if admin exists)
+        # Test 6: Registration endpoint structure
+        print("\n🔧 Testing Registration Endpoint Structure...")
+        await self.test_registration_endpoint_structure()
+        
+        # Test 7: Admin user management with new fields (if admin exists)
         print("\n👨‍💼 Testing Admin User Management...")
         await self.test_admin_user_management()
         
