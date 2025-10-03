@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Wallet, TrendingUp, User, CheckCircle, XCircle } from "lucide-react";
+import { LogOut, Wallet, TrendingUp, User, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 
 export default function Dashboard({ user, onLogout }) {
+  const navigate = useNavigate();
+  
   return (
     <div className="min-h-screen bg-slate-950" dir="rtl">
       {/* Header */}
@@ -18,7 +21,7 @@ export default function Dashboard({ user, onLogout }) {
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="text-sm text-slate-400">خوش آمدید</p>
-              <p className="text-white font-semibold">{user.full_name}</p>
+              <p className="text-white font-semibold">{user.full_name || user.email}</p>
             </div>
             <Button
               onClick={onLogout}
@@ -35,6 +38,34 @@ export default function Dashboard({ user, onLogout }) {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
+        {/* KYC Warning */}
+        {user.kyc_level < 1 && (
+          <Card className="bg-amber-900/20 border-amber-800/50 mb-6" data-testid="kyc-warning">
+            <CardContent className="py-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <AlertTriangle className="w-10 h-10 text-amber-400" />
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-1">
+                      احراز هویت خود را تکمیل کنید
+                    </h3>
+                    <p className="text-slate-300">
+                      برای استفاده از امکانات معاملاتی، واریز و برداشت، باید احراز هویت کنید
+                    </p>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => navigate('/kyc')}
+                  className="bg-amber-600 hover:bg-amber-700"
+                  data-testid="complete-kyc-button"
+                >
+                  تکمیل احراز هویت
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* Wallet Card */}
           <Card className="bg-gradient-to-br from-emerald-900/30 to-teal-900/30 border-emerald-800/50">
