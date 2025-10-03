@@ -786,6 +786,61 @@ async def approve_deposit(approval: DepositApproval, admin: User = Depends(get_c
     
     return {"message": f"درخواست با موفقیت {new_status} شد"}
 
+# ==================== ADMIN KYC ROUTES ====================
+
+@api_router.get("/admin/kyc/pending")
+async def get_pending_kyc(admin: User = Depends(get_current_admin)):
+    """Get all users with pending Level 2 KYC"""
+    users = await db.users.find({
+        "kyc_level": 1,
+        "kyc_status": "pending",
+        "kyc_documents": {"$ne": None}
+    }).to_list(None)
+    
+    return [{
+        "id": u["id"],
+        "full_name": u.get("full_name"),
+        "email": u.get("email"),
+        "phone": u.get("phone"),
+        "national_code": u.get("national_code"),
+        "kyc_documents": u.get("kyc_documents"),
+        "submitted_at": u.get("updated_at")
+    } for u in users]
+
+@api_router.post("/admin/kyc/approve")
+async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_current_admin)):
+    """Approve or reject KYC Level 2"""
+    user = await db.users.find_one({"id": approval.user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+    
+    if approval.action == "approve":
+        await db.users.update_one(
+            {"id": approval.user_id},
+            {"$set": {
+                "kyc_level": approval.kyc_level,
+                "kyc_status": "approved",
+                "updated_at": datetime.now(timezone.utc)
+            }}
+        )
+        message = f"احراز هویت سطح {approval.kyc_level} تایید شد"
+    else:
+        await db.users.update_one(
+            {"id": approval.user_id},
+            {"$set": {
+                "kyc_status": "rejected",
+                "kyc_documents": None,  # Clear documents so user can resubmit
+                "updated_at": datetime.now(timezone.utc)
+            }}
+        )
+        message = "احراز هویت رد شد"
+    
+    return {
+        "success": True,
+        "message": message,
+        "admin_note": approval.admin_note
+    }
+
 @api_router.get("/")
 async def root():
     return {"message": "Persian Crypto Exchange API", "version": "1.0.0"}
