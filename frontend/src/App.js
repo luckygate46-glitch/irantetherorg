@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import AuthPage from "./pages/AuthPageEnhanced";
 import Dashboard from "./pages/Dashboard";
+import KYCPage from "./pages/KYCPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminCards from "./pages/admin/AdminCards";
