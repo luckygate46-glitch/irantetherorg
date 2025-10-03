@@ -484,6 +484,8 @@ async def register(user_data: UserCreate):
     
     # Create new user with Level 0 (only phone verified)
     user = User(
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
         email=user_data.email,
         password_hash=hash_password(user_data.password),
         phone=user_data.phone,
