@@ -246,6 +246,93 @@ def user_to_response(user: User) -> UserResponse:
         created_at=user.created_at
     )
 
+# ==================== API.IR INTEGRATION ====================
+
+async def send_sms_otp_apir(phone: str, code: str) -> bool:
+    """Send OTP via API.IR SMS service"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{APIR_BASE_URL}/sw1/SmsOTP",
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "text/plain",
+                    "Authorization": APIR_API_KEY
+                },
+                json={"code": code, "mobile": phone},
+                timeout=10.0
+            )
+            data = response.json()
+            return data.get("success", False)
+    except Exception as e:
+        logger.error(f"API.IR SMS OTP Error: {str(e)}")
+        return False
+
+async def verify_shahkar(national_code: str, mobile: str, is_company: bool = False) -> dict:
+    """Verify national code with mobile number using Shahkar"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{APIR_BASE_URL}/sw1/Shahkar",
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "text/plain",
+                    "Authorization": APIR_API_KEY
+                },
+                json={
+                    "nationalCode": national_code,
+                    "mobile": mobile,
+                    "isCompany": is_company
+                },
+                timeout=10.0
+            )
+            return response.json()
+    except Exception as e:
+        logger.error(f"API.IR Shahkar Error: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+async def verify_card_match(national_code: str, birth_date: str, card_number: str) -> dict:
+    """Verify card belongs to user"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{APIR_BASE_URL}/sw1/CardMatch",
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "text/plain",
+                    "Authorization": APIR_API_KEY
+                },
+                json={
+                    "nationalCode": national_code,
+                    "birthDate": birth_date,
+                    "cardNumber": card_number
+                },
+                timeout=10.0
+            )
+            return response.json()
+    except Exception as e:
+        logger.error(f"API.IR CardMatch Error: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+async def get_card_info(card_number: str) -> dict:
+    """Get card owner name"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{APIR_BASE_URL}/sw1/CardInfo",
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "text/plain",
+                    "Authorization": APIR_API_KEY
+                },
+                json={"cardNumber": card_number},
+                timeout=10.0
+            )
+            return response.json()
+    except Exception as e:
+        logger.error(f"API.IR CardInfo Error: {str(e)}")
+        return {"success": False, "error": str(e)}
+
 # ==================== AUTH ROUTES ====================
 
 @api_router.post("/auth/register", response_model=TokenResponse)
