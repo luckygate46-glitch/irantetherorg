@@ -44,10 +44,7 @@ api_router = APIRouter(prefix="/api")
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
-    full_name: str
     phone: str  # Mandatory for OTP
-    national_code: str  # Mandatory for KYC
-    birth_date: Optional[str] = None  # Format: YYYY/MM/DD or 1370/05/15
     
     @validator('password')
     def validate_password(cls, v):
@@ -59,12 +56,6 @@ class UserCreate(BaseModel):
     def validate_phone(cls, v):
         if not v.startswith('09') or len(v) != 11:
             raise ValueError('شماره موبایل باید با 09 شروع شود و 11 رقم باشد')
-        return v
-    
-    @validator('national_code')
-    def validate_national_code(cls, v):
-        if len(v) != 10:
-            raise ValueError('کد ملی باید 10 رقم باشد')
         return v
 
 class UserLogin(BaseModel):
