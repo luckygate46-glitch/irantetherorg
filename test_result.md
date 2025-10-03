@@ -143,28 +143,40 @@ backend:
 
 frontend:
   - task: "Trading Page UI (/trade)"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "frontend/src/pages/Trade.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
         - agent: "main"
-        - comment: "Starting implementation of trading page with buy/sell orders and Persian RTL design"
+        - comment: "Implemented complete trading page with buy/sell/trade forms, coin selection, portfolio display"
 
   - task: "Trading Route Integration"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
         - agent: "main"
-        - comment: "Need to add /trade route to App.js"
+        - comment: "Added /trade route to App.js and trading button to Dashboard"
+
+  - task: "Admin Orders Management"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/admin/AdminOrders.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Created admin interface for managing trading orders with approve/reject functionality"
 
 metadata:
   created_by: "main_agent"
