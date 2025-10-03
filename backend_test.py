@@ -35,50 +35,106 @@ class RegistrationSystemTester:
         status = "✅ PASS" if success else "❌ FAIL"
         print(f"{status} {test_name}: {details}")
         
-    async def create_test_user(self, email: str, phone: str, password: str = "testpass123") -> Dict[str, Any]:
-        """Create a test user with phone verification"""
+    async def test_registration_with_new_fields(self, first_name: str, last_name: str, email: str, phone: str, password: str = "testpass123") -> Dict[str, Any]:
+        """Test registration with new fields (first_name, last_name, email, phone, password)"""
         try:
             # Step 1: Send OTP
+            await self.log_test(f"OTP Send for {phone}", True, "Sending OTP...")
             otp_response = await self.client.post(f"{BACKEND_URL}/otp/send", json={
                 "phone": phone
             })
             
             if otp_response.status_code != 200:
-                await self.log_test(f"OTP Send for {email}", False, f"Failed to send OTP: {otp_response.text}")
-                return {}
+                await self.log_test(f"OTP Send for {phone}", False, f"Failed to send OTP: {otp_response.text}")
+                # Continue with registration test anyway to check validation
+            else:
+                await self.log_test(f"OTP Send for {phone}", True, "OTP sent successfully")
             
-            # Step 2: Verify OTP (using mock code since we can't get real SMS)
-            # In real testing, we'd need to extract the code from logs or use a test service
-            verify_response = await self.client.post(f"{BACKEND_URL}/otp/verify", json={
-                "phone": phone,
-                "code": "12345"  # This will likely fail, but let's try
-            })
+            # Step 2: Try to verify OTP (we'll mock this since we can't get real SMS)
+            # First, let's try with a common test code
+            test_codes = ["12345", "00000", "11111", "99999"]
+            otp_verified = False
             
-            # Step 3: Register user
-            register_response = await self.client.post(f"{BACKEND_URL}/auth/register", json={
+            for test_code in test_codes:
+                verify_response = await self.client.post(f"{BACKEND_URL}/otp/verify", json={
+                    "phone": phone,
+                    "code": test_code
+                })
+                
+                if verify_response.status_code == 200:
+                    await self.log_test(f"OTP Verify for {phone}", True, f"OTP verified with code {test_code}")
+                    otp_verified = True
+                    break
+            
+            if not otp_verified:
+                await self.log_test(f"OTP Verify for {phone}", False, "Could not verify OTP with test codes")
+                # Continue anyway to test registration validation
+            
+            # Step 3: Test registration with new fields
+            register_data = {
+                "first_name": first_name,
+                "last_name": last_name,
                 "email": email,
-                "password": password,
-                "phone": phone
-            })
+                "phone": phone,
+                "password": password
+            }
             
-            if register_response.status_code == 201 or register_response.status_code == 200:
+            register_response = await self.client.post(f"{BACKEND_URL}/auth/register", json=register_data)
+            
+            if register_response.status_code in [200, 201]:
                 user_data = register_response.json()
-                await self.log_test(f"User Registration {email}", True, "User created successfully")
+                user_info = user_data.get("user", {})
+                
+                # Verify all new fields are present and correct
+                success = True
+                details = []
+                
+                if user_info.get("first_name") != first_name:
+                    success = False
+                    details.append(f"first_name mismatch: expected {first_name}, got {user_info.get('first_name')}")
+                
+                if user_info.get("last_name") != last_name:
+                    success = False
+                    details.append(f"last_name mismatch: expected {last_name}, got {user_info.get('last_name')}")
+                
+                if user_info.get("email") != email:
+                    success = False
+                    details.append(f"email mismatch: expected {email}, got {user_info.get('email')}")
+                
+                if user_info.get("phone") != phone:
+                    success = False
+                    details.append(f"phone mismatch: expected {phone}, got {user_info.get('phone')}")
+                
+                # Check if full_name is computed correctly
+                expected_full_name = f"{first_name} {last_name}"
+                if user_info.get("full_name") != expected_full_name:
+                    success = False
+                    details.append(f"full_name computation error: expected '{expected_full_name}', got '{user_info.get('full_name')}'")
+                
+                if success:
+                    await self.log_test(f"Registration with New Fields {email}", True, "All fields stored and computed correctly")
+                else:
+                    await self.log_test(f"Registration with New Fields {email}", False, "; ".join(details))
+                
                 return {
                     "email": email,
                     "phone": phone,
                     "password": password,
+                    "first_name": first_name,
+                    "last_name": last_name,
                     "token": user_data.get("access_token"),
-                    "user_id": user_data.get("user", {}).get("id"),
-                    "user_data": user_data.get("user", {})
+                    "user_id": user_info.get("id"),
+                    "user_data": user_info,
+                    "success": success
                 }
             else:
-                await self.log_test(f"User Registration {email}", False, f"Registration failed: {register_response.text}")
-                return {}
+                error_detail = register_response.text
+                await self.log_test(f"Registration with New Fields {email}", False, f"Registration failed: {error_detail}")
+                return {"success": False, "error": error_detail}
                 
         except Exception as e:
-            await self.log_test(f"User Creation {email}", False, f"Exception: {str(e)}")
-            return {}
+            await self.log_test(f"Registration Test {email}", False, f"Exception: {str(e)}")
+            return {"success": False, "error": str(e)}
     
     async def login_user(self, email: str, password: str) -> Dict[str, Any]:
         """Login user and return token"""
