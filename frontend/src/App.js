@@ -116,6 +116,10 @@ function App() {
             element={user?.is_admin ? <AdminDeposits user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/admin/orders" 
+            element={user?.is_admin ? <AdminOrders user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/" 
             element={<Navigate to={user ? (user.is_admin ? "/admin" : "/dashboard") : "/auth"} />} 
           />
