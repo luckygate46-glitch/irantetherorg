@@ -407,15 +407,34 @@ async def register(user_data: UserCreate):
             detail="این ایمیل قبلاً ثبت شده است"
         )
     
+    # Check if phone already exists
+    existing_phone = await db.users.find_one({"phone": user_data.phone})
+    if existing_phone:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="این شماره موبایل قبلاً ثبت شده است"
+        )
+    
+    # Check if phone OTP is verified
+    otp_verified = await db.otp_verifications.find_one(
+        {"phone": user_data.phone, "verified": True}
+    )
+    
     # Create new user
     user = User(
         email=user_data.email,
         password_hash=hash_password(user_data.password),
         full_name=user_data.full_name,
-        phone=user_data.phone
+        phone=user_data.phone,
+        national_code=user_data.national_code,
+        birth_date=user_data.birth_date,
+        is_phone_verified=bool(otp_verified)
     )
     
     await db.users.insert_one(user.dict())
+    
+    # Verify Shahkar in background (optional - can be done during KYC)
+    # shahkar_result = await verify_shahkar(user_data.national_code, user_data.phone)
     
     # Create access token
     access_token = create_access_token(data={"sub": user.id})
