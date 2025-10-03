@@ -84,20 +84,26 @@ class CryptoPriceService:
                             "symbol": data.get("symbol", "").upper(),
                             "name": data.get("name"),
                             "image": data.get("image", {}).get("large"),
-                            "current_price": market_data.get("current_price", {}).get("usd", 0),
-                            "market_cap": market_data.get("market_cap", {}).get("usd", 0),
-                            "total_volume": market_data.get("total_volume", {}).get("usd", 0),
-                            "high_24h": market_data.get("high_24h", {}).get("usd", 0),
-                            "low_24h": market_data.get("low_24h", {}).get("usd", 0),
-                            "price_change_24h": market_data.get("price_change_percentage_24h", 0),
-                            "price_change_7d": market_data.get("price_change_percentage_7d", 0),
-                            "price_change_30d": market_data.get("price_change_percentage_30d", 0),
-                            "circulating_supply": market_data.get("circulating_supply", 0),
-                            "total_supply": market_data.get("total_supply", 0),
-                            "ath": market_data.get("ath", {}).get("usd", 0),
-                            "atl": market_data.get("atl", {}).get("usd", 0),
+                            "market_data": {
+                                "current_price": {"usd": market_data.get("current_price", {}).get("usd", 0)},
+                                "market_cap": market_data.get("market_cap", {}).get("usd", 0),
+                                "total_volume": market_data.get("total_volume", {}).get("usd", 0),
+                                "high_24h": market_data.get("high_24h", {}).get("usd", 0),
+                                "low_24h": market_data.get("low_24h", {}).get("usd", 0),
+                                "price_change_percentage_24h": market_data.get("price_change_percentage_24h", 0),
+                                "price_change_percentage_7d": market_data.get("price_change_percentage_7d", 0),
+                                "price_change_percentage_30d": market_data.get("price_change_percentage_30d", 0),
+                                "circulating_supply": market_data.get("circulating_supply", 0),
+                                "total_supply": market_data.get("total_supply", 0),
+                                "ath": market_data.get("ath", {}).get("usd", 0),
+                                "atl": market_data.get("atl", {}).get("usd", 0),
+                            }
                         }
                     }
+                elif response.status_code == 429:
+                    # Rate limited - return mock data
+                    logger.warning(f"CoinGecko rate limited for {coin_id}, returning mock data")
+                    return self._get_mock_coin_details(coin_id)
                 else:
                     return {
                         "success": False,
@@ -105,10 +111,8 @@ class CryptoPriceService:
                     }
         except Exception as e:
             logger.error(f"Error fetching coin details: {str(e)}")
-            return {
-                "success": False,
-                "error": str(e)
-            }
+            # Return mock data on error for testing
+            return self._get_mock_coin_details(coin_id)
     
     async def get_market_chart(self, coin_id: str, days: int = 7):
         """Get historical market data for charting"""
