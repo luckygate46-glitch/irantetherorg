@@ -162,14 +162,14 @@ export default function AuthPage({ onLogin }) {
                   <TabsContent value="login" className="space-y-4 mt-6">
                     <form onSubmit={handleLogin} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="login-email" className="text-slate-200">ایمیل</Label>
+                        <Label htmlFor="login-email" className="text-slate-200">ایمیل یا نام کاربری</Label>
                         <div className="relative">
                           <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                           <Input
                             id="login-email"
                             data-testid="login-email-input"
-                            type="email"
-                            placeholder="email@example.com"
+                            type="text"
+                            placeholder="admin یا email@example.com"
                             value={loginData.email}
                             onChange={(e) => setLoginData({...loginData, email: e.target.value})}
                             className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
