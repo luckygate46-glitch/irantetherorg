@@ -756,9 +756,9 @@ class RegistrationSystemTester:
 
 async def main():
     """Main test runner"""
-    tester = TradingSystemTester()
+    tester = RegistrationSystemTester()
     try:
-        await tester.run_comprehensive_tests()
+        await tester.run_registration_tests()
     finally:
         await tester.close()
 
