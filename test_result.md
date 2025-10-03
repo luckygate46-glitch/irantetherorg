@@ -204,15 +204,18 @@ test_plan:
 
   - task: "Updated Registration Form"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py, frontend/src/pages/AuthPageEnhanced.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "main"
         - comment: "Updated registration to collect first_name, last_name, email, phone, password as requested"
+        - working: true
+        - agent: "testing"
+        - comment: "COMPREHENSIVE TESTING COMPLETED ✅ - Updated registration system fully functional! Tested: (1) Registration API with new fields (first_name, last_name, email, phone, password) ✅ (2) Field validation (min 2 chars for names, phone format) ✅ (3) UserResponse model with computed full_name ✅ (4) Complete registration flow with OTP verification ✅ (5) Login flow with updated user model ✅ (6) User profile display (/auth/me) with all new fields ✅ (7) KYC flow compatibility with updated model ✅ (8) Admin endpoint security ✅. All core functionality working: full_name computed correctly as 'first_name last_name', all required fields stored in database, login/profile endpoints return complete user data, KYC flow maintains compatibility. Registration requires OTP verification as expected (API.IR integration working correctly)."
 
 agent_communication:
     - agent: "main"
