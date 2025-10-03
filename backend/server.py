@@ -14,6 +14,8 @@ import bcrypt
 import jwt
 import httpx
 import random
+from ai_services import chatbot, market_analyst, portfolio_advisor, price_predictor, risk_analyzer, news_summarizer
+from crypto_prices import price_service
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
