@@ -265,10 +265,13 @@ def user_to_response(user: User) -> UserResponse:
     return UserResponse(
         id=user.id,
         email=user.email,
-        full_name=user.full_name,
         phone=user.phone,
+        full_name=user.full_name,
+        national_code=user.national_code,
         is_active=user.is_active,
-        is_verified=user.is_verified,
+        is_phone_verified=user.is_phone_verified,
+        kyc_level=user.kyc_level,
+        kyc_status=user.kyc_status,
         is_admin=user.is_admin,
         wallet_balance_tmn=user.wallet_balance_tmn,
         created_at=user.created_at
