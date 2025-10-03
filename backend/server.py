@@ -282,11 +282,16 @@ async def get_current_admin(current_user: User = Depends(get_current_user)):
     return current_user
 
 def user_to_response(user: User) -> UserResponse:
+    # Compute full_name from first_name + last_name if not overridden
+    computed_full_name = user.full_name or f"{user.first_name} {user.last_name}"
+    
     return UserResponse(
         id=user.id,
+        first_name=user.first_name,
+        last_name=user.last_name,
         email=user.email,
         phone=user.phone,
-        full_name=user.full_name,
+        full_name=computed_full_name,
         national_code=user.national_code,
         is_active=user.is_active,
         is_phone_verified=user.is_phone_verified,
