@@ -80,6 +80,10 @@ function App() {
             element={user && !user.is_admin ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to={user?.is_admin ? "/admin" : "/auth"} />} 
           />
           <Route 
+            path="/kyc" 
+            element={user ? <KYCPage user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/admin" 
             element={user?.is_admin ? <AdminDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
