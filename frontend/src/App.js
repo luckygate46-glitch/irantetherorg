@@ -86,6 +86,14 @@ function App() {
             element={user ? <KYCPage user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/market" 
+            element={user ? <Market user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/wallet" 
+            element={user ? <Wallet user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/admin" 
             element={user?.is_admin ? <AdminDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
