@@ -206,7 +206,7 @@ class OTPVerification(BaseModel):
     verified: bool = False
 
 class KYCLevel1Request(BaseModel):
-    full_name: str
+    full_name: str  # Complete name (can override first_name + last_name)
     national_code: str
     birth_date: str  # Format: 1370/05/15
     bank_card_number: str
