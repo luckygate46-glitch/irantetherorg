@@ -286,6 +286,43 @@ export default function AuthPageEnhanced({ onLogin }) {
                   {/* Register Tab with OTP - SIMPLIFIED */}
                   <TabsContent value="register" className="space-y-4 mt-6">
                     <form onSubmit={handleRegister} className="space-y-4">
+                      {/* First Name */}
+                      <div className="space-y-2">
+                        <Label htmlFor="register-first-name" className="text-slate-200">نام</Label>
+                        <div className="relative">
+                          <User className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                          <Input
+                            id="register-first-name"
+                            data-testid="register-first-name-input"
+                            type="text"
+                            placeholder="علی"
+                            value={registerData.first_name}
+                            onChange={(e) => setRegisterData({...registerData, first_name: e.target.value})}
+                            className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* Last Name */}
+                      <div className="space-y-2">
+                        <Label htmlFor="register-last-name" className="text-slate-200">نام خانوادگی</Label>
+                        <div className="relative">
+                          <User className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                          <Input
+                            id="register-last-name"
+                            data-testid="register-last-name-input"
+                            type="text"
+                            placeholder="احمدی"
+                            value={registerData.last_name}
+                            onChange={(e) => setRegisterData({...registerData, last_name: e.target.value})}
+                            className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* Email */}
                       <div className="space-y-2">
                         <Label htmlFor="register-email" className="text-slate-200">ایمیل</Label>
                         <div className="relative">
