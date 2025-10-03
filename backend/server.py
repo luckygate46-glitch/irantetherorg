@@ -891,6 +891,294 @@ async def search_crypto(query: str):
         raise HTTPException(status_code=500, detail=result.get("error"))
     return result
 
+# ==================== TRADING ORDER ROUTES ====================
+
+@api_router.post("/trading/order", response_model=TradingOrderResponse)
+async def create_trading_order(order_data: TradingOrderCreate, current_user: User = Depends(get_current_user)):
+    """Create a new trading order (buy/sell/trade)"""
+    
+    # Check KYC level
+    if current_user.kyc_level < 2:
+        raise HTTPException(
+            status_code=403,
+            detail="برای معامله باید احراز هویت سطح ۲ را تکمیل کنید"
+        )
+    
+    # Get current price
+    coin_data = await price_service.get_coin_details(order_data.coin_id)
+    if not coin_data["success"]:
+        raise HTTPException(status_code=404, detail="ارز مورد نظر یافت نشد")
+    
+    current_price_usd = coin_data["data"]["market_data"]["current_price"]["usd"]
+    # Approximate USD to IRR conversion (1 USD = 50,000 IRR)
+    current_price_tmn = current_price_usd * 50000
+    
+    total_value_tmn = 0
+    
+    if order_data.order_type == "buy":
+        if not order_data.amount_tmn or order_data.amount_tmn <= 0:
+            raise HTTPException(status_code=400, detail="مبلغ تومان باید بزرگتر از صفر باشد")
+        
+        # Check wallet balance
+        if current_user.wallet_balance_tmn < order_data.amount_tmn:
+            raise HTTPException(status_code=400, detail="موجودی کافی ندارید")
+        
+        total_value_tmn = order_data.amount_tmn
+        
+    elif order_data.order_type == "sell":
+        if not order_data.amount_crypto or order_data.amount_crypto <= 0:
+            raise HTTPException(status_code=400, detail="مقدار ارز باید بزرگتر از صفر باشد")
+        
+        # Check user holdings
+        holding = await db.user_holdings.find_one({
+            "user_id": current_user.id,
+            "coin_symbol": order_data.coin_symbol
+        })
+        
+        if not holding or holding["amount"] < order_data.amount_crypto:
+            raise HTTPException(status_code=400, detail="موجودی ارز کافی ندارید")
+        
+        total_value_tmn = order_data.amount_crypto * current_price_tmn
+        
+    elif order_data.order_type == "trade":
+        if not order_data.amount_crypto or not order_data.target_coin_id:
+            raise HTTPException(
+                status_code=400,
+                detail="برای معامله باید مقدار ارز و ارز مقصد را مشخص کنید"
+            )
+        
+        # Check user holdings for source coin
+        holding = await db.user_holdings.find_one({
+            "user_id": current_user.id,
+            "coin_symbol": order_data.coin_symbol
+        })
+        
+        if not holding or holding["amount"] < order_data.amount_crypto:
+            raise HTTPException(status_code=400, detail="موجودی ارز کافی ندارید")
+        
+        total_value_tmn = order_data.amount_crypto * current_price_tmn
+    
+    # Create trading order
+    trading_order = TradingOrder(
+        user_id=current_user.id,
+        order_type=order_data.order_type,
+        coin_symbol=order_data.coin_symbol,
+        coin_id=order_data.coin_id,
+        amount_crypto=order_data.amount_crypto,
+        amount_tmn=order_data.amount_tmn,
+        target_coin_symbol=order_data.target_coin_symbol,
+        target_coin_id=order_data.target_coin_id,
+        price_at_order=current_price_tmn,
+        total_value_tmn=total_value_tmn
+    )
+    
+    await db.trading_orders.insert_one(trading_order.dict())
+    
+    response_data = trading_order.dict()
+    response_data["user_email"] = current_user.email
+    response_data["user_name"] = current_user.full_name
+    
+    return TradingOrderResponse(**response_data)
+
+@api_router.get("/trading/orders/my", response_model=List[TradingOrderResponse])
+async def get_my_orders(current_user: User = Depends(get_current_user)):
+    """Get user's trading orders"""
+    orders = await db.trading_orders.find({"user_id": current_user.id}).to_list(None)
+    
+    result = []
+    for order in orders:
+        response_data = order.copy()
+        response_data["user_email"] = current_user.email
+        response_data["user_name"] = current_user.full_name
+        result.append(TradingOrderResponse(**response_data))
+    
+    return result
+
+@api_router.get("/trading/holdings/my", response_model=List[UserHoldingResponse])
+async def get_my_holdings(current_user: User = Depends(get_current_user)):
+    """Get user's crypto holdings"""
+    holdings = await db.user_holdings.find({"user_id": current_user.id}).to_list(None)
+    
+    result = []
+    for holding in holdings:
+        # Get current price
+        coin_data = await price_service.get_coin_details(holding["coin_id"])
+        current_price_usd = 0
+        current_price_tmn = 0
+        
+        if coin_data["success"]:
+            current_price_usd = coin_data["data"]["market_data"]["current_price"]["usd"]
+            current_price_tmn = current_price_usd * 50000
+        
+        total_value_tmn = holding["amount"] * current_price_tmn
+        pnl_percent = ((current_price_tmn - holding["average_buy_price_tmn"]) / holding["average_buy_price_tmn"]) * 100 if holding["average_buy_price_tmn"] > 0 else 0
+        
+        response_data = UserHoldingResponse(
+            id=holding["id"],
+            coin_symbol=holding["coin_symbol"],
+            coin_id=holding["coin_id"],
+            amount=holding["amount"],
+            average_buy_price_tmn=holding["average_buy_price_tmn"],
+            current_price_tmn=current_price_tmn,
+            total_value_tmn=total_value_tmn,
+            pnl_percent=pnl_percent
+        )
+        result.append(response_data)
+    
+    return result
+
+# ==================== ADMIN TRADING ROUTES ====================
+
+@api_router.get("/admin/trading/orders", response_model=List[TradingOrderResponse])
+async def get_all_trading_orders(admin: User = Depends(get_current_admin)):
+    """Get all trading orders for admin"""
+    orders = await db.trading_orders.find().to_list(None)
+    
+    result = []
+    for order in orders:
+        user = await db.users.find_one({"id": order["user_id"]})
+        response_data = order.copy()
+        if user:
+            response_data["user_email"] = user.get("email")
+            response_data["user_name"] = user.get("full_name")
+        result.append(TradingOrderResponse(**response_data))
+    
+    return result
+
+@api_router.post("/admin/trading/orders/approve")
+async def approve_trading_order(approval: TradingOrderApproval, admin: User = Depends(get_current_admin)):
+    """Approve or reject a trading order"""
+    order = await db.trading_orders.find_one({"id": approval.order_id})
+    if not order:
+        raise HTTPException(status_code=404, detail="سفارش یافت نشد")
+    
+    if order["status"] != "pending":
+        raise HTTPException(status_code=400, detail="این سفارش قبلاً پردازش شده است")
+    
+    new_status = "approved" if approval.action == "approve" else "rejected"
+    
+    # Update order status
+    await db.trading_orders.update_one(
+        {"id": approval.order_id},
+        {"$set": {
+            "status": new_status,
+            "admin_note": approval.admin_note,
+            "updated_at": datetime.now(timezone.utc)
+        }}
+    )
+    
+    if approval.action == "approve":
+        user = await db.users.find_one({"id": order["user_id"]})
+        if not user:
+            raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+        
+        if order["order_type"] == "buy":
+            # Deduct TMN balance and add crypto holding
+            await db.users.update_one(
+                {"id": order["user_id"]},
+                {"$inc": {"wallet_balance_tmn": -order["amount_tmn"]}}
+            )
+            
+            # Add or update crypto holding
+            crypto_amount = order["amount_tmn"] / order["price_at_order"]
+            existing_holding = await db.user_holdings.find_one({
+                "user_id": order["user_id"],
+                "coin_symbol": order["coin_symbol"]
+            })
+            
+            if existing_holding:
+                # Update existing holding (weighted average price)
+                total_amount = existing_holding["amount"] + crypto_amount
+                new_avg_price = ((existing_holding["amount"] * existing_holding["average_buy_price_tmn"]) + 
+                               (crypto_amount * order["price_at_order"])) / total_amount
+                
+                await db.user_holdings.update_one(
+                    {"id": existing_holding["id"]},
+                    {"$set": {
+                        "amount": total_amount,
+                        "average_buy_price_tmn": new_avg_price,
+                        "updated_at": datetime.now(timezone.utc)
+                    }}
+                )
+            else:
+                # Create new holding
+                new_holding = UserHolding(
+                    user_id=order["user_id"],
+                    coin_symbol=order["coin_symbol"],
+                    coin_id=order["coin_id"],
+                    amount=crypto_amount,
+                    average_buy_price_tmn=order["price_at_order"]
+                )
+                await db.user_holdings.insert_one(new_holding.dict())
+                
+        elif order["order_type"] == "sell":
+            # Add TMN balance and deduct crypto holding
+            tmn_amount = order["amount_crypto"] * order["price_at_order"]
+            await db.users.update_one(
+                {"id": order["user_id"]},
+                {"$inc": {"wallet_balance_tmn": tmn_amount}}
+            )
+            
+            # Deduct from crypto holding
+            await db.user_holdings.update_one(
+                {"user_id": order["user_id"], "coin_symbol": order["coin_symbol"]},
+                {"$inc": {"amount": -order["amount_crypto"]}}
+            )
+            
+        elif order["order_type"] == "trade":
+            # Get target coin current price
+            target_coin_data = await price_service.get_coin_details(order["target_coin_id"])
+            if target_coin_data["success"]:
+                target_price_usd = target_coin_data["data"]["market_data"]["current_price"]["usd"]
+                target_price_tmn = target_price_usd * 50000
+                
+                # Calculate how much target coin to give
+                source_value_tmn = order["amount_crypto"] * order["price_at_order"]
+                target_crypto_amount = source_value_tmn / target_price_tmn
+                
+                # Deduct source coin
+                await db.user_holdings.update_one(
+                    {"user_id": order["user_id"], "coin_symbol": order["coin_symbol"]},
+                    {"$inc": {"amount": -order["amount_crypto"]}}
+                )
+                
+                # Add target coin
+                existing_target_holding = await db.user_holdings.find_one({
+                    "user_id": order["user_id"],
+                    "coin_symbol": order["target_coin_symbol"]
+                })
+                
+                if existing_target_holding:
+                    total_amount = existing_target_holding["amount"] + target_crypto_amount
+                    new_avg_price = ((existing_target_holding["amount"] * existing_target_holding["average_buy_price_tmn"]) + 
+                                   (target_crypto_amount * target_price_tmn)) / total_amount
+                    
+                    await db.user_holdings.update_one(
+                        {"id": existing_target_holding["id"]},
+                        {"$set": {
+                            "amount": total_amount,
+                            "average_buy_price_tmn": new_avg_price,
+                            "updated_at": datetime.now(timezone.utc)
+                        }}
+                    )
+                else:
+                    new_holding = UserHolding(
+                        user_id=order["user_id"],
+                        coin_symbol=order["target_coin_symbol"],
+                        coin_id=order["target_coin_id"],
+                        amount=target_crypto_amount,
+                        average_buy_price_tmn=target_price_tmn
+                    )
+                    await db.user_holdings.insert_one(new_holding.dict())
+        
+        # Mark order as completed
+        await db.trading_orders.update_one(
+            {"id": approval.order_id},
+            {"$set": {"status": "completed"}}
+        )
+    
+    return {"message": f"سفارش با موفقیت {new_status} شد"}
+
 # ==================== AI CHATBOT ROUTES ====================
 
 # ==================== TRADING ORDER MODELS ====================
