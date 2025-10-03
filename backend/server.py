@@ -511,6 +511,117 @@ async def login(credentials: UserLogin):
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return user_to_response(current_user)
 
+# ==================== KYC ROUTES ====================
+
+@api_router.post("/kyc/level1")
+async def submit_kyc_level1(kyc_data: KYCLevel1Request, current_user: User = Depends(get_current_user)):
+    """Submit Level 1 KYC - Basic information and bank card"""
+    
+    if current_user.kyc_level >= 1:
+        raise HTTPException(
+            status_code=400,
+            detail="شما قبلاً احراز هویت سطح ۱ را تکمیل کرده‌اید"
+        )
+    
+    # Verify with API.IR Shahkar
+    shahkar_result = await verify_shahkar(kyc_data.national_code, current_user.phone)
+    
+    if not shahkar_result.get("success"):
+        raise HTTPException(
+            status_code=400,
+            detail="کد ملی با شماره موبایل مطابقت ندارد (شاهکار)"
+        )
+    
+    # Verify card ownership with API.IR CardMatch
+    card_match_result = await verify_card_match(
+        kyc_data.national_code,
+        kyc_data.birth_date,
+        kyc_data.bank_card_number
+    )
+    
+    if not card_match_result.get("success"):
+        raise HTTPException(
+            status_code=400,
+            detail="کارت بانکی متعلق به شما نیست"
+        )
+    
+    # Get card owner name
+    card_info = await get_card_info(kyc_data.bank_card_number)
+    card_owner_name = card_info.get("data", {}).get("name", "")
+    
+    # Update user with KYC Level 1 data
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {
+            "full_name": kyc_data.full_name,
+            "national_code": kyc_data.national_code,
+            "birth_date": kyc_data.birth_date,
+            "bank_card_number": kyc_data.bank_card_number,
+            "kyc_level": 1,
+            "kyc_status": "approved",  # Auto-approved since Shahkar & CardMatch passed
+            "updated_at": datetime.now(timezone.utc)
+        }}
+    )
+    
+    return {
+        "success": True,
+        "message": "احراز هویت سطح ۱ با موفقیت انجام شد",
+        "kyc_level": 1,
+        "card_owner_name": card_owner_name
+    }
+
+@api_router.post("/kyc/level2")
+async def submit_kyc_level2(kyc_data: KYCLevel2Request, current_user: User = Depends(get_current_user)):
+    """Submit Level 2 KYC - Document upload"""
+    
+    if current_user.kyc_level < 1:
+        raise HTTPException(
+            status_code=400,
+            detail="ابتدا باید احراز هویت سطح ۱ را تکمیل کنید"
+        )
+    
+    if current_user.kyc_level >= 2:
+        raise HTTPException(
+            status_code=400,
+            detail="شما قبلاً احراز هویت سطح ۲ را تکمیل کرده‌اید"
+        )
+    
+    # Store documents
+    kyc_documents = {
+        "id_card_photo": kyc_data.id_card_photo,
+        "selfie_type": kyc_data.selfie_type,
+        "selfie_data": kyc_data.selfie_data,
+        "submitted_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Update user - pending admin approval
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {
+            "kyc_documents": kyc_documents,
+            "kyc_status": "pending",  # Waiting for admin review
+            "updated_at": datetime.now(timezone.utc)
+        }}
+    )
+    
+    return {
+        "success": True,
+        "message": "مدارک شما ارسال شد و در انتظار تایید ادمین است (حداکثر ۱ ساعت)",
+        "status": "pending"
+    }
+
+@api_router.get("/kyc/status")
+async def get_kyc_status(current_user: User = Depends(get_current_user)):
+    """Get current KYC status"""
+    return {
+        "kyc_level": current_user.kyc_level,
+        "kyc_status": current_user.kyc_status,
+        "has_documents": current_user.kyc_documents is not None,
+        "full_name": current_user.full_name,
+        "national_code": current_user.national_code,
+        "bank_card_number": current_user.bank_card_number
+    }
+
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats", response_model=AdminStats)
