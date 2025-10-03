@@ -101,3 +101,86 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Complete the Iranian crypto exchange with trading functionality, AI integration fixes, and iranicard.ir research. Main service: users can buy cryptos (admin processes orders), trade cryptos, and sell cryptos."
+
+backend:
+  - task: "Trading Order System (Buy/Sell/Trade)"
+    implemented: false
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Starting implementation of crypto trading orders with admin approval system"
+
+  - task: "AI Integration Fix (emergentintegrations)"
+    implemented: false
+    working: false
+    file: "backend/ai_services.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "main"
+        - comment: "Previous httpx and NoneType errors with emergentintegrations - needs debugging"
+
+  - task: "CoinGecko API Integration"
+    implemented: true
+    working: false
+    file: "backend/crypto_prices.py"
+    stuck_count: 1
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: false
+        - agent: "main"
+        - comment: "CoinGecko API calls failing - needs investigation"
+
+frontend:
+  - task: "Trading Page UI (/trade)"
+    implemented: false
+    working: "NA"
+    file: "frontend/src/pages/Trade.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Starting implementation of trading page with buy/sell orders and Persian RTL design"
+
+  - task: "Trading Route Integration"
+    implemented: false
+    working: "NA"
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Need to add /trade route to App.js"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Trading Order System (Buy/Sell/Trade)"
+    - "Trading Page UI (/trade)"
+  stuck_tasks:
+    - "AI Integration Fix (emergentintegrations)"
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+    - message: "Starting Phase 1: Building trading system with order-based buy/sell/trade functionality and admin approval workflow"
