@@ -202,8 +202,20 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Updated Registration Form"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py, frontend/src/pages/AuthPageEnhanced.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Updated registration to collect first_name, last_name, email, phone, password as requested"
+
 agent_communication:
     - agent: "main"
-    - message: "Completed Phase 1: Built complete trading system with order-based buy/sell/trade functionality, admin approval workflow, and user interface. Ready for backend testing."
+    - message: "Completed Phase 1: Built complete trading system + Updated registration form to collect first_name, last_name, email, phone, password. Ready for testing."
     - agent: "testing"
     - message: "BACKEND TESTING COMPLETE ✅ - Trading system fully functional! All core APIs tested and working: buy/sell/trade orders, admin approval, KYC restrictions, balance validation, holdings management. Fixed CoinGecko rate limiting with mock data fallback. Only remaining issue: AI integration needs web search for emergentintegrations debugging. Ready for frontend testing or main agent can summarize and finish."
