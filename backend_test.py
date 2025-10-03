@@ -614,15 +614,15 @@ class RegistrationSystemTester:
             {
                 "first_name": "علی",
                 "last_name": "احمدی",
-                "email": "ali.ahmadi@test.com",
-                "phone": "09123456789",
+                "email": "ali.new.test@example.com",
+                "phone": "09123456700",
                 "password": "testpass123"
             },
             {
                 "first_name": "فاطمه",
                 "last_name": "محمدی",
-                "email": "fateme.mohammadi@test.com",
-                "phone": "09123456788",
+                "email": "fateme.new.test@example.com",
+                "phone": "09123456701",
                 "password": "testpass456"
             }
         ]
