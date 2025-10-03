@@ -136,8 +136,8 @@ class RegistrationSystemTester:
             await self.log_test(f"Registration Test {email}", False, f"Exception: {str(e)}")
             return {"success": False, "error": str(e)}
     
-    async def login_user(self, email: str, password: str) -> Dict[str, Any]:
-        """Login user and return token"""
+    async def test_login_with_updated_model(self, email: str, password: str) -> Dict[str, Any]:
+        """Test login with updated user model"""
         try:
             response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
                 "email": email,
@@ -146,18 +146,41 @@ class RegistrationSystemTester:
             
             if response.status_code == 200:
                 data = response.json()
-                await self.log_test(f"Login {email}", True, "Login successful")
+                user_info = data.get("user", {})
+                
+                # Verify user response contains all expected fields
+                required_fields = ["id", "first_name", "last_name", "email", "phone", "full_name", "is_active", "is_phone_verified", "kyc_level", "kyc_status", "is_admin", "wallet_balance_tmn", "created_at"]
+                missing_fields = []
+                
+                for field in required_fields:
+                    if field not in user_info:
+                        missing_fields.append(field)
+                
+                if missing_fields:
+                    await self.log_test(f"Login Response Fields {email}", False, f"Missing fields: {missing_fields}")
+                else:
+                    await self.log_test(f"Login Response Fields {email}", True, "All required fields present")
+                
+                # Verify full_name computation
+                expected_full_name = f"{user_info.get('first_name', '')} {user_info.get('last_name', '')}"
+                if user_info.get("full_name") == expected_full_name:
+                    await self.log_test(f"Login Full Name Computation {email}", True, f"full_name correctly computed as '{expected_full_name}'")
+                else:
+                    await self.log_test(f"Login Full Name Computation {email}", False, f"full_name computation error: expected '{expected_full_name}', got '{user_info.get('full_name')}'")
+                
+                await self.log_test(f"Login {email}", True, "Login successful with updated model")
                 return {
                     "token": data.get("access_token"),
-                    "user_data": data.get("user", {})
+                    "user_data": user_info,
+                    "success": True
                 }
             else:
                 await self.log_test(f"Login {email}", False, f"Login failed: {response.text}")
-                return {}
+                return {"success": False, "error": response.text}
                 
         except Exception as e:
             await self.log_test(f"Login {email}", False, f"Exception: {str(e)}")
-            return {}
+            return {"success": False, "error": str(e)}
     
     async def complete_kyc_level1(self, token: str, user_email: str) -> bool:
         """Complete KYC Level 1 for user"""
