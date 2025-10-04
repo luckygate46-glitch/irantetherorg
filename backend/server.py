@@ -595,25 +595,21 @@ async def register(user_data: UserCreate, request: Request):
             detail="این شماره موبایل قبلاً ثبت شده است"
         )
     
-    # Check if phone OTP is verified
+    # Check if phone OTP is verified (optional - user can verify later)
     otp_verified = await db.otp_verifications.find_one(
         {"phone": user_data.phone, "verified": True}
     )
     
-    if not otp_verified:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="لطفا ابتدا شماره موبایل خود را تایید کنید"
-        )
+    is_phone_verified = bool(otp_verified)
     
-    # Create new user with Level 0 (only phone verified)
+    # Create new user with Level 0 (phone verification optional)
     user = User(
         first_name=user_data.first_name,
         last_name=user_data.last_name,
         email=user_data.email,
         password_hash=hash_password(user_data.password),
         phone=user_data.phone,
-        is_phone_verified=True,
+        is_phone_verified=is_phone_verified,
         kyc_level=0,  # Can only view market
         kyc_status="pending"
     )
