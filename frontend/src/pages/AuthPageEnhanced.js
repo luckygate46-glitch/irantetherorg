@@ -380,8 +380,8 @@ export default function AuthPageEnhanced({ onLogin }) {
                       <Button
                         type="submit"
                         data-testid="register-submit-button"
-                        disabled={loading || !otpVerified}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-6 rounded-lg disabled:opacity-50"
+                        disabled={loading}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-6 rounded-lg"
                       >
                         {loading ? "در حال ثبت‌نام..." : "ثبت‌نام"}
                         {!loading && <ArrowRight className="mr-2 w-5 h-5" />}
