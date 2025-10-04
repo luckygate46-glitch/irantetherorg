@@ -612,7 +612,7 @@ async def login_user(user_credentials: UserLogin, request: Request):
         )
     
     # Find user
-    user_data = await db.users.find_one({"email": credentials.email})
+    user_data = await db.users.find_one({"email": user_credentials.email})
     if not user_data:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
