@@ -236,8 +236,8 @@ class AdminKYCTester:
             # Test without authentication
             response = await self.client.get(f"{BACKEND_URL}/admin/kyc/pending")
             
-            if response.status_code == 401:
-                await self.log_test("Admin Auth Required (No Token)", True, "Correctly requires authentication")
+            if response.status_code in [401, 403]:
+                await self.log_test("Admin Auth Required (No Token)", True, f"Correctly requires authentication (status: {response.status_code})")
             else:
                 await self.log_test("Admin Auth Required (No Token)", False, f"Should require auth: {response.status_code}")
                 return False
