@@ -14,6 +14,9 @@ import AdminCards from "./pages/admin/AdminCards";
 import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminKYC from "./pages/admin/AdminKYC";
+import AdminDashboardAI from "./pages/admin/AdminDashboardAI";
+import AdminPriceManager from "./pages/admin/AdminPriceManager";
+import AdminTradingManager from "./pages/admin/AdminTradingManager";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
