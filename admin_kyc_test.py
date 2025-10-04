@@ -37,52 +37,33 @@ class AdminKYCTester:
         print(f"{status} {test_name}: {details}")
         
     async def create_test_user(self) -> Dict[str, Any]:
-        """Create a test user for KYC testing"""
+        """Use the existing test user mentioned in the review request"""
         try:
-            # Create test user with Persian name
+            # Use the existing test user from the review request
             user_data = {
-                "first_name": "سارومان",
-                "last_name": "والار",
-                "email": "saruman.valar.test.kyc.20251004@gmail.com",
-                "phone": "09123456999",
+                "email": "saruman.valar.test.20251004163014@gmail.com",
                 "password": "password123"
             }
             
-            response = await self.client.post(f"{BACKEND_URL}/auth/register", json=user_data)
+            # Try to login with existing user
+            login_response = await self.client.post(f"{BACKEND_URL}/auth/login", json=user_data)
             
-            if response.status_code in [200, 201]:
-                data = response.json()
-                user_info = data.get("user", {})
-                await self.log_test("Create Test User", True, f"Test user created: {user_info.get('email')}")
+            if login_response.status_code == 200:
+                login_data = login_response.json()
+                user_info = login_data.get("user", {})
+                await self.log_test("Login Existing Test User", True, f"Logged in existing user: {user_info.get('email')}")
                 return {
-                    "token": data.get("access_token"),
+                    "token": login_data.get("access_token"),
                     "user_id": user_info.get("id"),
                     "email": user_info.get("email"),
                     "success": True
                 }
             else:
-                # Try to login if user already exists
-                login_response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
-                    "email": user_data["email"],
-                    "password": user_data["password"]
-                })
-                
-                if login_response.status_code == 200:
-                    login_data = login_response.json()
-                    user_info = login_data.get("user", {})
-                    await self.log_test("Login Existing Test User", True, f"Logged in existing user: {user_info.get('email')}")
-                    return {
-                        "token": login_data.get("access_token"),
-                        "user_id": user_info.get("id"),
-                        "email": user_info.get("email"),
-                        "success": True
-                    }
-                else:
-                    await self.log_test("Create Test User", False, f"Failed to create or login user: {response.text}")
-                    return {"success": False}
+                await self.log_test("Login Test User", False, f"Failed to login test user: {login_response.text}")
+                return {"success": False}
                     
         except Exception as e:
-            await self.log_test("Create Test User", False, f"Exception: {str(e)}")
+            await self.log_test("Login Test User", False, f"Exception: {str(e)}")
             return {"success": False}
     
     async def get_admin_token(self) -> Optional[str]:
