@@ -21,7 +21,7 @@ export default function AuthPageEnhanced({ onLogin }) {
     password: ""
   });
   
-  // Register state with OTP (simplified)
+  // Register state
   const [registerData, setRegisterData] = useState({
     first_name: "",
     last_name: "",
@@ -30,11 +30,7 @@ export default function AuthPageEnhanced({ onLogin }) {
     password: ""
   });
 
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [otpVerified, setOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [otpLoading, setOtpLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
