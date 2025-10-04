@@ -27,6 +27,55 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Rate limiting storage (in-memory for simplicity)
+rate_limit_storage = {}
+
+# Cache storage (in-memory for simplicity)
+cache_storage = {}
+
+def check_rate_limit(identifier: str, limit: int = 10, window: int = 60) -> bool:
+    """Simple rate limiting check"""
+    if not RATE_LIMIT_ENABLED:
+        return True
+    
+    current_time = time.time()
+    
+    if identifier not in rate_limit_storage:
+        rate_limit_storage[identifier] = []
+    
+    # Clean old entries
+    rate_limit_storage[identifier] = [
+        timestamp for timestamp in rate_limit_storage[identifier] 
+        if current_time - timestamp < window
+    ]
+    
+    # Check if limit exceeded
+    if len(rate_limit_storage[identifier]) >= limit:
+        return False
+    
+    # Add current request
+    rate_limit_storage[identifier].append(current_time)
+    return True
+
+def get_from_cache(key: str):
+    """Get value from cache"""
+    if key not in cache_storage:
+        return None
+    
+    item = cache_storage[key]
+    if time.time() - item['timestamp'] > CACHE_TTL:
+        del cache_storage[key]
+        return None
+    
+    return item['data']
+
+def set_cache(key: str, data):
+    """Set value in cache"""
+    cache_storage[key] = {
+        'data': data,
+        'timestamp': time.time()
+    }
+
 # Security
 security = HTTPBearer()
 SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'persian-crypto-exchange-secret-key-2025')
