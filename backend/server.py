@@ -461,8 +461,13 @@ async def verify_otp(request: VerifyOTPRequest):
     
     otp = OTPVerification(**otp_data)
     
-    # Check expiration
-    if datetime.now(timezone.utc) > otp.expires_at:
+    # Check expiration - ensure both datetimes are timezone-aware
+    current_time = datetime.now(timezone.utc)
+    expires_at = otp.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    
+    if current_time > expires_at:
         raise HTTPException(
             status_code=400,
             detail="کد تایید منقضی شده است. کد جدید درخواست کنید"
