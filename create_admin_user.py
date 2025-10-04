@@ -32,29 +32,17 @@ async def create_admin_user():
         }
         
         async with httpx.AsyncClient(timeout=30.0) as http_client:
-            # Try to register
-            response = await http_client.post(f"{BACKEND_URL}/auth/register", json=admin_data)
+            # Try to login with existing user
+            login_response = await http_client.post(f"{BACKEND_URL}/auth/login", json=admin_data)
             
-            if response.status_code in [200, 201]:
-                print("✅ Admin user registered successfully")
-                user_data = response.json()
-                user_info = user_data.get("user", {})
+            if login_response.status_code == 200:
+                print("✅ User logged in successfully")
+                login_data = login_response.json()
+                user_info = login_data.get("user", {})
                 user_id = user_info.get("id")
             else:
-                # Try to login if user exists
-                login_response = await http_client.post(f"{BACKEND_URL}/auth/login", json={
-                    "email": admin_data["email"],
-                    "password": admin_data["password"]
-                })
-                
-                if login_response.status_code == 200:
-                    print("✅ Admin user already exists, logged in")
-                    login_data = login_response.json()
-                    user_info = login_data.get("user", {})
-                    user_id = user_info.get("id")
-                else:
-                    print(f"❌ Failed to create/login admin user: {response.text}")
-                    return False
+                print(f"❌ Failed to login user: {login_response.text}")
+                return False
             
             # Update user to be admin in database
             if user_id:
