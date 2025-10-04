@@ -284,13 +284,24 @@ async def get_current_admin(current_user: User = Depends(get_current_user)):
     return current_user
 
 def user_to_response(user: User) -> UserResponse:
+    # Handle backward compatibility for users without first_name/last_name
+    first_name = user.first_name or ""
+    last_name = user.last_name or ""
+    
     # Compute full_name from first_name + last_name if not overridden
-    computed_full_name = user.full_name or f"{user.first_name} {user.last_name}"
+    if user.full_name:
+        computed_full_name = user.full_name
+    elif first_name and last_name:
+        computed_full_name = f"{first_name} {last_name}"
+    elif first_name or last_name:
+        computed_full_name = first_name or last_name
+    else:
+        computed_full_name = user.email.split('@')[0]  # Fallback to email username
     
     return UserResponse(
         id=user.id,
-        first_name=user.first_name,
-        last_name=user.last_name,
+        first_name=first_name,
+        last_name=last_name,
         email=user.email,
         phone=user.phone,
         full_name=computed_full_name,
