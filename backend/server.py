@@ -622,7 +622,7 @@ async def login_user(user_credentials: UserLogin, request: Request):
     user = User(**user_data)
     
     # Verify password
-    if not verify_password(credentials.password, user.password_hash):
+    if not verify_password(user_credentials.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="ایمیل یا رمز عبور اشتباه است"
