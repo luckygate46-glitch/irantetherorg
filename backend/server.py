@@ -38,6 +38,12 @@ APIR_API_KEY = os.environ.get('APIR_API_KEY', "Bearer hEDOyeYLEalDw/zGbLnyZ3V4Xr
 # Development mode fallback for OTP
 DEVELOPMENT_MODE = os.environ.get('DEVELOPMENT_MODE', 'true').lower() == 'true'
 
+# Rate limiting settings
+RATE_LIMIT_ENABLED = os.environ.get('RATE_LIMIT_ENABLED', 'true').lower() == 'true'
+
+# Cache settings for performance
+CACHE_TTL = int(os.environ.get('CACHE_TTL', '300'))  # 5 minutes default
+
 # Create the main app without a prefix
 app = FastAPI()
 
