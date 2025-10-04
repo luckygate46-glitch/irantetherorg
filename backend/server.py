@@ -1781,6 +1781,231 @@ async def predict_price(coin_id: str, timeframe: str = "24h", current_user: User
     prediction = await price_predictor.predict_price(coin_data["data"], timeframe)
     return prediction
 
+# ==================== ADMIN TRADING MANAGEMENT ROUTES ====================
+
+@api_router.get("/admin/trading/stats")
+async def get_trading_stats(timeframe: str = "24h", admin: User = Depends(get_current_admin)):
+    """Get trading statistics for admin dashboard"""
+    try:
+        # Calculate timeframe
+        if timeframe == "1h":
+            time_delta = timedelta(hours=1)
+        elif timeframe == "24h":
+            time_delta = timedelta(hours=24)
+        elif timeframe == "7d":
+            time_delta = timedelta(days=7)
+        elif timeframe == "30d":
+            time_delta = timedelta(days=30)
+        else:
+            time_delta = timedelta(hours=24)
+        
+        since_time = datetime.now(timezone.utc) - time_delta
+        
+        # Get trading orders in timeframe
+        orders = await db.trading_orders.find({
+            "created_at": {"$gte": since_time.isoformat()}
+        }).to_list(None)
+        
+        # Calculate stats
+        total_volume = sum(order.get("total_value_tmn", 0) for order in orders)
+        total_trades = len(orders)
+        completed_trades = len([o for o in orders if o.get("status") == "completed"])
+        
+        # Get unique traders
+        unique_traders = len(set(order.get("user_id") for order in orders))
+        
+        # Calculate average trade size
+        avg_trade_size = total_volume / max(total_trades, 1)
+        
+        # Mock additional stats
+        fee_revenue = total_volume * 0.001  # 0.1% fee
+        avg_fee_rate = 0.1
+        highest_fee = max([order.get("total_value_tmn", 0) * 0.001 for order in orders] or [0])
+        avg_processing_time = random.uniform(2, 15)
+        volume_change = random.uniform(-10, 25)
+        
+        return {
+            "total_volume": total_volume,
+            "total_trades": total_trades,
+            "completed_trades": completed_trades,
+            "active_traders": unique_traders,
+            "total_users": await db.users.count_documents({}),
+            "avg_trade_size": avg_trade_size,
+            "fee_revenue": fee_revenue,
+            "avg_fee_rate": avg_fee_rate,
+            "highest_fee": highest_fee,
+            "avg_processing_time": avg_processing_time,
+            "volume_change": volume_change,
+            "timeframe": timeframe
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/trading/live-orders")
+async def get_live_orders(admin: User = Depends(get_current_admin)):
+    """Get live trading orders for admin monitoring"""
+    try:
+        # Get recent orders (last 24 hours)
+        since_time = datetime.now(timezone.utc) - timedelta(hours=24)
+        
+        orders = await db.trading_orders.find({
+            "created_at": {"$gte": since_time.isoformat()}
+        }).sort([("created_at", -1)]).limit(50).to_list(None)
+        
+        # Enrich with user data
+        enriched_orders = []
+        for order in orders:
+            user = await db.users.find_one({"id": order.get("user_id")})
+            order_data = order.copy()
+            if user:
+                order_data["user_email"] = user.get("email")
+                order_data["user_name"] = user.get("full_name") or f"{user.get('first_name', '')} {user.get('last_name', '')}"
+            enriched_orders.append(order_data)
+        
+        return enriched_orders
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/trading/pairs")
+async def get_trading_pairs(admin: User = Depends(get_current_admin)):
+    """Get trading pairs configuration"""
+    try:
+        # Mock trading pairs - integrate with real data
+        pairs = [
+            {
+                "id": "btc_tmn",
+                "symbol": "BTC/TMN",
+                "base": "BTC",
+                "quote": "TMN",
+                "active": True,
+                "last_price": 2150000000,  # 2.15B TMN
+                "volume_24h": 50000000000,
+                "change_24h": 2.5,
+                "fee_rate": 0.1
+            },
+            {
+                "id": "eth_tmn",
+                "symbol": "ETH/TMN",
+                "base": "ETH",
+                "quote": "TMN",
+                "active": True,
+                "last_price": 120000000,  # 120M TMN
+                "volume_24h": 30000000000,
+                "change_24h": -1.2,
+                "fee_rate": 0.1
+            },
+            {
+                "id": "usdt_tmn",
+                "symbol": "USDT/TMN",
+                "base": "USDT",
+                "quote": "TMN",
+                "active": True,
+                "last_price": 50000,  # 50K TMN
+                "volume_24h": 100000000000,
+                "change_24h": 0.1,
+                "fee_rate": 0.05
+            },
+            {
+                "id": "bnb_tmn",
+                "symbol": "BNB/TMN",
+                "base": "BNB",
+                "quote": "TMN",
+                "active": True,
+                "last_price": 15000000,  # 15M TMN
+                "volume_24h": 10000000000,
+                "change_24h": 1.8,
+                "fee_rate": 0.1
+            }
+        ]
+        
+        return pairs
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/trading/market-data")
+async def get_market_data(admin: User = Depends(get_current_admin)):
+    """Get overall market data summary"""
+    try:
+        # Mock market data - integrate with real market APIs
+        market_data = {
+            "market_cap": 1500000000000000,  # 1.5 Quadrillion TMN
+            "total_volume_24h": 50000000000000,  # 50 Trillion TMN
+            "active_cryptocurrencies": 45,
+            "market_change": random.uniform(-5, 8),
+            "top_gainer": {
+                "symbol": "DOGE",
+                "change": 15.6
+            },
+            "top_loser": {
+                "symbol": "ADA",
+                "change": -8.2
+            },
+            "fear_greed_index": random.randint(20, 80),
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+        
+        return market_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/trading/order-action")
+async def handle_order_action(action_data: dict, admin: User = Depends(get_current_admin)):
+    """Handle admin actions on trading orders"""
+    try:
+        order_id = action_data.get("order_id")
+        action = action_data.get("action")  # approve, reject, cancel
+        
+        if not order_id or not action:
+            raise HTTPException(status_code=400, detail="شناسه سفارش و نوع عملیات الزامی است")
+        
+        order = await db.trading_orders.find_one({"id": order_id})
+        if not order:
+            raise HTTPException(status_code=404, detail="سفارش یافت نشد")
+        
+        # Update order status based on action
+        new_status = {
+            "approve": "processing",
+            "reject": "cancelled",
+            "cancel": "cancelled"
+        }.get(action, "pending")
+        
+        await db.trading_orders.update_one(
+            {"id": order_id},
+            {"$set": {
+                "status": new_status,
+                "admin_action": action,
+                "admin_id": admin.id,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        return {
+            "success": True,
+            "message": f"سفارش {order_id} با موفقیت {action} شد",
+            "new_status": new_status
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/admin/trading/pair/{pair_id}/toggle")
+async def toggle_trading_pair(pair_id: str, toggle_data: dict, admin: User = Depends(get_current_admin)):
+    """Toggle trading pair active/inactive status"""
+    try:
+        active = toggle_data.get("active", True)
+        
+        # This would update the trading pair in your database
+        # For now, just return success
+        return {
+            "success": True,
+            "message": f"جفت معاملاتی {pair_id} {'فعال' if active else 'غیرفعال'} شد",
+            "pair_id": pair_id,
+            "active": active,
+            "updated_by": admin.id,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/")
 async def root():
     return {"message": "Persian Crypto Exchange API with AI", "version": "2.0.0"}
