@@ -372,22 +372,8 @@ class AdminKYCTester:
                 # Verify user status updated
                 await self.test_user_kyc_status_after_admin_action(self.test_user_token, 2, "approved")
             
-            # Step 7: Test rejection workflow with another user
-            user_result2 = await self.create_test_user()
-            if user_result2.get("success"):
-                user2_token = user_result2["token"]
-                user2_id = user_result2["user_id"]
-                user2_email = user_result2["email"]
-                
-                # Complete Level 1 and submit Level 2 for second user
-                if await self.complete_kyc_level1(user2_token, user2_email):
-                    if await self.submit_kyc_level2(user2_token, user2_email):
-                        # Test rejection
-                        reject_success = await self.test_admin_kyc_approve_endpoint(self.admin_token, user2_id, "reject")
-                        if reject_success:
-                            # Verify user status updated and can resubmit
-                            await self.test_user_kyc_status_after_admin_action(user2_token, 1, "rejected")
-                            await self.test_rejected_user_can_resubmit(user2_token, user2_email)
+            # Step 7: Test rejection workflow - create a new user for this
+            await self.test_rejection_workflow()
             
             await self.log_test("Complete KYC Workflow", True, "Full workflow tested successfully")
             return True
