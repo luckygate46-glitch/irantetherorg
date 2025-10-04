@@ -27,11 +27,8 @@ async def create_admin_user():
         
         # First, try to register a new admin user
         admin_data = {
-            "first_name": "ادمین",
-            "last_name": "سیستم",
-            "email": "admin@example.com",
-            "phone": "09123456000",
-            "password": "admin123456"
+            "email": "testuser@example.com",
+            "password": "testpass"
         }
         
         async with httpx.AsyncClient(timeout=30.0) as http_client:
