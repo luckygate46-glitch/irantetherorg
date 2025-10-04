@@ -42,7 +42,7 @@ class AdminUserTester:
             admin_data = {
                 "first_name": "ادمین",
                 "last_name": "سیستم", 
-                "email": "admin@system.local",
+                "email": "admin@example.com",
                 "phone": "09000000000",
                 "password": "istari118"
             }
