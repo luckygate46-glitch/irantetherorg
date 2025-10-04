@@ -91,15 +91,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 APIR_BASE_URL = "https://s.api.ir/api"
 APIR_API_KEY = os.environ.get('APIR_API_KEY', "Bearer hEDOyeYLEalDw/zGbLnyZ3V4XrsFA8+57LaeB2dJYovHDMybuxE3bTMBvC0FPaPAZRG34SOttlW19ItO6fuNql/6xJ4ajwIRuFfthX1hG88=")
 
-# Development mode fallback for OTP
-DEVELOPMENT_MODE = os.environ.get('DEVELOPMENT_MODE', 'true').lower() == 'true'
-
-# Rate limiting settings
-RATE_LIMIT_ENABLED = os.environ.get('RATE_LIMIT_ENABLED', 'true').lower() == 'true'
-
-# Cache settings for performance
-CACHE_TTL = int(os.environ.get('CACHE_TTL', '300'))  # 5 minutes default
-
 # Create the main app without a prefix
 app = FastAPI()
 
