@@ -161,9 +161,14 @@ class LoginDebugTester:
     
     async def test_known_user_login(self):
         """Test login with the specific user mentioned: saruman.valar@gmail.com"""
-        print("\n🎯 Testing with known user: saruman.valar@gmail.com")
+        print("\n🎯 Testing with specific user: saruman.valar@gmail.com")
         
-        # Try common passwords
+        # Test with the specific password requested
+        result = await self.test_login_api_direct("saruman.valar@gmail.com", "password123", "Specific User Login (saruman.valar@gmail.com)")
+        if result:
+            return result
+        
+        # If that fails, try other common passwords
         test_passwords = ["password", "123456", "admin", "test", "saruman", "valar"]
         
         for password in test_passwords:
@@ -171,7 +176,7 @@ class LoginDebugTester:
             if result:
                 return result
         
-        await self.log_test("Known User Login", False, "Could not login with common passwords")
+        await self.log_test("Known User Login", False, "Could not login with any tested passwords")
         return None
     
     async def test_existing_test_users(self):
