@@ -55,7 +55,7 @@ async def create_admin_user():
                     print(f"✅ User {admin_data['email']} is now an admin")
                     
                     # Test admin access
-                    token = user_data.get("access_token") if 'user_data' in locals() else login_data.get("access_token")
+                    token = login_data.get("access_token")
                     if token:
                         headers = {"Authorization": f"Bearer {token}"}
                         admin_test = await http_client.get(f"{BACKEND_URL}/admin/kyc/pending", headers=headers)
