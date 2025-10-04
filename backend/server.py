@@ -14,6 +14,8 @@ import bcrypt
 import jwt
 import httpx
 import random
+import time
+import asyncio
 from ai_services import chatbot, market_analyst, portfolio_advisor, price_predictor, risk_analyzer, news_summarizer
 from crypto_prices import price_service
 
