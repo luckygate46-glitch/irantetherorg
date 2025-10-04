@@ -65,17 +65,10 @@ export default function AuthPageEnhanced({ onLogin }) {
       const response = await axios.post(`${API}/auth/register`, registerData);
       onLogin(response.data.access_token, response.data.user);
       
-      if (otpVerified) {
-        toast({
-          title: "ثبت‌نام موفق",
-          description: `حساب شما با موفقیت ایجاد شد و شماره موبایل تایید شده است`,
-        });
-      } else {
-        toast({
-          title: "ثبت‌نام موفق",
-          description: `حساب شما ایجاد شد. می‌توانید بعداً شماره موبایل را تایید کنید`,
-        });
-      }
+      toast({
+        title: "ثبت‌نام موفق",
+        description: `حساب شما با موفقیت ایجاد شد. تایید شماره موبایل در مرحله احراز هویت انجام می‌شود`,
+      });
     } catch (error) {
       toast({
         title: "خطا در ثبت‌نام",
