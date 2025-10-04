@@ -1496,6 +1496,46 @@ async def approve_order_alias(approval: TradingOrderApproval, admin: User = Depe
 
 # ==================== AI ADMIN ROUTES ====================
 
+@api_router.get("/admin/stats")
+async def get_admin_stats(admin: User = Depends(get_current_admin)):
+    """Get basic admin statistics"""
+    try:
+        # Get basic counts
+        total_users = await db.users.count_documents({})
+        active_users = await db.users.count_documents({"is_active": True})
+        pending_kyc = await db.users.count_documents({"kyc_status": "pending"})
+        pending_orders = await db.trading_orders.count_documents({"status": "pending"})
+        
+        # Calculate today's trading volume
+        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        today_orders = await db.trading_orders.find({
+            "created_at": {"$gte": today.isoformat()}
+        }).to_list(None)
+        
+        trading_volume_24h = sum(order.get("total_value_tmn", 0) for order in today_orders)
+        orders_count_24h = len(today_orders)
+        
+        # Mock additional stats
+        online_users = random.randint(50, 200)
+        trading_users = random.randint(10, 50)
+        revenue_today = trading_volume_24h * 0.001  # 0.1% fee
+        trading_fees_today = revenue_today
+        
+        return {
+            "total_users": total_users,
+            "active_users": active_users,
+            "pending_kyc": pending_kyc,
+            "pending_orders": pending_orders,
+            "trading_volume_24h": trading_volume_24h,
+            "orders_count_24h": orders_count_24h,
+            "online_users": online_users,
+            "trading_users": trading_users,
+            "revenue_today": revenue_today,
+            "trading_fees_today": trading_fees_today
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/admin/ai/insights")
 async def get_ai_insights(admin: User = Depends(get_current_admin)):
     """Get AI-powered admin insights"""
