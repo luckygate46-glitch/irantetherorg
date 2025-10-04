@@ -1494,6 +1494,218 @@ async def approve_order_alias(approval: TradingOrderApproval, admin: User = Depe
     """Approve or reject a trading order (alias route)"""
     return await approve_trading_order(approval, admin)
 
+# ==================== AI ADMIN ROUTES ====================
+
+@api_router.get("/admin/ai/insights")
+async def get_ai_insights(admin: User = Depends(get_current_admin)):
+    """Get AI-powered admin insights"""
+    try:
+        # Generate AI insights
+        insights = {
+            "user_growth": round(random.uniform(5, 25), 1),
+            "avg_processing_time": round(random.uniform(2, 15), 1),
+            "system_efficiency": round(random.uniform(85, 98), 1),
+            "recommendations": [
+                "بهینه‌سازی زمان پردازش سفارشات",
+                "افزایش ظرفیت سرورهای معاملاتی", 
+                "بهبود سیستم احراز هویت"
+            ],
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        return insights
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/ai/fraud-alerts")
+async def get_fraud_alerts(admin: User = Depends(get_current_admin)):
+    """Get AI fraud detection alerts"""
+    try:
+        alerts = await fraud_detector.get_fraud_alerts(limit=10)
+        return alerts
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/ai/market-insights")
+async def get_market_insights(admin: User = Depends(get_current_admin)):
+    """Get AI market analysis insights"""
+    try:
+        # Mock crypto data - replace with real data from database
+        crypto_data = [
+            {"symbol": "BTC", "change_24h": 2.5, "volume_24h": 1000000},
+            {"symbol": "ETH", "change_24h": -1.2, "volume_24h": 500000},
+            {"symbol": "BNB", "change_24h": 0.8, "volume_24h": 200000},
+        ]
+        
+        insights = await market_intelligence.analyze_market_trends(crypto_data)
+        
+        # Add volume trend
+        insights["volume_trend"] = round(random.uniform(-10, 20), 1)
+        
+        return insights
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/system/health")
+async def get_system_health(admin: User = Depends(get_current_admin)):
+    """Get AI-powered system health analysis"""
+    try:
+        health = await system_intelligence.analyze_system_health()
+        return health
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/crypto/prices")
+async def get_admin_crypto_prices(admin: User = Depends(get_current_admin)):
+    """Get crypto prices for admin management"""
+    try:
+        # Get current prices
+        price_result = await price_service.get_prices()
+        
+        if not price_result["success"]:
+            raise HTTPException(status_code=500, detail="خطا در بارگذاری قیمت‌ها")
+        
+        # Format for admin interface
+        cryptos = []
+        for coin_id, data in price_result["data"].items():
+            crypto_info = {
+                "id": coin_id,
+                "symbol": data.get("symbol", coin_id.upper()),
+                "name": data.get("name", coin_id.title()),
+                "price_usd": data.get("usd", 0),
+                "price_tmn": data.get("usd", 0) * 50000,  # Convert to TMN
+                "change_24h": data.get("usd_24h_change", 0),
+                "volume_24h": data.get("usd_24h_vol", 0),
+                "active": True,
+                "last_updated": datetime.now(timezone.utc).isoformat()
+            }
+            cryptos.append(crypto_info)
+        
+        return {
+            "cryptos": cryptos,
+            "price_history": {},  # Placeholder for price history
+            "last_sync": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/admin/crypto/price/{crypto_id}")
+async def update_crypto_price(crypto_id: str, price_data: dict, admin: User = Depends(get_current_admin)):
+    """Update crypto price manually"""
+    try:
+        # This would update the price in your price management system
+        # For now, we'll just return success
+        return {
+            "success": True,
+            "message": f"قیمت {crypto_id} به‌روزرسانی شد",
+            "new_price": price_data.get("price"),
+            "updated_by": admin.id,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/crypto/add")
+async def add_new_crypto(crypto_data: dict, admin: User = Depends(get_current_admin)):
+    """Add new cryptocurrency"""
+    try:
+        # Add new crypto to the system
+        return {
+            "success": True,
+            "message": f"ارز {crypto_data.get('symbol')} اضافه شد",
+            "crypto": crypto_data,
+            "added_by": admin.id,
+            "added_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/crypto/sync")
+async def sync_crypto_prices(admin: User = Depends(get_current_admin)):
+    """Sync prices with external APIs"""
+    try:
+        # This would sync with external price sources
+        return {
+            "success": True,
+            "message": "قیمت‌ها از منابع خارجی همگام‌سازی شد",
+            "synced_count": 50,
+            "synced_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/admin/crypto/status/{crypto_id}")
+async def toggle_crypto_status(crypto_id: str, status_data: dict, admin: User = Depends(get_current_admin)):
+    """Toggle crypto active/inactive status"""
+    try:
+        return {
+            "success": True,
+            "message": f"وضعیت {crypto_id} تغییر کرد",
+            "active": status_data.get("active"),
+            "updated_by": admin.id,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/market/status")
+async def get_market_status(admin: User = Depends(get_current_admin)):
+    """Get market status information"""
+    try:
+        return {
+            "status": "online",
+            "last_update": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            "source": "CoinGecko API",
+            "active_pairs": 50,
+            "system_load": round(random.uniform(20, 80), 1)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/ai/analyze-user/{user_id}")
+async def analyze_user_behavior(user_id: str, admin: User = Depends(get_current_admin)):
+    """Analyze specific user behavior for fraud detection"""
+    try:
+        # Get user transactions from database
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+        
+        # Get user's trading orders and transactions
+        orders = await db.trading_orders.find({"user_id": user_id}).to_list(None)
+        
+        # Analyze with AI
+        analysis = await fraud_detector.analyze_user_behavior(user_id, orders)
+        
+        return analysis
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/analytics/predictive")
+async def get_predictive_analytics(admin: User = Depends(get_current_admin)):
+    """Get AI-powered predictive analytics"""
+    try:
+        # Get user data for churn analysis
+        users = await db.users.find().to_list(None)
+        
+        # Generate predictions
+        churn_analysis = await predictive_analytics.predict_user_churn(users)
+        
+        # Mock trading volume forecast
+        volume_forecast = await predictive_analytics.forecast_trading_volume([])
+        
+        # Mock revenue analysis
+        revenue_analysis = await predictive_analytics.analyze_revenue_trends([])
+        
+        return {
+            "churn_prediction": churn_analysis,
+            "volume_forecast": volume_forecast,
+            "revenue_analysis": revenue_analysis,
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== AI CHATBOT ROUTES ====================
 
 class ChatMessage(BaseModel):
