@@ -270,8 +270,8 @@ class FinalAuthTester:
         print(f"1. Create test user with new registration: {'✅ PASS' if reg_success else '❌ FAIL'}")
         
         # 2. Test existing users can still login
-        existing_login_success = any("existing" in r.get("response_data", {}).get("user_type", "") and r["success"] for r in self.test_results if "Login No 500 Error" in r["test"])
-        print(f"2. Existing users can still login: {'✅ PASS' if existing_login_success or len(self.successful_logins) > 0 else '❌ FAIL'}")
+        existing_login_success = len(self.successful_logins) > 0
+        print(f"2. Existing users can still login: {'✅ PASS' if existing_login_success else '❌ FAIL'}")
         
         # 3. Verify login API no longer returns 500 errors
         no_500_errors = not any("500 ERROR" in r["details"] and not r["success"] for r in self.test_results)
