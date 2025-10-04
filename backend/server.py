@@ -1174,6 +1174,12 @@ async def get_all_trading_orders(admin: User = Depends(get_current_admin)):
     
     return result
 
+# Alias for frontend compatibility
+@api_router.get("/admin/orders", response_model=List[TradingOrderResponse])
+async def get_all_orders_alias(admin: User = Depends(get_current_admin)):
+    """Get all trading orders for admin (alias route)"""
+    return await get_all_trading_orders(admin)
+
 @api_router.post("/admin/trading/orders/approve")
 async def approve_trading_order(approval: TradingOrderApproval, admin: User = Depends(get_current_admin)):
     """Approve or reject a trading order"""
