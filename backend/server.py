@@ -80,8 +80,8 @@ class UserLogin(BaseModel):
 
 class UserResponse(BaseModel):
     id: str
-    first_name: str
-    last_name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     email: str
     phone: str
     full_name: Optional[str] = None  # Computed from first_name + last_name
