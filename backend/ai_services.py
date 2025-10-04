@@ -88,6 +88,12 @@ class MarketAnalyst:
     async def analyze_market(self, coin_data: dict):
         """Analyze market data and provide insights"""
         try:
+            if not EMERGENT_LLM_KEY:
+                return {
+                    "success": False,
+                    "error": "API key not configured"
+                }
+                
             prompt = f"""
 تحلیل بازار {coin_data.get('name', 'ارز دیجیتال')}:
 
@@ -109,6 +115,8 @@ class MarketAnalyst:
             message = UserMessage(text=prompt)
             analysis = await chat.send_message(message)
             
+            logger.info(f"Market analysis successful for {coin_data.get('symbol', 'CRYPTO')}")
+            
             return {
                 "success": True,
                 "analysis": analysis,
@@ -116,6 +124,7 @@ class MarketAnalyst:
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
         except Exception as e:
+            logger.error(f"Market analysis error: {str(e)}")
             return {
                 "success": False,
                 "error": str(e)
