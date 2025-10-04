@@ -13,6 +13,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminCards from "./pages/admin/AdminCards";
 import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminOrders from "./pages/admin/AdminOrders";
+import AdminKYC from "./pages/admin/AdminKYC";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
