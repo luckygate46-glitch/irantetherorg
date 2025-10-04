@@ -33,12 +33,19 @@ async def create_admin_user():
             print("❌ No users found in database")
             return False
         
-        # Find a user to make admin (prefer one with email containing 'test')
+        # Find the test user we know the password for
         target_user = None
         for user in users:
-            if 'test' in user.get('email', '').lower():
+            if user.get('email') == 'saruman.valar.test.20251004163014@gmail.com':
                 target_user = user
                 break
+        
+        if not target_user:
+            # Find any user with 'test' in email
+            for user in users:
+                if 'test' in user.get('email', '').lower():
+                    target_user = user
+                    break
         
         if not target_user:
             target_user = users[0]  # Use first user
