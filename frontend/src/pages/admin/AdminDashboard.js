@@ -173,6 +173,16 @@ export default function AdminDashboard({ user, onLogout }) {
                 <h3 className="text-white font-semibold mb-2">مدیریت سفارشات</h3>
                 <p className="text-sm text-slate-400">بررسی و تایید سفارشات معاملاتی</p>
               </button>
+
+              <button
+                onClick={() => navigate('/admin/kyc')}
+                className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-800 transition-colors text-right"
+                data-testid="quick-action-kyc"
+              >
+                <Shield className="w-8 h-8 text-orange-400 mb-3" />
+                <h3 className="text-white font-semibold mb-2">احراز هویت</h3>
+                <p className="text-sm text-slate-400">بررسی و تایید مدارک کاربران</p>
+              </button>
             </div>
           </CardContent>
         </Card>
