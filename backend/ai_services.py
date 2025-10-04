@@ -38,6 +38,13 @@ class PersianCryptoBot:
     async def chat(self, user_message: str, session_id: str, conversation_history: list = None):
         """Send message to AI and get response"""
         try:
+            if not EMERGENT_LLM_KEY:
+                return {
+                    "success": False,
+                    "error": "API key not configured",
+                    "message": "سرویس هوش مصنوعی در حال حاضر در دسترس نیست."
+                }
+            
             chat = LlmChat(
                 api_key=EMERGENT_LLM_KEY,
                 session_id=session_id,
@@ -47,12 +54,15 @@ class PersianCryptoBot:
             message = UserMessage(text=user_message)
             response = await chat.send_message(message)
             
+            logger.info(f"AI Chat successful for session {session_id}")
+            
             return {
                 "success": True,
                 "message": response,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
         except Exception as e:
+            logger.error(f"AI Chat error: {str(e)}")
             return {
                 "success": False,
                 "error": str(e),
