@@ -54,66 +54,7 @@ export default function AuthPageEnhanced({ onLogin }) {
     }
   };
 
-  const sendOTP = async () => {
-    if (!registerData.phone || registerData.phone.length !== 11) {
-      toast({
-        title: "خطا",
-        description: "شماره موبایل باید 11 رقم باشد",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setOtpLoading(true);
-    try {
-      await axios.post(`${API}/otp/send`, { phone: registerData.phone });
-      setOtpSent(true);
-      toast({
-        title: "ارسال موفق",
-        description: "کد تایید به شماره موبایل شما ارسال شد",
-      });
-    } catch (error) {
-      toast({
-        title: "خطا در ارسال کد",
-        description: error.response?.data?.detail || "لطفا دوباره تلاش کنید",
-        variant: "destructive"
-      });
-    } finally {
-      setOtpLoading(false);
-    }
-  };
-
-  const verifyOTP = async () => {
-    if (!otpCode || otpCode.length !== 5) {
-      toast({
-        title: "خطا",
-        description: "کد تایید باید 5 رقم باشد",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setOtpLoading(true);
-    try {
-      await axios.post(`${API}/otp/verify`, { 
-        phone: registerData.phone, 
-        code: otpCode 
-      });
-      setOtpVerified(true);
-      toast({
-        title: "تایید موفق",
-        description: "شماره موبایل شما تایید شد",
-      });
-    } catch (error) {
-      toast({
-        title: "خطا در تایید",
-        description: error.response?.data?.detail || "کد وارد شده اشتباه است",
-        variant: "destructive"
-      });
-    } finally {
-      setOtpLoading(false);
-    }
-  };
+ 
 
   const handleRegister = async (e) => {
     e.preventDefault();
