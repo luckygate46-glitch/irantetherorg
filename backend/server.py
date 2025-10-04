@@ -991,9 +991,18 @@ async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_cu
 @api_router.get("/crypto/prices")
 async def get_crypto_prices():
     """Get current prices for top cryptocurrencies"""
+    # Check cache first
+    cache_key = "crypto_prices"
+    cached_result = get_from_cache(cache_key)
+    if cached_result:
+        return cached_result
+    
     result = await price_service.get_prices()
     if not result["success"]:
         raise HTTPException(status_code=500, detail=result.get("error"))
+    
+    # Cache the result
+    set_cache(cache_key, result)
     return result
 
 @api_router.get("/crypto/{coin_id}")
