@@ -600,7 +600,17 @@ async def register(user_data: UserCreate):
     )
 
 @api_router.post("/auth/login", response_model=TokenResponse)
-async def login(credentials: UserLogin):
+async def login_user(user_credentials: UserLogin, request: Request):
+    """Login user and return JWT token"""
+    
+    # Rate limiting for login attempts
+    client_ip = request.client.host if request.client else "unknown"
+    if not check_rate_limit(f"login_{client_ip}", limit=5, window=300):  # 5 attempts per 5 minutes
+        raise HTTPException(
+            status_code=429,
+            detail="تعداد تلاش‌های ورود بیش از حد مجاز. لطفا 5 دقیقه صبر کنید"
+        )
+    
     # Find user
     user_data = await db.users.find_one({"email": credentials.email})
     if not user_data:
