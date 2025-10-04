@@ -133,7 +133,7 @@ export default function AdminDashboard({ user, onLogout }) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               <button
                 onClick={() => navigate('/admin/users')}
                 className="p-6 bg-slate-800/50 border border-slate-700 rounded-lg hover:bg-slate-800 transition-colors text-right"
