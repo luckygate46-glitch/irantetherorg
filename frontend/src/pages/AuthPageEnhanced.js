@@ -358,7 +358,6 @@ export default function AuthPageEnhanced({ onLogin }) {
                               onChange={(e) => setRegisterData({...registerData, phone: e.target.value})}
                               className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
                               disabled={otpVerified}
-                              required
                             />
                           </div>
                           {!otpVerified && (
