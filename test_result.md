@@ -347,6 +347,21 @@ test_plan:
         - agent: "testing"
         - comment: "COMPREHENSIVE ADMIN KYC TESTING COMPLETED ✅ - All admin KYC management functionality working perfectly! Tested: (1) Admin Authentication ✅: Endpoints properly protected, non-admin users blocked with 403 status (2) GET /api/admin/kyc/pending ✅: Successfully retrieves pending Level 2 KYC requests with correct response format (id, full_name, email, phone, national_code, kyc_documents) (3) POST /api/admin/kyc/approve ✅: Both approve and reject actions working correctly with proper status updates (4) Database Updates ✅: KYC status changes from 'pending' to 'approved'/'rejected', KYC level updates from 1 to 2 for approved users (5) Rejection Workflow ✅: Rejected users have documents cleared and can resubmit Level 2 KYC (6) Complete Workflow ✅: Full cycle tested - User Level 1 → Level 2 submission → Admin review → Approval/Rejection → Status updates. Admin can see 3 pending KYC requests, approve/reject them with admin notes, and all database updates work correctly. Success rate: 95.7% (22/23 tests passed)."
 
+  - task: "Admin User Creation with Specific Credentials"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Created admin user with exact credentials: email 'admin', password 'istari118', is_admin = true, Persian names, phone number, KYC level 2"
+        - working: true
+        - agent: "testing"
+        - comment: "ADMIN USER CREATION WITH SPECIFIC CREDENTIALS COMPLETE ✅ - Successfully created and verified admin user with exact credentials as requested! COMPREHENSIVE VERIFICATION RESULTS: (1) Admin User Created ✅: Created admin user with email 'admin' and password 'istari118' as specified (2) Admin Privileges Set ✅: User has is_admin = true with full administrative access (3) Persian Details Added ✅: Full name set to 'ادمین سیستم', phone '09000000000' (4) KYC Level 2 ✅: Set to full access level with approved status (5) Login Verification ✅: Successfully tested login with exact credentials admin/istari118 (6) JWT Token Verification ✅: Token contains admin privileges and KYC Level 2 access (7) Admin Panel Access ✅: All admin routes working (/admin/stats, /admin/users, /admin/orders, /admin/kyc/pending) (8) Admin Dashboard ✅: Dashboard accessible with complete statistics (9) Admin KYC Management ✅: Can access and manage pending KYC requests (10) Complete Admin Functionality ✅: All admin features verified working. FINAL RESULT: Admin user is fully functional and accessible at admin panel interface with credentials: Email: admin, Password: istari118. User ID: admin-user-001. All requirements met with 100% success rate (9/9 tests passed)."
+
 agent_communication:
     - agent: "main"
     - message: "Completed Phase 1: Built complete trading system + Updated registration form to collect first_name, last_name, email, phone, password. Ready for testing."
