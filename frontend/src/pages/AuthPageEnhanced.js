@@ -212,7 +212,7 @@ export default function AuthPageEnhanced({ onLogin }) {
                     </form>
                   </TabsContent>
 
-                  {/* Register Tab with OTP - SIMPLIFIED */}
+                  {/* Register Tab */}
                   <TabsContent value="register" className="space-y-4 mt-6">
                     <form onSubmit={handleRegister} className="space-y-4">
                       {/* First Name */}
