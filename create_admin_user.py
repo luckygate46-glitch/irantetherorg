@@ -29,7 +29,7 @@ async def create_admin_user():
         admin_data = {
             "first_name": "ادمین",
             "last_name": "سیستم",
-            "email": "admin@tehcrypto.test",
+            "email": "admin@example.com",
             "phone": "09123456000",
             "password": "admin123456"
         }
