@@ -3,10 +3,18 @@ AI Services for Persian Crypto Exchange
 Includes: Market Analysis, Trading Signals, Chatbot, Price Predictions
 """
 import os
+from dotenv import load_dotenv
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 from datetime import datetime, timezone
 import json
 import random
+import logging
+
+# Load environment variables
+load_dotenv()
+
+# Setup logging
+logger = logging.getLogger(__name__)
 
 # Load environment
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
