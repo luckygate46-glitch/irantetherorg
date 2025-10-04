@@ -63,8 +63,8 @@ async def create_admin_user():
             
             # Try to login and test admin access
             async with httpx.AsyncClient(timeout=30.0) as http_client:
-                # We don't know the password, so let's just test with a common one
-                test_passwords = ["testpass", "password123", "admin123", "123456"]
+                # Test with known password for our test user
+                test_passwords = ["password123", "testpass", "admin123", "123456"]
                 
                 for password in test_passwords:
                     login_response = await http_client.post(f"{BACKEND_URL}/auth/login", json={
