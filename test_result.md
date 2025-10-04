@@ -240,10 +240,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Trading Page UI (/trade)"
-    - "Admin Orders Management"
+    - "Registration & Authentication Flow"
   stuck_tasks:
     - "AI Integration Fix (emergentintegrations)"
+    - "Registration & Authentication Flow"
   test_all: false
   test_priority: "high_first"
 
