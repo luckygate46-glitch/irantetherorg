@@ -287,6 +287,21 @@ test_plan:
         - agent: "testing"
         - comment: "FINAL FIX VERIFICATION COMPLETE ✅ - ALL CRITICAL FIXES SUCCESSFULLY VERIFIED! Comprehensive testing with 100% success rate (13/13 tests): (1) Authentication System Fix: Login 500 errors resolved, backward compatibility maintained, new registration fields working ✅ (2) OTP Service Fix: Development fallback working, error handling fixed (resolved timezone comparison bug) ✅ (3) Admin Endpoints Fix: /admin/orders and /admin/orders/approve endpoints implemented and working ✅ (4) Complete User Journey: Full registration → OTP → login → dashboard flow working end-to-end ✅. All 8 critical fixes verified working. Iranian crypto exchange is now fully functional."
 
+  - task: "Simplified Registration System (No OTP Required)"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "main"
+        - comment: "Updated registration flow to remove SMS verification requirement - users can register immediately without OTP"
+        - working: true
+        - agent: "testing"
+        - comment: "SIMPLIFIED REGISTRATION SYSTEM TESTING COMPLETE ✅ - All requirements verified successfully! Tested: (1) Simple Registration Test with POST /api/auth/register using Persian names (احمد محمدی) ✅ (2) Registration works without OTP verification - users can register immediately ✅ (3) User created with is_phone_verified=False as expected ✅ (4) JWT token generation working correctly ✅ (5) All user fields (first_name, last_name, email, phone, password) saved correctly ✅ (6) Full name computation working: 'احمد محمدی' ✅ (7) Login after registration successful ✅ (8) Dashboard access (/auth/me) working ✅ (9) Complete user journey: Registration → Login → Dashboard access all functional ✅ (10) Backend API accessible and responding correctly ✅. CRITICAL SUCCESS: Users can now register immediately without SMS/OTP verification step, phone verification deferred to KYC process as requested. Frontend registration form issues are not backend-related - backend APIs are fully functional."
+
 agent_communication:
     - agent: "main"
     - message: "Completed Phase 1: Built complete trading system + Updated registration form to collect first_name, last_name, email, phone, password. Ready for testing."
