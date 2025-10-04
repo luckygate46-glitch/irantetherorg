@@ -82,10 +82,18 @@ class AdminKYCTester:
                 if response.status_code == 200:
                     data = response.json()
                     user_info = data.get("user", {})
+                    token = data.get("access_token")
                     
-                    if user_info.get("is_admin"):
+                    # Test if this user has admin privileges by trying to access admin endpoint
+                    headers = {"Authorization": f"Bearer {token}"}
+                    admin_test = await self.client.get(f"{BACKEND_URL}/admin/kyc/pending", headers=headers)
+                    
+                    if admin_test.status_code == 200:
                         await self.log_test("Admin Login", True, f"Admin logged in: {user_info.get('email')}")
-                        return data.get("access_token")
+                        return token
+                    elif user_info.get("is_admin"):
+                        await self.log_test("Admin Login", True, f"Admin logged in: {user_info.get('email')}")
+                        return token
             
             await self.log_test("Admin Login", False, "No admin credentials found")
             return None
