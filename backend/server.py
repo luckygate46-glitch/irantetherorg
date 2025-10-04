@@ -522,7 +522,6 @@ async def send_otp(request: SendOTPRequest, http_request: Request):
 async def verify_otp(request: VerifyOTPRequest, http_request: Request):
     """Verify OTP code"""
     # Rate limiting for OTP verification attempts
-    client_ip = http_request.client.host if http_request.client else "unknown"
     phone_key = f"otp_verify_{request.phone}"
     
     if not check_rate_limit(phone_key, limit=5, window=300):  # 5 verification attempts per phone per 5 minutes
