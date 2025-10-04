@@ -441,6 +441,54 @@ class AdminKYCTester:
         else:
             print("  ✅ Complete KYC workflow functional")
     
+    async def test_rejection_workflow(self) -> bool:
+        """Test KYC rejection workflow with a new user"""
+        try:
+            # Create a new user for rejection testing
+            import uuid
+            unique_id = str(uuid.uuid4())[:8]
+            
+            new_user_data = {
+                "first_name": "تست",
+                "last_name": "رد شده",
+                "email": f"test.reject.{unique_id}@example.com",
+                "phone": f"0912345{unique_id[:4]}",
+                "password": "password123"
+            }
+            
+            # Register new user
+            response = await self.client.post(f"{BACKEND_URL}/auth/register", json=new_user_data)
+            
+            if response.status_code in [200, 201]:
+                data = response.json()
+                user_info = data.get("user", {})
+                user_token = data.get("access_token")
+                user_id = user_info.get("id")
+                user_email = user_info.get("email")
+                
+                await self.log_test("Create Rejection Test User", True, f"Created user: {user_email}")
+                
+                # Complete KYC Level 1
+                if await self.complete_kyc_level1(user_token, user_email):
+                    # Submit KYC Level 2
+                    if await self.submit_kyc_level2(user_token, user_email):
+                        # Test rejection
+                        reject_success = await self.test_admin_kyc_approve_endpoint(self.admin_token, user_id, "reject")
+                        if reject_success:
+                            # Verify user status updated and can resubmit
+                            await self.test_user_kyc_status_after_admin_action(user_token, 1, "rejected")
+                            await self.test_rejected_user_can_resubmit(user_token, user_email)
+                            return True
+                
+                return False
+            else:
+                await self.log_test("Create Rejection Test User", False, f"Failed to create user: {response.text}")
+                return False
+                
+        except Exception as e:
+            await self.log_test("Rejection Workflow Test", False, f"Exception: {str(e)}")
+            return False
+    
     async def close(self):
         """Close HTTP client"""
         await self.client.aclose()
