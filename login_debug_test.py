@@ -261,34 +261,54 @@ class LoginDebugTester:
             return False
     
     async def create_test_user_for_login(self):
-        """Create a test user specifically for login testing"""
+        """Create the specific test user requested: saruman.valar@gmail.com"""
         try:
-            # Try to register a new user for testing
+            # Create the specific user requested in the review
             test_user_data = {
-                "first_name": "تست",
-                "last_name": "کاربر",
-                "email": f"login.test.{datetime.now().strftime('%Y%m%d%H%M%S')}@example.com",
-                "phone": "09123456999",
-                "password": "logintest123"
+                "first_name": "سارومان",
+                "last_name": "والار",
+                "email": "saruman.valar@gmail.com",
+                "phone": "09123456789",
+                "password": "password123"
             }
+            
+            print(f"🔧 Creating specific test user: {test_user_data['email']}")
+            print(f"   Persian names: {test_user_data['first_name']} {test_user_data['last_name']}")
+            print(f"   Phone: {test_user_data['phone']}")
+            print(f"   Password: {test_user_data['password']}")
             
             response = await self.client.post(f"{BACKEND_URL}/auth/register", json=test_user_data)
             
             if response.status_code in [200, 201]:
                 data = response.json()
-                await self.log_test("Test User Creation", True, f"Created test user: {test_user_data['email']}")
+                user_info = data.get("user", {})
+                await self.log_test("Specific Test User Creation", True, f"Created user: {test_user_data['email']} with full_name: {user_info.get('full_name')}")
                 return {
                     "email": test_user_data["email"],
                     "password": test_user_data["password"],
                     "token": data.get("access_token"),
-                    "user_data": data.get("user", {})
+                    "user_data": user_info
                 }
+            elif response.status_code == 400:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                
+                if "قبلاً ثبت شده" in error_detail or "already exists" in error_detail.lower():
+                    await self.log_test("Specific Test User Creation", True, f"User {test_user_data['email']} already exists - will test login")
+                    return {
+                        "email": test_user_data["email"],
+                        "password": test_user_data["password"],
+                        "user_exists": True
+                    }
+                else:
+                    await self.log_test("Specific Test User Creation", False, f"Registration failed: {error_detail}")
+                    return None
             else:
-                await self.log_test("Test User Creation", False, f"Failed to create test user: {response.text}")
+                await self.log_test("Specific Test User Creation", False, f"Failed to create test user: {response.text}")
                 return None
                 
         except Exception as e:
-            await self.log_test("Test User Creation", False, f"Exception: {str(e)}")
+            await self.log_test("Specific Test User Creation", False, f"Exception: {str(e)}")
             return None
     
     async def run_login_debug_tests(self):
