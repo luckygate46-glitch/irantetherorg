@@ -1314,6 +1314,12 @@ async def approve_trading_order(approval: TradingOrderApproval, admin: User = De
     
     return {"message": f"سفارش با موفقیت {new_status} شد"}
 
+# Alias for frontend compatibility
+@api_router.post("/admin/orders/approve")
+async def approve_order_alias(approval: TradingOrderApproval, admin: User = Depends(get_current_admin)):
+    """Approve or reject a trading order (alias route)"""
+    return await approve_trading_order(approval, admin)
+
 # ==================== AI CHATBOT ROUTES ====================
 
 class ChatMessage(BaseModel):
