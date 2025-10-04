@@ -299,10 +299,10 @@ class KYCDebugTester:
         
         # Test malformed JSON
         try:
+            malformed_headers = {**headers, "Content-Type": "application/json"}
             response = await self.client.post(f"{BACKEND_URL}/kyc/level1", 
-                headers=headers, 
-                content="invalid json",
-                headers={**headers, "Content-Type": "application/json"})
+                headers=malformed_headers, 
+                content="invalid json")
             
             if response.status_code == 422:
                 await self.log_test("KYC Malformed JSON Handling", True, 
