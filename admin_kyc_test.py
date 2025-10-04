@@ -71,8 +71,9 @@ class AdminKYCTester:
         try:
             # Try common admin credentials
             admin_credentials = [
+                {"email": "saruman.valar.test.20251004163014@gmail.com", "password": "password123"},  # Known admin
                 {"email": "admin@example.com", "password": "admin123"},
-                {"email": "testuser@example.com", "password": "testpass"},  # This might be admin
+                {"email": "testuser@example.com", "password": "testpass"},
                 {"email": "admin@tehcrypto.com", "password": "admin123"},
             ]
             
