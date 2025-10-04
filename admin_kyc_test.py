@@ -328,10 +328,25 @@ class AdminKYCTester:
                 await self.log_test("Check Current KYC Status", False, f"Failed to check KYC status: {kyc_status_response.text}")
                 return False
             
-            # Step 3: Submit KYC Level 2
-            level2_success = await self.submit_kyc_level2(self.test_user_token, user_email)
-            if not level2_success:
-                return False
+            # Step 3: Submit KYC Level 2 (check if already submitted)
+            kyc_status_response = await self.client.get(f"{BACKEND_URL}/kyc/status", headers=headers)
+            if kyc_status_response.status_code == 200:
+                kyc_data = kyc_status_response.json()
+                has_documents = kyc_data.get("has_documents", False)
+                current_level = kyc_data.get("kyc_level", 0)
+                
+                if current_level >= 2:
+                    await self.log_test("KYC Level 2 Status", True, "User already has Level 2 KYC approved")
+                elif has_documents:
+                    await self.log_test("KYC Level 2 Documents", True, "User already has Level 2 documents submitted")
+                else:
+                    level2_success = await self.submit_kyc_level2(self.test_user_token, user_email)
+                    if not level2_success:
+                        return False
+            else:
+                level2_success = await self.submit_kyc_level2(self.test_user_token, user_email)
+                if not level2_success:
+                    return False
             
             # Step 4: Get admin token
             self.admin_token = await self.get_admin_token()
