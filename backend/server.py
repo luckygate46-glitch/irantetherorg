@@ -1033,9 +1033,18 @@ async def get_coin_chart(coin_id: str, days: int = 7):
 @api_router.get("/crypto/trending/coins")
 async def get_trending():
     """Get trending cryptocurrencies"""
+    # Check cache first
+    cache_key = "trending_coins"
+    cached_result = get_from_cache(cache_key)
+    if cached_result:
+        return cached_result
+    
     result = await price_service.get_trending_coins()
     if not result["success"]:
         raise HTTPException(status_code=500, detail=result.get("error"))
+    
+    # Cache the result
+    set_cache(cache_key, result)
     return result
 
 @api_router.get("/crypto/search/{query}")
