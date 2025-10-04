@@ -91,7 +91,7 @@ class AdminUserTester:
         """Login with admin credentials"""
         try:
             login_data = {
-                "email": "admin@example.com",
+                "email": "admin.istari118@example.com",
                 "password": "istari118"
             }
             
