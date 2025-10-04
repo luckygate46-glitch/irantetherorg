@@ -548,7 +548,15 @@ async def verify_otp(request: VerifyOTPRequest):
 # ==================== AUTH ROUTES ====================
 
 @api_router.post("/auth/register", response_model=TokenResponse)
-async def register(user_data: UserCreate):
+async def register(user_data: UserCreate, request: Request):
+    # Rate limiting for registration attempts
+    client_ip = request.client.host if request.client else "unknown"
+    if not check_rate_limit(f"register_{client_ip}", limit=3, window=300):  # 3 attempts per 5 minutes
+        raise HTTPException(
+            status_code=429,
+            detail="تعداد تلاش‌های ثبت‌نام بیش از حد مجاز. لطفا 5 دقیقه صبر کنید"
+        )
+    
     # Check if user already exists
     existing_user = await db.users.find_one({"email": user_data.email})
     if existing_user:
