@@ -1008,9 +1008,18 @@ async def get_crypto_prices():
 @api_router.get("/crypto/{coin_id}")
 async def get_coin_details(coin_id: str):
     """Get detailed information about a specific coin"""
+    # Check cache first
+    cache_key = f"coin_details_{coin_id}"
+    cached_result = get_from_cache(cache_key)
+    if cached_result:
+        return cached_result
+    
     result = await price_service.get_coin_details(coin_id)
     if not result["success"]:
         raise HTTPException(status_code=404, detail=result.get("error"))
+    
+    # Cache the result
+    set_cache(cache_key, result)
     return result
 
 @api_router.get("/crypto/{coin_id}/chart")
