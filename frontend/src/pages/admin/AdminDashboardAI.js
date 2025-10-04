@@ -136,7 +136,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
           </div>
           <div className="flex items-center gap-4">
             <Button onClick={fetchDashboardData} variant="outline" size="sm" disabled={refreshing}>
-              <Refresh className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4" />
             </Button>
             <span className="text-slate-300">سلام {user?.full_name || user?.email}</span>
             <button
