@@ -343,6 +343,7 @@ export default function AuthPageEnhanced({ onLogin }) {
                       <div className="space-y-2">
                         <Label htmlFor="register-phone" className="text-slate-200 flex items-center gap-2">
                           شماره موبایل
+                          <span className="text-xs text-slate-400">(اختیاری)</span>
                           {otpVerified && <Shield className="w-4 h-4 text-emerald-400" />}
                         </Label>
                         <div className="flex gap-2">
