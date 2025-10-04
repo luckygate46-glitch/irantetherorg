@@ -481,8 +481,25 @@ async def get_card_info(card_number: str) -> dict:
 # ==================== OTP ROUTES ====================
 
 @api_router.post("/otp/send")
-async def send_otp(request: SendOTPRequest):
+async def send_otp(request: SendOTPRequest, http_request: Request):
     """Send OTP code via SMS using API.IR"""
+    # Rate limiting for OTP requests
+    client_ip = http_request.client.host if http_request.client else "unknown"
+    phone_key = f"otp_send_{request.phone}"
+    ip_key = f"otp_send_ip_{client_ip}"
+    
+    if not check_rate_limit(phone_key, limit=3, window=300):  # 3 OTP per phone per 5 minutes
+        raise HTTPException(
+            status_code=429,
+            detail="تعداد درخواست کد تایید برای این شماره بیش از حد مجاز. لطفا 5 دقیقه صبر کنید"
+        )
+    
+    if not check_rate_limit(ip_key, limit=10, window=300):  # 10 OTP per IP per 5 minutes
+        raise HTTPException(
+            status_code=429,
+            detail="تعداد درخواست کد تایید از این IP بیش از حد مجاز. لطفا 5 دقیقه صبر کنید"
+        )
+    
     # Generate 5-digit code
     code = str(random.randint(10000, 99999))
     
