@@ -255,6 +255,8 @@ test_plan:
   test_priority: "high_first"
   critical_fixes_completed: true
   ai_integration_completed: true
+  comprehensive_debug_completed: true
+  system_health_check_completed: true
 
   - task: "Updated Registration Form"
     implemented: true
