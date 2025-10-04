@@ -243,10 +243,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Registration & Authentication Flow"
+    - "AI Integration Fix (emergentintegrations)"
   stuck_tasks:
     - "AI Integration Fix (emergentintegrations)"
-    - "Registration & Authentication Flow"
   test_all: false
   test_priority: "high_first"
 
