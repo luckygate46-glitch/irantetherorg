@@ -101,8 +101,8 @@ class TokenResponse(BaseModel):
 
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    first_name: str
-    last_name: str
+    first_name: Optional[str] = None  # Made optional for backward compatibility
+    last_name: Optional[str] = None  # Made optional for backward compatibility
     email: str
     password_hash: str
     phone: str
