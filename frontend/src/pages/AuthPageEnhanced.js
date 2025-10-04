@@ -339,71 +339,26 @@ export default function AuthPageEnhanced({ onLogin }) {
                         </div>
                       </div>
 
-                      {/* Phone with OTP */}
+                      {/* Phone Number */}
                       <div className="space-y-2">
-                        <Label htmlFor="register-phone" className="text-slate-200 flex items-center gap-2">
-                          شماره موبایل
-                          <span className="text-xs text-slate-400">(اختیاری)</span>
-                          {otpVerified && <Shield className="w-4 h-4 text-emerald-400" />}
-                        </Label>
-                        <div className="flex gap-2">
-                          <div className="relative flex-1">
-                            <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                            <Input
-                              id="register-phone"
-                              data-testid="register-phone-input"
-                              type="tel"
-                              placeholder="09123456789"
-                              value={registerData.phone}
-                              onChange={(e) => setRegisterData({...registerData, phone: e.target.value})}
-                              className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
-                              disabled={otpVerified}
-                            />
-                          </div>
-                          {!otpVerified && (
-                            <Button
-                              type="button"
-                              onClick={sendOTP}
-                              disabled={otpLoading || !registerData.phone}
-                              className="bg-teal-600 hover:bg-teal-700"
-                              data-testid="send-otp-button"
-                            >
-                              {otpLoading ? "..." : otpSent ? "ارسال مجدد" : "ارسال کد"}
-                            </Button>
-                          )}
+                        <Label htmlFor="register-phone" className="text-slate-200">شماره موبایل</Label>
+                        <div className="relative">
+                          <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                          <Input
+                            id="register-phone"
+                            data-testid="register-phone-input"
+                            type="tel"
+                            placeholder="09123456789"
+                            value={registerData.phone}
+                            onChange={(e) => setRegisterData({...registerData, phone: e.target.value})}
+                            className="pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                            required
+                          />
                         </div>
                         <div className="text-xs text-slate-400">
-                          می‌توانید بدون تایید موبایل ثبت‌نام کنید و بعداً آن را تایید کنید
+                          تایید شماره موبایل در مرحله احراز هویت انجام می‌شود
                         </div>
                       </div>
-
-                      {/* OTP Verification */}
-                      {otpSent && !otpVerified && (
-                        <div className="space-y-2 bg-teal-900/20 border border-teal-800/50 rounded-lg p-4">
-                          <Label htmlFor="otp-code" className="text-slate-200">کد تایید (5 رقم)</Label>
-                          <div className="flex gap-2">
-                            <Input
-                              id="otp-code"
-                              data-testid="otp-code-input"
-                              type="text"
-                              maxLength={5}
-                              placeholder="12345"
-                              value={otpCode}
-                              onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
-                              className="bg-slate-800/50 border-slate-700 text-white text-center text-lg tracking-widest"
-                            />
-                            <Button
-                              type="button"
-                              onClick={verifyOTP}
-                              disabled={otpLoading || otpCode.length !== 5}
-                              className="bg-emerald-600 hover:bg-emerald-700"
-                              data-testid="verify-otp-button"
-                            >
-                              {otpLoading ? "..." : "تایید"}
-                            </Button>
-                          </div>
-                        </div>
-                      )}
 
                       <div className="space-y-2">
                         <Label htmlFor="register-password" className="text-slate-200">رمز عبور</Label>
