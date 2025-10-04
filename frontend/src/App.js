@@ -105,7 +105,7 @@ function App() {
           />
           <Route 
             path="/admin" 
-            element={user?.is_admin ? <AdminDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user?.is_admin ? <AdminDashboardAI user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
             path="/admin/users" 
