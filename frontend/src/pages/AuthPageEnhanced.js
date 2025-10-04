@@ -372,6 +372,9 @@ export default function AuthPageEnhanced({ onLogin }) {
                             </Button>
                           )}
                         </div>
+                        <div className="text-xs text-slate-400">
+                          می‌توانید بدون تایید موبایل ثبت‌نام کنید و بعداً آن را تایید کنید
+                        </div>
                       </div>
 
                       {/* OTP Verification */}
