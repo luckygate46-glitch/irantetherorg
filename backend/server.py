@@ -1035,6 +1035,10 @@ async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_cu
                 "updated_at": datetime.now(timezone.utc)
             }}
         )
+        
+        # Log the approval for debugging
+        logger.info(f"KYC approved for user {approval.user_id}: level={approval.kyc_level}, status=approved")
+        
         message = f"احراز هویت سطح {approval.kyc_level} تایید شد"
     else:
         await db.users.update_one(
