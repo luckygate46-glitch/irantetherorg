@@ -1051,11 +1051,20 @@ async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_cu
         )
         message = "احراز هویت رد شد"
     
-    return {
-        "success": True,
-        "message": message,
-        "admin_note": approval.admin_note
-    }
+    if approval.action == "approve":
+        return {
+            "success": True,
+            "message": message,
+            "user_id": approval.user_id,
+            "new_level": approval.kyc_level,
+            "admin_note": approval.admin_note
+        }
+    else:
+        return {
+            "success": True,
+            "message": message,
+            "admin_note": approval.admin_note
+        }
 
 # ==================== CRYPTO PRICE ROUTES ====================
 
