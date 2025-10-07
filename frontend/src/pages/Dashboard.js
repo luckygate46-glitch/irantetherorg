@@ -112,7 +112,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {/* KYC Warning */}
-        {user.kyc_level < 1 && (
+        {currentUser.kyc_level < 1 && (
           <Card className="bg-amber-900/20 border-amber-800/50 mb-6" data-testid="kyc-warning">
             <CardContent className="py-6">
               <div className="flex items-center justify-between">
