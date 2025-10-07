@@ -21,7 +21,7 @@ async def check_saruman_user():
         "password": "password123"
     }
     
-    register_response = await client.post("https://tehcrypto.preview.emergentagent.com/api/auth/register", json=register_data)
+    register_response = await client.post("https://irancraft.preview.emergentagent.com/api/auth/register", json=register_data)
     
     print(f"Registration attempt status: {register_response.status_code}")
     
@@ -35,7 +35,7 @@ async def check_saruman_user():
             
             for password in common_passwords:
                 try:
-                    login_response = await client.post("https://tehcrypto.preview.emergentagent.com/api/auth/login", json={
+                    login_response = await client.post("https://irancraft.preview.emergentagent.com/api/auth/login", json={
                         "email": "saruman.valar@gmail.com",
                         "password": password
                     })
@@ -68,7 +68,7 @@ async def check_saruman_user():
         print(f"New user: {user_data.get('full_name')} - Token: {token[:50]}...")
         
         # Test login with the password we just used
-        login_response = await client.post("https://tehcrypto.preview.emergentagent.com/api/auth/login", json={
+        login_response = await client.post("https://irancraft.preview.emergentagent.com/api/auth/login", json={
             "email": "saruman.valar@gmail.com",
             "password": "password123"
         })
