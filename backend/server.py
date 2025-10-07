@@ -2161,6 +2161,231 @@ async def toggle_trading_pair(pair_id: str, toggle_data: dict, admin: User = Dep
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== USER AGI ROUTES ====================
+
+@api_router.get("/user/ai/recommendations")
+async def get_personal_recommendations(current_user: User = Depends(get_current_user)):
+    """Get AI-powered personalized trading recommendations"""
+    try:
+        # Get user's portfolio
+        holdings = await db.user_holdings.find({"user_id": current_user.id}).to_list(None)
+        portfolio = {
+            'holdings': {holding.get('crypto_symbol', 'BTC'): holding.get('amount_tmn', 0) for holding in holdings}
+        }
+        
+        # Get market data
+        price_result = await price_service.get_prices()
+        market_data = price_result.get("data", {}) if price_result.get("success") else {}
+        
+        # Generate personalized recommendations
+        recommendations = await personal_assistant.get_personalized_recommendations(
+            current_user.id, portfolio, market_data
+        )
+        
+        return recommendations
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/user/ai/portfolio-analysis")
+async def get_portfolio_analysis(current_user: User = Depends(get_current_user)):
+    """Get AI-powered portfolio analysis and optimization"""
+    try:
+        # Get user's portfolio
+        holdings = await db.user_holdings.find({"user_id": current_user.id}).to_list(None)
+        portfolio = {
+            'holdings': {holding.get('crypto_symbol', 'BTC'): holding.get('amount_tmn', 0) for holding in holdings}
+        }
+        
+        # Get historical data (mock for now)
+        historical_data = []  # Replace with real historical data
+        
+        # Analyze portfolio performance
+        analysis = await portfolio_manager.analyze_portfolio_performance(
+            current_user.id, portfolio, historical_data
+        )
+        
+        return analysis
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/user/ai/notifications")
+async def get_smart_notifications(current_user: User = Depends(get_current_user)):
+    """Get AI-generated smart notifications"""
+    try:
+        # Get user's portfolio
+        holdings = await db.user_holdings.find({"user_id": current_user.id}).to_list(None)
+        portfolio = {
+            'holdings': {holding.get('crypto_symbol', 'BTC'): holding.get('amount_tmn', 0) for holding in holdings}
+        }
+        
+        # Get market data
+        price_result = await price_service.get_prices()
+        market_data = price_result.get("data", {}) if price_result.get("success") else {}
+        
+        # User preferences (mock for now)
+        user_preferences = {
+            'notification_types': ['price_alert', 'trading_opportunity', 'risk_warning'],
+            'risk_tolerance': 'medium'
+        }
+        
+        # Generate smart notifications
+        notifications = await notification_system.generate_smart_notifications(
+            current_user.id, portfolio, market_data, user_preferences
+        )
+        
+        return {
+            'notifications': notifications,
+            'generated_at': datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/user/ai/market-insights")
+async def get_user_market_insights(current_user: User = Depends(get_current_user)):
+    """Get personalized market insights for user"""
+    try:
+        # Get market data
+        price_result = await price_service.get_prices()
+        market_data = price_result.get("data", {}) if price_result.get("success") else {}
+        
+        # Convert market data to the format expected by market intelligence
+        crypto_data = []
+        for coin_id, data in list(market_data.items())[:10]:  # Top 10 cryptos
+            crypto_data.append({
+                'symbol': data.get('symbol', coin_id.upper()),
+                'change_24h': data.get('usd_24h_change', 0),
+                'volume_24h': data.get('usd_24h_vol', 0)
+            })
+        
+        # Get market insights
+        insights = await market_intelligence.analyze_market_trends(crypto_data)
+        
+        # Add user-specific insights
+        user_insights = {
+            'market_overview': insights,
+            'trending_cryptos': crypto_data[:5],
+            'market_alerts': [
+                {
+                    'type': 'market_trend',
+                    'message': f"بازار در حالت {insights.get('market_sentiment', 'خنثی')} است",
+                    'severity': 'info'
+                }
+            ],
+            'investment_tips': [
+                "در شرایط فعلی بازار، تنوع‌بخشی پرتفوی توصیه می‌شود",
+                "نظارت بر اخبار و رویدادهای مهم بازار ضروری است",
+                "استفاده از استراتژی DCA برای کاهش ریسک"
+            ],
+            'generated_at': datetime.now(timezone.utc).isoformat()
+        }
+        
+        return user_insights
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/user/ai/ask-assistant")
+async def ask_trading_assistant(question_data: dict, current_user: User = Depends(get_current_user)):
+    """Ask the AI trading assistant a question"""
+    try:
+        question = question_data.get("question", "")
+        if not question:
+            raise HTTPException(status_code=400, detail="سوال الزامی است")
+        
+        # Get user context
+        holdings = await db.user_holdings.find({"user_id": current_user.id}).to_list(None)
+        portfolio_value = sum(holding.get('amount_tmn', 0) for holding in holdings)
+        
+        # Generate contextual response based on question keywords
+        response = await _generate_assistant_response(question, portfolio_value)
+        
+        return {
+            'question': question,
+            'response': response,
+            'context': {
+                'portfolio_value': portfolio_value,
+                'holdings_count': len(holdings)
+            },
+            'generated_at': datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+async def _generate_assistant_response(question: str, portfolio_value: float) -> str:
+    """Generate AI assistant response based on question"""
+    question_lower = question.lower()
+    
+    # Trading-related questions
+    if any(word in question_lower for word in ['خرید', 'buy', 'فروش', 'sell']):
+        return "برای تصمیم‌گیری در خرید و فروش، ابتدا تحلیل تکنیکال و بنیادی انجام دهید. همچنین وضعیت بازار کلی و اخبار مربوط به ارز مورد نظر را بررسی کنید. توصیه می‌شود هرگز تمام سرمایه را روی یک ارز قرار ندهید."
+    
+    # Portfolio questions
+    elif any(word in question_lower for word in ['پرتفوی', 'portfolio', 'تنوع']):
+        if portfolio_value > 50000000:  # 50M TMN
+            return "پرتفوی شما ارزش قابل توجهی دارد. توصیه می‌شود آن را بین 5-8 ارز مختلف تقسیم کنید تا ریسک کاهش یابد. همچنین نسبت 60% ارزهای اصلی (Bitcoin, Ethereum) و 40% ارزهای جایگزین مناسب است."
+        else:
+            return "برای شروع، روی 2-3 ارز اصلی مثل Bitcoin و Ethereum متمرکز شوید. با افزایش سرمایه، می‌توانید تنوع بیشتری ایجاد کنید."
+    
+    # Risk management
+    elif any(word in question_lower for word in ['ریسک', 'risk', 'زیان', 'loss']):
+        return "مدیریت ریسک اساس موفقیت در معاملات است. هرگز بیش از 5-10% کل سرمایه را در یک معامله ریسک نکنید. از Stop Loss استفاده کنید و همیشه استراتژی خروج داشته باشید."
+    
+    # Market analysis
+    elif any(word in question_lower for word in ['بازار', 'market', 'تحلیل', 'analysis']):
+        return "برای تحلیل بازار، هم تحلیل تکنیکال و هم تحلیل بنیادی مهم هستند. اخبار، حجم معاملات، و احساسات بازار را پیگیری کنید. از منابع معتبر اطلاعات کسب کنید."
+    
+    # Default response
+    else:
+        return "سوال جالبی پرسیدید! برای ارائه پاسخ دقیق‌تر، لطفاً سوال خود را با جزئیات بیشتری مطرح کنید. من در زمینه معاملات، تحلیل بازار، مدیریت ریسک و بهینه‌سازی پرتفوی می‌توانم کمک کنم."
+
+@api_router.get("/user/ai/dashboard")
+async def get_user_ai_dashboard(current_user: User = Depends(get_current_user)):
+    """Get comprehensive AI dashboard data for user"""
+    try:
+        # Get user's portfolio
+        holdings = await db.user_holdings.find({"user_id": current_user.id}).to_list(None)
+        portfolio = {
+            'holdings': {holding.get('crypto_symbol', 'BTC'): holding.get('amount_tmn', 0) for holding in holdings}
+        }
+        portfolio_value = sum(portfolio['holdings'].values())
+        
+        # Get market data
+        price_result = await price_service.get_prices()
+        market_data = price_result.get("data", {}) if price_result.get("success") else {}
+        
+        # Get quick stats
+        quick_stats = {
+            'portfolio_value': portfolio_value,
+            'holdings_count': len([h for h in portfolio['holdings'].values() if h > 0]),
+            'top_holding': max(portfolio['holdings'], key=portfolio['holdings'].get) if portfolio['holdings'] else None,
+            'daily_change': random.uniform(-5, 8),  # Mock daily change
+            'weekly_performance': random.uniform(-15, 25)  # Mock weekly performance
+        }
+        
+        # Get recent notifications (top 3)
+        user_preferences = {'notification_types': ['price_alert', 'trading_opportunity']}
+        notifications = await notification_system.generate_smart_notifications(
+            current_user.id, portfolio, market_data, user_preferences
+        )
+        recent_notifications = notifications[:3]
+        
+        # Get quick recommendations (top 2)
+        recommendations_data = await personal_assistant.get_personalized_recommendations(
+            current_user.id, portfolio, market_data
+        )
+        quick_recommendations = recommendations_data.get('recommendations', [])[:2]
+        
+        return {
+            'user_id': current_user.id,
+            'quick_stats': quick_stats,
+            'recent_notifications': recent_notifications,
+            'quick_recommendations': quick_recommendations,
+            'market_sentiment': personal_assistant._get_market_sentiment(market_data),
+            'ai_status': 'active',
+            'generated_at': datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/")
 async def root():
     return {"message": "Persian Crypto Exchange API with AI", "version": "2.0.0"}
