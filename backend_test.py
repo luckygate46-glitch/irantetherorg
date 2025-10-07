@@ -483,7 +483,7 @@ class UserAGITester:
                 else:
                     response = await self.client.post(f"{BACKEND_URL}{endpoint}", json={"question": "test"})
                 
-                if response.status_code == 401:
+                if response.status_code in [401, 403]:
                     print(f"✅ Authentication required for {endpoint}")
                     auth_required_count += 1
                 else:
