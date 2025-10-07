@@ -1510,9 +1510,9 @@ async def approve_order_alias(approval: TradingOrderApproval, admin: User = Depe
 
 # ==================== AI ADMIN ROUTES ====================
 
-@api_router.get("/admin/stats")
-async def get_admin_stats(admin: User = Depends(get_current_admin)):
-    """Get basic admin statistics"""
+@api_router.get("/admin/stats/extended")
+async def get_admin_stats_extended(admin: User = Depends(get_current_admin)):
+    """Get extended admin statistics"""
     try:
         # Get basic counts
         total_users = await db.users.count_documents({})
