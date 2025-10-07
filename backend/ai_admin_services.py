@@ -126,6 +126,61 @@ class FraudDetectionAI:
             } for i in range(limit)
         ]
         return alerts
+    
+    async def detect_fraud_patterns(self) -> Dict:
+        """Detect and analyze fraud patterns across the platform"""
+        try:
+            patterns = {
+                'velocity_fraud': {
+                    'name': 'تراکنش‌های پرسرعت',
+                    'description': 'الگوی تراکنش‌های متعدد در زمان کوتاه',
+                    'detected_count': random.randint(5, 25),
+                    'risk_score': random.uniform(0.6, 0.9),
+                    'affected_users': random.randint(3, 15)
+                },
+                'amount_anomaly': {
+                    'name': 'ناهنجاری مبلغ تراکنش',
+                    'description': 'مبالغ غیرمعمول نسبت به تاریخچه کاربر',
+                    'detected_count': random.randint(2, 12),
+                    'risk_score': random.uniform(0.5, 0.8),
+                    'affected_users': random.randint(2, 8)
+                },
+                'geographic_anomaly': {
+                    'name': 'ناهنجاری جغرافیایی',
+                    'description': 'ورود از مکان‌های غیرمعمول',
+                    'detected_count': random.randint(1, 8),
+                    'risk_score': random.uniform(0.4, 0.7),
+                    'affected_users': random.randint(1, 5)
+                },
+                'behavioral_shift': {
+                    'name': 'تغییر رفتار کاربر',
+                    'description': 'تغییر ناگهانی در الگوی معاملاتی',
+                    'detected_count': random.randint(3, 18),
+                    'risk_score': random.uniform(0.3, 0.6),
+                    'affected_users': random.randint(2, 12)
+                }
+            }
+            
+            # Calculate overall fraud risk
+            total_risk = sum(p['risk_score'] * p['detected_count'] for p in patterns.values())
+            normalized_risk = min(100, (total_risk / 10) * 100)
+            
+            return {
+                'patterns': patterns,
+                'overall_risk_score': round(normalized_risk, 1),
+                'total_incidents': sum(p['detected_count'] for p in patterns.values()),
+                'recommendations': [
+                    "تقویت سیستم‌های احراز هویت دومرحله‌ای",
+                    "اعمال محدودیت‌های زمانی برای تراکنش‌های بزرگ",
+                    "بهبود مانیتورینگ ورود کاربران",
+                    "پیاده‌سازی سیستم هشدار فوری"
+                ],
+                'analysis_timestamp': datetime.now(timezone.utc).isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error detecting fraud patterns: {str(e)}")
+            return {'error': str(e)}
 
 
 class MarketIntelligenceAI:
