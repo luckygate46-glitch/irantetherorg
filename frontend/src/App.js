@@ -17,6 +17,9 @@ import AdminKYC from "./pages/admin/AdminKYC";
 import AdminDashboardAI from "./pages/admin/AdminDashboardAI";
 import AdminPriceManager from "./pages/admin/AdminPriceManager";
 import AdminTradingManager from "./pages/admin/AdminTradingManager";
+import AdminFraudDetection from "./pages/admin/AdminFraudDetection";
+import AdminAdvancedAnalytics from "./pages/admin/AdminAdvancedAnalytics";
+import AdminAIAssistant from "./pages/admin/AdminAIAssistant";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
