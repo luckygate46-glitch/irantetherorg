@@ -317,8 +317,8 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                 سیستم KYC با شاهکار
               </li>
               <li className="flex items-center gap-2">
-                <div className="w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center text-xs">AI</div>
-                هوش مصنوعی و سیگنال‌های معاملاتی (به زودی)
+                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                دستیار هوشمند و پیشنهادات معاملاتی
               </li>
             </ul>
           </CardContent>
