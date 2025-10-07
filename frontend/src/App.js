@@ -20,6 +20,9 @@ import AdminTradingManager from "./pages/admin/AdminTradingManager";
 import AdminFraudDetection from "./pages/admin/AdminFraudDetection";
 import AdminAdvancedAnalytics from "./pages/admin/AdminAdvancedAnalytics";
 import AdminAIAssistant from "./pages/admin/AdminAIAssistant";
+import UserAIDashboard from "./pages/UserAIDashboard";
+import UserAIAssistant from "./pages/UserAIAssistant";
+import UserAIRecommendations from "./pages/UserAIRecommendations";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
