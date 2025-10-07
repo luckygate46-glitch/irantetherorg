@@ -180,7 +180,14 @@ class FraudDetectionAI:
             
         except Exception as e:
             logger.error(f"Error detecting fraud patterns: {str(e)}")
-            return {'error': str(e)}
+            return {
+                'patterns': {},
+                'overall_risk_score': 0.0,
+                'total_incidents': 0,
+                'recommendations': [],
+                'analysis_timestamp': datetime.now(timezone.utc).isoformat(),
+                'error': str(e)
+            }
 
 
 class MarketIntelligenceAI:
