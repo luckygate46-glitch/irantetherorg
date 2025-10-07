@@ -279,6 +279,16 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                   <span className="text-base font-semibold">احراز هویت</span>
                 </div>
               </Button>
+              
+              <Button 
+                onClick={() => navigate('/ai/dashboard')}
+                className="h-20 bg-gradient-to-br from-violet-600 to-purple-700 hover:from-violet-700 hover:to-purple-800"
+              >
+                <div className="text-center">
+                  <Brain className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">دستیار هوشمند</span>
+                </div>
+              </Button>
             </div>
           </CardContent>
         </Card>
