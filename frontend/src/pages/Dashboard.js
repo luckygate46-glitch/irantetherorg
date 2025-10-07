@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Wallet, TrendingUp, User, CheckCircle, XCircle, AlertTriangle, RefreshCw } from "lucide-react";
+import { LogOut, Wallet, TrendingUp, User, CheckCircle, XCircle, AlertTriangle, RefreshCw, Brain } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
