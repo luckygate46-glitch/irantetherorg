@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend Testing for Iranian Crypto Exchange Registration System
-Tests updated registration API with new fields (first_name, last_name, email, phone, password)
+Comprehensive Backend Testing for Iranian Crypto Exchange - User AGI Features
+Testing all new User AI endpoints with Persian language support
 """
 
 import asyncio
@@ -9,13 +9,16 @@ import httpx
 import json
 import os
 from datetime import datetime
-from typing import Dict, Any, Optional
+import sys
 
 # Configuration
 BACKEND_URL = "https://irancraft.preview.emergentagent.com/api"
-TEST_TIMEOUT = 30.0
+TEST_USER_EMAIL = "testuser@example.com"
+TEST_USER_PASSWORD = "password123"
+ADMIN_EMAIL = "admin"
+ADMIN_PASSWORD = "istari118"
 
-class RegistrationSystemTester:
+class UserAGITester:
     def __init__(self):
         self.client = httpx.AsyncClient(timeout=TEST_TIMEOUT)
         self.test_users = {}
