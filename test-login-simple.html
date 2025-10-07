@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Login Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1a1a1a; color: white; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #2a2a2a; padding: 30px; border-radius: 10px; }
+        input, button { width: 100%; padding: 12px; margin: 10px 0; border: none; border-radius: 5px; }
+        input { background: #3a3a3a; color: white; }
+        button { background: #10b981; color: white; cursor: pointer; font-weight: bold; }
+        button:hover { background: #059669; }
+        .result { background: #1a2332; border: 1px solid #374151; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success { border-color: #10b981; background: #1a332a; }
+        .error { border-color: #ef4444; background: #332a1a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">🔐 Simple Login Test</h1>
+        <p style="text-align: center;">Direct test without React framework</p>
+        
+        <form id="loginForm">
+            <h3>Login Credentials:</h3>
+            <input type="text" id="email" placeholder="Email (try: admin)" value="admin">
+            <input type="password" id="password" placeholder="Password (try: istari118)" value="istari118">
+            <button type="submit">🚀 Test Login</button>
+        </form>
+        
+        <div id="results">
+            <div class="result">
+                <strong>Status:</strong> Ready to test<br>
+                <strong>Backend URL:</strong> https://irancraft.preview.emergentagent.com
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; font-size: 14px; opacity: 0.7;">
+            <h4>How this works:</h4>
+            <ul>
+                <li>This bypasses all React/frontend complexity</li>
+                <li>Direct fetch API call to backend</li>
+                <li>Same credentials that work in curl</li>
+                <li>If this fails, it's a browser/network issue</li>
+                <li>If this works, it's a React app issue</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = `
+                <div class="result">
+                    <strong>Status:</strong> 🔄 Testing login...<br>
+                    <strong>Email:</strong> ${email}<br>
+                    <strong>URL:</strong> https://irancraft.preview.emergentagent.com/api/auth/login
+                </div>
+            `;
+            
+            try {
+                console.log('Starting login test...');
+                const startTime = Date.now();
+                
+                const response = await fetch('https://irancraft.preview.emergentagent.com/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+                
+                console.log('Response received:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Login successful:', data);
+                    
+                    resultsDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ SUCCESS!</strong><br>
+                            <strong>User:</strong> ${data.user.full_name}<br>
+                            <strong>Email:</strong> ${data.user.email}<br>
+                            <strong>Admin:</strong> ${data.user.is_admin ? 'Yes' : 'No'}<br>
+                            <strong>KYC Level:</strong> ${data.user.kyc_level}<br>
+                            <strong>Response Time:</strong> ${responseTime}ms<br>
+                            <strong>Token:</strong> ${data.access_token.substring(0, 50)}...<br><br>
+                            <em>🎉 Login working perfectly! The issue is not with backend connectivity.</em>
+                        </div>
+                    `;
+                } else {
+                    const errorData = await response.text();
+                    console.log('Login failed:', response.status, errorData);
+                    
+                    resultsDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ LOGIN FAILED</strong><br>
+                            <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                            <strong>Response Time:</strong> ${responseTime}ms<br>
+                            <strong>Error:</strong> ${errorData}<br><br>
+                            <em>Check credentials or backend configuration.</em>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                
+                resultsDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>🌐 NETWORK ERROR</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <strong>Type:</strong> ${error.name}<br><br>
+                        <em>This indicates a connectivity issue from your browser to the backend server.</em><br><br>
+                        <strong>Possible causes:</strong><br>
+                        • CORS policy blocking the request<br>
+                        • Network firewall/proxy issues<br>
+                        • DNS resolution problems<br>
+                        • Backend server not accessible from your location<br>
+                    </div>
+                `;
+            }
+        });
+        
+        // Show initial connection info
+        console.log('Simple login test loaded');
+        console.log('Backend URL:', 'https://irancraft.preview.emergentagent.com');
+    </script>
+</body>
+</html>
