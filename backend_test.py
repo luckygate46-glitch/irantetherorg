@@ -13,7 +13,7 @@ import sys
 
 # Configuration
 BACKEND_URL = "https://irancraft.preview.emergentagent.com/api"
-TEST_USER_EMAIL = "testuser@example.com"
+TEST_USER_EMAIL = "ali.rezaei@example.com"
 TEST_USER_PASSWORD = "password123"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
