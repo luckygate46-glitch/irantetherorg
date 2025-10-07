@@ -84,7 +84,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="text-sm text-slate-400">خوش آمدید</p>
-              <p className="text-white font-semibold">{user.full_name || user.email}</p>
+              <p className="text-white font-semibold">{currentUser.full_name || currentUser.email}</p>
             </div>
             <Button
               onClick={onLogout}
