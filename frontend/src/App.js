@@ -89,7 +89,7 @@ function App() {
           />
           <Route 
             path="/dashboard" 
-            element={user && !user.is_admin ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to={user?.is_admin ? "/admin" : "/auth"} />} 
+            element={user && !user.is_admin ? <Dashboard user={user} onLogout={handleLogout} onUserUpdate={handleUserUpdate} /> : <Navigate to={user?.is_admin ? "/admin" : "/auth"} />} 
           />
           <Route 
             path="/kyc" 
