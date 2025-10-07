@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Debug - صرافی کریپتو ایران</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Vazir', Arial, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">تست ورود - Login Debug</h1>
+        
+        <!-- Backend URL Display -->
+        <div class="bg-slate-800 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Backend URL Configuration</h2>
+            <p class="text-slate-300">Frontend configured to connect to:</p>
+            <p class="text-emerald-400 font-mono bg-slate-700 p-2 rounded mt-2" id="backend-url">Loading...</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="bg-slate-800 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Login Test Form</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">ایمیل / Email:</label>
+                    <input type="text" id="email" value="admin" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">رمز عبور / Password:</label>
+                    <input type="password" id="password" value="istari118" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded">
+                    ورود / Login
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Display -->
+        <div class="bg-slate-800 rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Test Results</h2>
+            <div id="results" class="space-y-2">
+                <p class="text-slate-400">Click login to test connection...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Display backend URL
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        document.getElementById('backend-url').textContent = backendUrl;
+
+        // Handle form submission
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = '<p class="text-yellow-400">Testing login...</p>';
+            
+            try {
+                // Test 1: Try configured backend URL
+                let response;
+                let apiUrl = `${backendUrl}/api/auth/login`;
+                
+                resultsDiv.innerHTML += `<p class="text-blue-400">Trying: ${apiUrl}</p>`;
+                
+                response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultsDiv.innerHTML += '<p class="text-green-400">✅ Login successful with configured URL!</p>';
+                    resultsDiv.innerHTML += `<p class="text-green-300">Token: ${data.access_token.substring(0, 50)}...</p>`;
+                    resultsDiv.innerHTML += `<p class="text-green-300">User: ${data.user.full_name}</p>`;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `<p class="text-red-400">❌ Configured URL failed: ${error.message}</p>`;
+                
+                // Test 2: Try localhost fallback
+                try {
+                    const localUrl = 'http://localhost:8001/api/auth/login';
+                    resultsDiv.innerHTML += `<p class="text-blue-400">Trying fallback: ${localUrl}</p>`;
+                    
+                    const localResponse = await fetch(localUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    if (localResponse.ok) {
+                        const data = await localResponse.json();
+                        resultsDiv.innerHTML += '<p class="text-green-400">✅ Login successful with localhost!</p>';
+                        resultsDiv.innerHTML += `<p class="text-green-300">Token: ${data.access_token.substring(0, 50)}...</p>`;
+                        resultsDiv.innerHTML += `<p class="text-green-300">User: ${data.user.full_name}</p>`;
+                        resultsDiv.innerHTML += '<p class="text-orange-400">⚠️ Frontend needs backend URL configuration update</p>';
+                    } else {
+                        throw new Error(`HTTP ${localResponse.status}: ${localResponse.statusText}`);
+                    }
+                } catch (localError) {
+                    resultsDiv.innerHTML += `<p class="text-red-400">❌ Localhost also failed: ${localError.message}</p>`;
+                    resultsDiv.innerHTML += '<p class="text-red-400">🚨 Backend may not be running or accessible</p>';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
