@@ -1741,20 +1741,121 @@ async def get_predictive_analytics(admin: User = Depends(get_current_admin)):
         # Get user data for churn analysis
         users = await db.users.find().to_list(None)
         
+        # Get historical trading data
+        historical_orders = await db.trading_orders.find().to_list(None)
+        
         # Generate predictions
         churn_analysis = await predictive_analytics.predict_user_churn(users)
-        
-        # Mock trading volume forecast
-        volume_forecast = await predictive_analytics.forecast_trading_volume([])
-        
-        # Mock revenue analysis
-        revenue_analysis = await predictive_analytics.analyze_revenue_trends([])
+        volume_forecast = await predictive_analytics.forecast_trading_volume(historical_orders)
+        revenue_analysis = await predictive_analytics.analyze_revenue_trends(historical_orders)
         
         return {
             "churn_prediction": churn_analysis,
             "volume_forecast": volume_forecast,
             "revenue_analysis": revenue_analysis,
             "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/ai/fraud-detection")
+async def get_detailed_fraud_analysis(admin: User = Depends(get_current_admin)):
+    """Get comprehensive fraud detection analysis"""
+    try:
+        # Get all users and their transactions
+        users = await db.users.find().to_list(None)
+        high_risk_users = []
+        
+        for user in users[:20]:  # Analyze top 20 users
+            orders = await db.trading_orders.find({"user_id": user.get("id")}).to_list(None)
+            if orders:
+                analysis = await fraud_detector.analyze_user_behavior(user.get("id"), orders)
+                if analysis.get("risk_level") in ["high", "medium"]:
+                    high_risk_users.append({
+                        "user_id": user.get("id"),
+                        "email": user.get("email"),
+                        "full_name": user.get("full_name", ""),
+                        "risk_analysis": analysis
+                    })
+        
+        # Get fraud patterns
+        fraud_patterns = await fraud_detector.detect_fraud_patterns()
+        
+        return {
+            "high_risk_users": high_risk_users,
+            "fraud_patterns": fraud_patterns,
+            "total_analyzed": len(users),
+            "risk_summary": {
+                "high_risk_count": len([u for u in high_risk_users if u["risk_analysis"]["risk_level"] == "high"]),
+                "medium_risk_count": len([u for u in high_risk_users if u["risk_analysis"]["risk_level"] == "medium"]),
+                "low_risk_count": len(users) - len(high_risk_users)
+            },
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/ai/advanced-analytics")
+async def get_advanced_analytics(admin: User = Depends(get_current_admin)):
+    """Get advanced analytics dashboard data"""
+    try:
+        # Get comprehensive system analytics
+        analytics = await system_intelligence.get_advanced_analytics()
+        
+        # Get user behavior analytics
+        user_analytics = await predictive_analytics.analyze_user_patterns()
+        
+        # Get trading performance analytics
+        trading_analytics = await market_intelligence.get_trading_performance()
+        
+        return {
+            "system_analytics": analytics,
+            "user_behavior": user_analytics,
+            "trading_performance": trading_analytics,
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/ai/assistant")
+async def get_ai_assistant_data(admin: User = Depends(get_current_admin)):
+    """Get AI assistant interface data"""
+    try:
+        # Get system recommendations
+        recommendations = await system_intelligence.get_system_recommendations()
+        
+        # Get recent alerts and actions
+        recent_alerts = await fraud_detector.get_fraud_alerts(limit=5)
+        
+        # Get quick actions suggestions
+        quick_actions = await system_intelligence.get_quick_actions()
+        
+        return {
+            "recommendations": recommendations,
+            "recent_alerts": recent_alerts,
+            "quick_actions": quick_actions,
+            "assistant_status": "active",
+            "generated_at": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/ai/execute-action")
+async def execute_ai_action(action_data: dict, admin: User = Depends(get_current_admin)):
+    """Execute AI-recommended action"""
+    try:
+        action_type = action_data.get("action_type")
+        action_params = action_data.get("parameters", {})
+        
+        # Execute different types of actions
+        result = await system_intelligence.execute_action(action_type, action_params, admin.id)
+        
+        return {
+            "success": True,
+            "action_type": action_type,
+            "result": result,
+            "executed_by": admin.id,
+            "executed_at": datetime.now(timezone.utc).isoformat()
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
