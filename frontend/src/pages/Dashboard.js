@@ -151,7 +151,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-white" data-testid="wallet-balance">
-                {user.wallet_balance_tmn.toLocaleString('fa-IR')} تومان
+                {currentUser.wallet_balance_tmn.toLocaleString('fa-IR')} تومان
               </p>
             </CardContent>
           </Card>
