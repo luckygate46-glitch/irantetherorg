@@ -238,7 +238,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
               <Button 
                 onClick={() => navigate('/trade')}
                 className="h-20 bg-gradient-to-br from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800"
-                disabled={user.kyc_level < 2}
+                disabled={currentUser.kyc_level < 2}
               >
                 <div className="text-center">
                   <TrendingUp className="w-6 h-6 mx-auto mb-1" />
