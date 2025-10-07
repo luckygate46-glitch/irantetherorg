@@ -249,7 +249,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
               <Button 
                 onClick={() => navigate('/wallet')}
                 className="h-20 bg-gradient-to-br from-blue-600 to-cyan-700 hover:from-blue-700 hover:to-cyan-800"
-                disabled={user.kyc_level < 1}
+                disabled={currentUser.kyc_level < 1}
               >
                 <div className="text-center">
                   <Wallet className="w-6 h-6 mx-auto mb-1" />
