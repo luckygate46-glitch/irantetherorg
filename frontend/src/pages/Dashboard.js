@@ -46,7 +46,20 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
             title: "احراز هویت تایید شد! 🎉",
             description: "سطح احراز هویت شما به سطح ۲ ارتقا یافت. اکنون می‌توانید معامله کنید.",
           });
+        } else if (updatedUser.kyc_level === 1) {
+          toast({
+            title: "احراز هویت سطح ۱ تایید شد ✅",
+            description: "اکنون می‌توانید به کیف پول دسترسی داشته باشید.",
+          });
         }
+      }
+      
+      // Check if KYC status was approved
+      if (user.kyc_status !== updatedUser.kyc_status && updatedUser.kyc_status === "approved" && showNotification) {
+        toast({
+          title: "وضعیت احراز هویت به‌روزرسانی شد",
+          description: "احراز هویت شما تایید شده است",
+        });
       }
       
       if (showNotification) {
