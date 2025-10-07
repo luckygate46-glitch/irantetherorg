@@ -143,6 +143,18 @@ function App() {
             element={user?.is_admin ? <AdminTradingManager user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/admin/ai/fraud" 
+            element={user?.is_admin ? <AdminFraudDetection user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/admin/ai/analytics" 
+            element={user?.is_admin ? <AdminAdvancedAnalytics user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/admin/ai/assistant" 
+            element={user?.is_admin ? <AdminAIAssistant user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/" 
             element={<Navigate to={user ? (user.is_admin ? "/admin" : "/dashboard") : "/auth"} />} 
           />
