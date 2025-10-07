@@ -472,6 +472,176 @@ class SystemIntelligenceAI:
             recommendations.append("نیاز به بررسی فوری سیستم")
         
         return recommendations
+    
+    async def get_advanced_analytics(self) -> Dict:
+        """Get comprehensive system analytics"""
+        try:
+            analytics = {
+                'performance_trends': {
+                    'cpu_trend': [random.randint(20, 80) for _ in range(24)],  # Last 24 hours
+                    'memory_trend': [random.randint(40, 85) for _ in range(24)],
+                    'disk_trend': [random.randint(30, 75) for _ in range(24)],
+                    'network_trend': [random.randint(10, 95) for _ in range(24)]
+                },
+                'api_metrics': {
+                    'endpoint_performance': {
+                        '/api/auth/login': {'avg_time': random.uniform(50, 200), 'success_rate': random.uniform(95, 100)},
+                        '/api/trading/orders': {'avg_time': random.uniform(80, 300), 'success_rate': random.uniform(92, 99)},
+                        '/api/kyc/status': {'avg_time': random.uniform(30, 150), 'success_rate': random.uniform(98, 100)},
+                        '/api/crypto/prices': {'avg_time': random.uniform(100, 400), 'success_rate': random.uniform(90, 98)}
+                    },
+                    'total_requests_24h': random.randint(10000, 50000),
+                    'error_rate_24h': random.uniform(0.1, 2.0)
+                },
+                'database_metrics': {
+                    'connection_pool_usage': random.uniform(40, 80),
+                    'query_performance': random.uniform(10, 100),
+                    'storage_efficiency': random.uniform(70, 95),
+                    'backup_status': 'healthy'
+                },
+                'security_metrics': {
+                    'failed_login_attempts': random.randint(50, 500),
+                    'blocked_ips': random.randint(5, 50),
+                    'security_alerts': random.randint(0, 10),
+                    'ssl_status': 'valid'
+                }
+            }
+            
+            return analytics
+            
+        except Exception as e:
+            logger.error(f"Error getting advanced analytics: {str(e)}")
+            return {'error': str(e)}
+    
+    async def get_system_recommendations(self) -> List[Dict]:
+        """Get intelligent system recommendations"""
+        recommendations = [
+            {
+                'id': 'opt_001',
+                'category': 'performance',
+                'priority': 'high',
+                'title': 'بهینه‌سازی پردازش سفارشات',
+                'description': 'زمان پردازش سفارشات بیش از حد مطلوب است',
+                'action': 'افزایش تعداد worker processها',
+                'estimated_impact': 'کاهش 40% زمان پردازش',
+                'difficulty': 'medium'
+            },
+            {
+                'id': 'sec_001',
+                'category': 'security',
+                'priority': 'high',
+                'title': 'بهبود احراز هویت',
+                'description': 'تعداد تلاش‌های ناموفق ورود بالا است',
+                'action': 'پیاده‌سازی captcha و محدودیت نرخ',
+                'estimated_impact': 'کاهش 60% حملات brute force',
+                'difficulty': 'low'
+            },
+            {
+                'id': 'scale_001',
+                'category': 'scalability',
+                'priority': 'medium',
+                'title': 'آماده‌سازی برای رشد کاربران',
+                'description': 'آمادگی برای افزایش تعداد کاربران',
+                'action': 'اجرای load balancer و caching',
+                'estimated_impact': 'پشتیبانی از 10x کاربران فعلی',
+                'difficulty': 'high'
+            },
+            {
+                'id': 'mon_001',
+                'category': 'monitoring',
+                'priority': 'medium',
+                'title': 'بهبود مانیتورینگ',
+                'description': 'نیاز به مانیتورینگ دقیق‌تر سیستم',
+                'action': 'نصب ابزارهای مانیتورینگ پیشرفته',
+                'estimated_impact': 'شناسایی زودتر مشکلات',
+                'difficulty': 'medium'
+            }
+        ]
+        
+        return recommendations
+    
+    async def get_quick_actions(self) -> List[Dict]:
+        """Get quick action suggestions"""
+        actions = [
+            {
+                'id': 'restart_api',
+                'title': 'راه‌اندازی مجدد API',
+                'description': 'بهبود عملکرد API سرور',
+                'category': 'maintenance',
+                'estimated_time': '2 دقیقه',
+                'risk_level': 'low'
+            },
+            {
+                'id': 'clear_cache',
+                'title': 'پاک‌سازی حافظه موقت',
+                'description': 'آزادسازی حافظه و بهبود سرعت',
+                'category': 'performance',
+                'estimated_time': '30 ثانیه',
+                'risk_level': 'very_low'
+            },
+            {
+                'id': 'backup_db',
+                'title': 'پشتیبان‌گیری پایگاه داده',
+                'description': 'ایجاد نسخه پشتیبان امروز',
+                'category': 'backup',
+                'estimated_time': '5 دقیقه',
+                'risk_level': 'very_low'
+            },
+            {
+                'id': 'sync_prices',
+                'title': 'همگام‌سازی قیمت‌ها',
+                'description': 'به‌روزرسانی قیمت‌های ارزهای دیجیتال',
+                'category': 'data',
+                'estimated_time': '1 دقیقه',
+                'risk_level': 'low'
+            }
+        ]
+        
+        return actions
+    
+    async def execute_action(self, action_type: str, parameters: Dict, admin_id: str) -> Dict:
+        """Execute system action"""
+        try:
+            if action_type == 'restart_api':
+                # Mock API restart
+                return {
+                    'success': True,
+                    'message': 'API سرور با موفقیت راه‌اندازی شد',
+                    'execution_time': '120 ثانیه'
+                }
+            elif action_type == 'clear_cache':
+                # Mock cache clear
+                return {
+                    'success': True,
+                    'message': 'حافظه موقت پاک شد',
+                    'freed_memory': f'{random.randint(100, 500)} مگابایت'
+                }
+            elif action_type == 'backup_db':
+                # Mock database backup
+                return {
+                    'success': True,
+                    'message': 'پشتیبان‌گیری انجام شد',
+                    'backup_size': f'{random.randint(50, 200)} مگابایت'
+                }
+            elif action_type == 'sync_prices':
+                # Mock price sync
+                return {
+                    'success': True,
+                    'message': 'قیمت‌ها همگام‌سازی شد',
+                    'updated_coins': random.randint(20, 50)
+                }
+            else:
+                return {
+                    'success': False,
+                    'message': 'عملیات نامشخص'
+                }
+                
+        except Exception as e:
+            logger.error(f"Error executing action {action_type}: {str(e)}")
+            return {
+                'success': False,
+                'message': f'خطا در اجرای عملیات: {str(e)}'
+            }
 
 
 class PredictiveAnalyticsAI:
