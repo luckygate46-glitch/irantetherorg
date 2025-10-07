@@ -87,6 +87,16 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
               <p className="text-white font-semibold">{currentUser.full_name || currentUser.email}</p>
             </div>
             <Button
+              onClick={() => refreshUserData(true)}
+              variant="outline"
+              size="sm"
+              className="border-slate-600 text-slate-300 hover:text-white hover:border-slate-500 ml-2"
+              disabled={refreshing}
+            >
+              <RefreshCw className={`w-4 h-4 ml-2 ${refreshing ? 'animate-spin' : ''}`} />
+              بروزرسانی
+            </Button>
+            <Button
               onClick={onLogout}
               data-testid="logout-button"
               variant="outline"
