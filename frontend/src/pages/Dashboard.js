@@ -1,10 +1,73 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Wallet, TrendingUp, User, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { LogOut, Wallet, TrendingUp, User, CheckCircle, XCircle, AlertTriangle, RefreshCw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-export default function Dashboard({ user, onLogout }) {
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
+export default function Dashboard({ user, onLogout, onUserUpdate }) {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [currentUser, setCurrentUser] = useState(user);
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    setCurrentUser(user);
+    
+    // Auto-refresh user data every 30 seconds to check for KYC updates
+    const interval = setInterval(() => {
+      refreshUserData(false); // Silent refresh
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [user]);
+
+  const refreshUserData = async (showNotification = true) => {
+    try {
+      setRefreshing(true);
+      const response = await axios.get(`${API}/auth/me`);
+      const updatedUser = response.data;
+      
+      setCurrentUser(updatedUser);
+      
+      // Notify parent component about user update
+      if (onUserUpdate) {
+        onUserUpdate(updatedUser);
+      }
+      
+      // Check if KYC status changed
+      if (user.kyc_level !== updatedUser.kyc_level && showNotification) {
+        if (updatedUser.kyc_level === 2) {
+          toast({
+            title: "احراز هویت تایید شد! 🎉",
+            description: "سطح احراز هویت شما به سطح ۲ ارتقا یافت. اکنون می‌توانید معامله کنید.",
+          });
+        }
+      }
+      
+      if (showNotification) {
+        toast({
+          title: "به‌روزرسانی موفق",
+          description: "اطلاعات حساب شما به‌روزرسانی شد",
+        });
+      }
+    } catch (error) {
+      console.error('خطا در به‌روزرسانی اطلاعات کاربر:', error);
+      if (showNotification) {
+        toast({
+          title: "خطا",
+          description: "خطا در به‌روزرسانی اطلاعات",
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  };
   
   return (
     <div className="min-h-screen bg-slate-950" dir="rtl">
