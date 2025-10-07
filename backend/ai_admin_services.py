@@ -302,6 +302,79 @@ class MarketIntelligenceAI:
             recommendations.append("افزایش فرکانس به‌روزرسانی قیمت‌ها")
         
         return recommendations
+    
+    async def get_trading_performance(self) -> Dict:
+        """Analyze trading platform performance metrics"""
+        try:
+            # Mock trading performance analysis
+            performance_data = {
+                'execution_speed': {
+                    'avg_order_execution': random.uniform(0.5, 2.5),  # seconds
+                    'fastest_execution': random.uniform(0.1, 0.8),
+                    'slowest_execution': random.uniform(2.0, 5.0),
+                    'success_rate': random.uniform(95, 99.8)
+                },
+                'liquidity_analysis': {
+                    'market_depth': random.uniform(70, 95),
+                    'bid_ask_spread': random.uniform(0.1, 0.5),
+                    'volume_consistency': random.uniform(80, 98)
+                },
+                'user_satisfaction': {
+                    'avg_slippage': random.uniform(0.05, 0.3),
+                    'order_completion_rate': random.uniform(92, 99),
+                    'user_retention': random.uniform(75, 90)
+                },
+                'market_efficiency': {
+                    'price_discovery': random.uniform(85, 98),
+                    'arbitrage_opportunities': random.randint(2, 15),
+                    'market_stability': random.uniform(80, 95)
+                }
+            }
+            
+            # Calculate overall performance score
+            scores = [
+                performance_data['execution_speed']['success_rate'],
+                performance_data['liquidity_analysis']['market_depth'],
+                performance_data['user_satisfaction']['order_completion_rate'],
+                performance_data['market_efficiency']['price_discovery']
+            ]
+            overall_score = sum(scores) / len(scores)
+            
+            return {
+                'performance_metrics': performance_data,
+                'overall_score': round(overall_score, 1),
+                'recommendations': self._get_performance_recommendations(overall_score),
+                'analysis_timestamp': datetime.now(timezone.utc).isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error analyzing trading performance: {str(e)}")
+            return {'error': str(e)}
+    
+    def _get_performance_recommendations(self, score: float) -> List[str]:
+        """Get performance optimization recommendations"""
+        recommendations = []
+        
+        if score < 85:
+            recommendations.extend([
+                "بهینه‌سازی موتور معاملاتی برای کاهش زمان اجرا",
+                "بهبود سیستم تطبیق سفارشات",
+                "افزایش ظرفیت پردازش همزمان"
+            ])
+        elif score < 92:
+            recommendations.extend([
+                "تنظیم دقیق‌تر پارامترهای ریسک",
+                "بهبود الگوریتم‌های قیمت‌گذاری",
+                "ارتقای زیرساخت شبکه"
+            ])
+        else:
+            recommendations.extend([
+                "حفظ عملکرد فعلی عالی",
+                "بررسی امکانات توسعه جدید",
+                "مانیتورینگ مستمر کیفیت خدمات"
+            ])
+        
+        return recommendations
 
 
 class SystemIntelligenceAI:
