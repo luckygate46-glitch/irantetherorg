@@ -251,19 +251,23 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
           {/* Dashboard */}
-          {renderMenuItem(menuItems[0])}
+          <div className="mb-4">
+            {renderMenuItem(menuItems[0])}
+          </div>
 
           {/* Special Items */}
-          <div className="space-y-1">
+          <div className="space-y-2 mb-4">
             {specialItems.map(item => renderMenuItem(item))}
           </div>
 
-          <div className="border-t border-slate-700 my-4"></div>
+          <div className="border-t border-slate-700 my-4 mx-2"></div>
 
           {/* Main Sections */}
-          {menuItems.slice(1).map(section => renderMenuItem(section))}
+          <div className="space-y-2">
+            {menuItems.slice(1).map(section => renderMenuItem(section))}
+          </div>
         </div>
 
         {/* Sidebar Footer */}
