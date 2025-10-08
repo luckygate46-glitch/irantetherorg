@@ -23,6 +23,8 @@ import AdminAIAssistant from "./pages/admin/AdminAIAssistant";
 import UserAIDashboard from "./pages/UserAIDashboard";
 import UserAIAssistant from "./pages/UserAIAssistant";
 import UserAIRecommendations from "./pages/UserAIRecommendations";
+import MultiAssetTrading from "./pages/MultiAssetTrading";
+import StakingYieldFarming from "./pages/StakingYieldFarming";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
