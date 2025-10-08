@@ -266,6 +266,13 @@ test_plan:
   ai_integration_completed: true
   comprehensive_debug_completed: true
   system_health_check_completed: true
+  advanced_features_testing_completed: true
+  advanced_trading_verified: true
+  advanced_ai_verified: true
+  multi_asset_verified: true
+  staking_verified: true
+  authentication_verified: true
+  persian_language_verified: true
 
   - task: "Updated Registration Form"
     implemented: true
