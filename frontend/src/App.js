@@ -196,7 +196,43 @@ function App() {
           />
           <Route 
             path="/kyc-game" 
-            element={user && !user.is_admin ? <KYCWaitingGame user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <KYCWaitingGame user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/currency-exchange" 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <CurrencyExchange user={user} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/support-tickets" 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <SupportTickets user={user} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/contact-us" 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <ContactUs user={user} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/rewards" 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <Rewards user={user} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/" 
