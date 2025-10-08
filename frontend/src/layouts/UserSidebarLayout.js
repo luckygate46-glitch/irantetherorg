@@ -230,9 +230,12 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
           
           {/* KYC Status */}
           <div className="mt-4 p-3 bg-slate-700 rounded-lg">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-300">وضعیت KYC:</span>
-              <Badge variant={user?.kyc_level === 2 ? "success" : user?.kyc_level === 1 ? "secondary" : "destructive"}>
+              <Badge 
+                variant={user?.kyc_level === 2 ? "default" : user?.kyc_level === 1 ? "secondary" : "destructive"}
+                className="text-xs"
+              >
                 سطح {user?.kyc_level || 0}
               </Badge>
             </div>
@@ -240,11 +243,11 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full mt-2"
+                className="w-full text-xs h-8"
                 onClick={() => navigate('/kyc-game')}
               >
-                <Gamepad2 className="w-4 h-4 ml-2" />
-                بازی کنید
+                <Gamepad2 className="w-3 h-3 ml-1" />
+                <span>بازی کنید</span>
               </Button>
             )}
           </div>
