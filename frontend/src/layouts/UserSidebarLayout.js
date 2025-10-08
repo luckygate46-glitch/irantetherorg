@@ -207,24 +207,24 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
         flex flex-col overflow-hidden
       `}>
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-slate-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
+        <div className="p-4 border-b border-slate-700 shrink-0">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shrink-0">
+                <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <div>
-                <h2 className="text-white font-semibold">صرافی کریپتو ایران</h2>
-                <p className="text-gray-400 text-sm">{user?.full_name}</p>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-white font-semibold text-sm leading-tight">صرافی کریپتو ایران</h2>
+                <p className="text-gray-400 text-xs truncate">{user?.full_name || 'کاربر'}</p>
               </div>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden"
+              className="md:hidden shrink-0"
               onClick={() => setSidebarOpen(false)}
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </Button>
           </div>
           
