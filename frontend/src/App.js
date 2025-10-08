@@ -116,7 +116,11 @@ function App() {
           />
           <Route 
             path="/market" 
-            element={user ? <Market user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <Market user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/wallet" 
