@@ -104,7 +104,11 @@ function App() {
           />
           <Route 
             path="/dashboard" 
-            element={user && !user.is_admin ? <Dashboard user={user} onLogout={handleLogout} onUserUpdate={handleUserUpdate} /> : <Navigate to={user?.is_admin ? "/admin" : "/auth"} />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <Dashboard user={user} onUserUpdate={handleUserUpdate} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to={user?.is_admin ? "/admin" : "/auth"} />} 
           />
           <Route 
             path="/kyc" 
