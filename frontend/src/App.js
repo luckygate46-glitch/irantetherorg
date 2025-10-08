@@ -188,27 +188,51 @@ function App() {
           />
           <Route 
             path="/ai/dashboard" 
-            element={user && !user.is_admin ? <UserAIDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <UserAIDashboard user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/ai/assistant" 
-            element={user && !user.is_admin ? <UserAIAssistant user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <UserAIAssistant user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/ai/recommendations" 
-            element={user && !user.is_admin ? <UserAIRecommendations user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <UserAIRecommendations user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/multi-asset" 
-            element={user && !user.is_admin ? <MultiAssetTrading user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <MultiAssetTrading user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/staking" 
-            element={user && !user.is_admin ? <StakingYieldFarming user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <StakingYieldFarming user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/ai/portfolio-analysis" 
-            element={user && !user.is_admin ? <PortfolioAnalysis user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <PortfolioAnalysis user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/kyc-game" 
