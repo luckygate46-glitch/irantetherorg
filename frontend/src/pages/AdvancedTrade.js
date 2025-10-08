@@ -53,20 +53,13 @@ const AdvancedTrade = ({ user, onLogout }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (user?.kyc_level < 2) {
-      toast({
-        title: "دسترسی محدود",
-        description: "برای استفاده از معاملات پیشرفته باید احراز هویت سطح ۲ را تکمیل کنید",
-        variant: "destructive"
-      });
+    if (!user) {
+      navigate('/auth');
       return;
     }
-    
-    fetchData();
-    // Auto-refresh every 10 seconds
-    const interval = setInterval(fetchData, 10000);
-    return () => clearInterval(interval);
-  }, [user]);
+    fetchCryptoPrices();
+    fetchUserOrders();
+  }, [user, navigate]);
 
   const fetchData = async () => {
     try {
