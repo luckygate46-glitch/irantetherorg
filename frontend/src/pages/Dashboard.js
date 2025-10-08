@@ -289,6 +289,38 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                   <span className="text-base font-semibold">دستیار هوشمند</span>
                 </div>
               </Button>
+
+              <Button 
+                onClick={() => navigate('/advanced-trade')}
+                className="h-20 bg-gradient-to-br from-red-600 to-pink-700 hover:from-red-700 hover:to-pink-800"
+                disabled={currentUser.kyc_level < 2}
+              >
+                <div className="text-center">
+                  <TrendingUp className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">معاملات پیشرفته</span>
+                </div>
+              </Button>
+
+              <Button 
+                onClick={() => navigate('/multi-asset')}
+                className="h-20 bg-gradient-to-br from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800"
+              >
+                <div className="text-center">
+                  <RefreshCw className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">بازارهای متنوع</span>
+                </div>
+              </Button>
+
+              <Button 
+                onClick={() => navigate('/staking')}
+                className="h-20 bg-gradient-to-br from-yellow-600 to-amber-700 hover:from-yellow-700 hover:to-amber-800"
+                disabled={currentUser.kyc_level < 1}
+              >
+                <div className="text-center">
+                  <TrendingUp className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">استیکینگ</span>
+                </div>
+              </Button>
             </div>
           </CardContent>
         </Card>
