@@ -62,18 +62,33 @@ export default function AuthPageEnhanced({ onLogin }) {
     setLoading(true);
     
     try {
+      console.log('Attempting registration with:', registerData);
       const response = await axios.post(`${API}/auth/register`, registerData);
+      console.log('Registration successful:', response.data);
+      
       onLogin(response.data.access_token, response.data.user);
       
       toast({
         title: "ثبت‌نام موفق",
         description: `حساب شما با موفقیت ایجاد شد. تایید شماره موبایل در مرحله احراز هویت انجام می‌شود`,
+        duration: 6000,
       });
     } catch (error) {
+      console.error('Registration failed:', error);
+      const errorMessage = error.response?.data?.detail || error.message || "لطفا دوباره تلاش کنید";
+      
       toast({
         title: "خطا در ثبت‌نام",
-        description: error.response?.data?.detail || "لطفا دوباره تلاش کنید",
-        variant: "destructive"
+        description: errorMessage,
+        variant: "destructive",
+        duration: 8000,
+      });
+      
+      // Also log to console for debugging
+      console.log('Registration error details:', {
+        status: error.response?.status,
+        message: errorMessage,
+        data: registerData
       });
     } finally {
       setLoading(false);
