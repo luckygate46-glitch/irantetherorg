@@ -186,6 +186,10 @@ function App() {
             element={user && !user.is_admin ? <PortfolioAnalysis user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/kyc-game" 
+            element={user && !user.is_admin ? <KYCWaitingGame user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/" 
             element={<Navigate to={user ? (user.is_admin ? "/admin" : "/dashboard") : "/auth"} />} 
           />
