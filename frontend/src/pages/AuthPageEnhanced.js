@@ -37,13 +37,21 @@ export default function AuthPageEnhanced({ onLogin }) {
     setLoading(true);
     
     try {
+      console.log('Starting login with:', loginData);
       const response = await axios.post(`${API}/auth/login`, loginData);
-      onLogin(response.data.access_token, response.data.user);
+      console.log('Login successful:', response.data);
+      
+      if (onLogin) {
+        onLogin(response.data.access_token, response.data.user);
+        console.log('onLogin called successfully');
+      }
+      
       toast({
         title: "ورود موفق",
         description: `خوش آمدید ${response.data.user.full_name}`,
       });
     } catch (error) {
+      console.error('Login error:', error);
       toast({
         title: "خطا در ورود",
         description: error.response?.data?.detail || "لطفا دوباره تلاش کنید",
