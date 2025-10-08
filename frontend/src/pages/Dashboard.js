@@ -291,7 +291,27 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
               </Button>
 
               <Button 
-                onClick={() => navigate('/advanced-trade')}
+                onClick={() => navigate('/ai/assistant')}
+                className="h-20 bg-gradient-to-br from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800"
+              >
+                <div className="text-center">
+                  <Brain className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">مشاور AI</span>
+                </div>
+              </Button>
+
+              <Button 
+                onClick={() => navigate('/ai/recommendations')}
+                className="h-20 bg-gradient-to-br from-pink-600 to-rose-700 hover:from-pink-700 hover:to-rose-800"
+              >
+                <div className="text-center">
+                  <Brain className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">پیشنهادات AI</span>
+                </div>
+              </Button>
+
+              <Button 
+                onClick={() => navigate('/trade')}
                 className="h-20 bg-gradient-to-br from-red-600 to-pink-700 hover:from-red-700 hover:to-pink-800"
                 disabled={currentUser.kyc_level < 2}
               >
@@ -319,6 +339,16 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                 <div className="text-center">
                   <TrendingUp className="w-6 h-6 mx-auto mb-1" />
                   <span className="text-base font-semibold">استیکینگ</span>
+                </div>
+              </Button>
+
+              <Button 
+                onClick={() => navigate('/ai/portfolio-analysis')}
+                className="h-20 bg-gradient-to-br from-teal-600 to-cyan-700 hover:from-teal-700 hover:to-cyan-800"
+              >
+                <div className="text-center">
+                  <TrendingUp className="w-6 h-6 mx-auto mb-1" />
+                  <span className="text-base font-semibold">تحلیل پرتفوی</span>
                 </div>
               </Button>
             </div>
