@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
-import AuthPage from "./pages/AuthPageEnhanced";
+import AuthPage from "./pages/SimpleAuth";
 import Dashboard from "./pages/Dashboard";
 import KYCPage from "./pages/KYCPage";
 import Market from "./pages/Market";
