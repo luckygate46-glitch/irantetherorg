@@ -14,7 +14,7 @@ from typing import Dict, Any, List, Optional
 import uuid
 
 # Configuration
-BACKEND_URL = "https://irancraft.preview.emergentagent.com/api"
+BACKEND_URL = "https://agitrader-platform.preview.emergentagent.com/api"
 TEST_TIMEOUT = 30.0
 
 class ComprehensiveBackendTester:
