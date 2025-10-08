@@ -1237,6 +1237,154 @@ class UserHoldingResponse(BaseModel):
     total_value_tmn: Optional[float] = None
     pnl_percent: Optional[float] = None
 
+# Advanced Order Types Models
+class LimitOrder(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    order_type: str  # "limit_buy", "limit_sell"
+    coin_symbol: str
+    coin_id: str
+    amount_crypto: float
+    target_price_tmn: float
+    expiry_date: Optional[datetime] = None
+    status: str = "active"  # active, filled, cancelled, expired
+    filled_amount: float = 0.0
+    remaining_amount: float
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class StopLossOrder(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    coin_symbol: str
+    coin_id: str
+    amount_crypto: float
+    stop_price_tmn: float  # Price at which to trigger
+    limit_price_tmn: Optional[float] = None  # Optional limit price
+    status: str = "active"  # active, triggered, cancelled
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class DCAStrategy(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    coin_symbol: str
+    coin_id: str
+    amount_tmn_per_purchase: float
+    frequency: str  # "daily", "weekly", "monthly"
+    total_budget_tmn: float
+    spent_amount_tmn: float = 0.0
+    next_purchase_date: datetime
+    status: str = "active"  # active, paused, completed, cancelled
+    auto_rebalance: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PortfolioRebalancing(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    target_allocation: dict  # {"BTC": 40, "ETH": 30, "BNB": 20, "USDT": 10}
+    rebalance_threshold: float = 5.0  # Percentage deviation to trigger rebalance
+    frequency: str = "monthly"  # daily, weekly, monthly, quarterly
+    last_rebalance: Optional[datetime] = None
+    status: str = "active"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Multi-Asset Support Models  
+class AssetType(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    asset_class: str  # "crypto", "stock", "commodity", "forex", "nft", "real_estate"
+    symbol: str
+    name: str
+    description: str
+    base_currency: str = "TMN"
+    trading_enabled: bool = True
+    min_order_size: float
+    max_order_size: float
+    trading_fees: dict  # {"maker": 0.1, "taker": 0.1, "withdrawal": 0.0005}
+    metadata: dict = {}
+
+class StockAsset(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    symbol: str  # e.g., "TEPIX", "IKCO"
+    name: str
+    isin_code: str
+    sector: str
+    market: str  # "TSE" (Tehran Stock Exchange)
+    price_tmn: float
+    daily_change: float
+    volume: float
+    market_cap: float
+    pe_ratio: Optional[float] = None
+
+class CommodityAsset(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    symbol: str  # "GOLD", "SILVER", "OIL"
+    name: str
+    unit: str  # "gram", "ounce", "barrel"
+    price_tmn: float
+    daily_change: float
+    global_price_usd: float
+    quality_grade: Optional[str] = None
+
+class ForexPair(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    base_currency: str  # "USD"
+    quote_currency: str  # "TMN"
+    pair_symbol: str  # "USDTMN"
+    bid_price: float
+    ask_price: float
+    spread: float
+    daily_change: float
+    volume_24h: float
+
+class NFTAsset(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    token_id: str
+    contract_address: str
+    name: str
+    description: str
+    image_url: str
+    creator: str
+    owner: str
+    price_tmn: Optional[float] = None
+    blockchain: str = "Ethereum"
+    metadata: dict = {}
+
+class RealEstateToken(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    property_id: str
+    property_name: str
+    location: str
+    property_type: str  # "residential", "commercial", "industrial"
+    total_tokens: int
+    price_per_token_tmn: float
+    annual_yield: float
+    property_value_tmn: float
+    rental_income_share: bool = True
+    property_documents: List[str] = []
+
+# Enhanced User Profile Models
+class UserPreferences(BaseModel):
+    user_id: str
+    risk_tolerance: str = "moderate"  # conservative, moderate, aggressive
+    investment_goals: List[str] = []  # growth, income, preservation, speculation
+    preferred_assets: List[str] = []  # crypto, stocks, commodities, etc.
+    notification_settings: dict = {}
+    ui_preferences: dict = {}  # theme, layout, widgets
+    trading_preferences: dict = {}  # auto_rebalance, dca_enabled, etc.
+    language: str = "fa"
+    timezone: str = "Asia/Tehran"
+
+class UserBehaviorAnalytics(BaseModel):
+    user_id: str
+    trading_frequency: str  # "low", "medium", "high"
+    preferred_trading_hours: List[int] = []  # Hours of day user is most active
+    risk_score: float = 50.0  # 0-100
+    profit_loss_ratio: float = 0.0
+    win_rate: float = 0.0
+    average_holding_period: float = 0.0  # Days
+    favorite_assets: List[str] = []
+    behavioral_patterns: dict = {}
+    last_analysis: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 # ==================== TRADING ORDER ROUTES ====================
 
 @api_router.post("/trading/order", response_model=TradingOrderResponse)
