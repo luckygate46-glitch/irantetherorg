@@ -273,7 +273,8 @@ test_plan:
   staking_verified: true
   authentication_verified: true
   persian_language_verified: true
-  comprehensive_upgrade_needs_testing: true
+  comprehensive_upgrade_needs_testing: false
+  comprehensive_upgrade_testing_completed: true
 
   - task: "Updated Registration Form"
     implemented: true
