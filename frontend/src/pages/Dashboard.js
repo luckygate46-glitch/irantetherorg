@@ -295,7 +295,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                 className="h-20 bg-gradient-to-br from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800"
               >
                 <div className="text-center">
-                  <Brain className="w-6 h-6 mx-auto mb-1" />
+                  <Bot className="w-6 h-6 mx-auto mb-1" />
                   <span className="text-base font-semibold">مشاور AI</span>
                 </div>
               </Button>
@@ -305,7 +305,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                 className="h-20 bg-gradient-to-br from-pink-600 to-rose-700 hover:from-pink-700 hover:to-rose-800"
               >
                 <div className="text-center">
-                  <Brain className="w-6 h-6 mx-auto mb-1" />
+                  <Lightbulb className="w-6 h-6 mx-auto mb-1" />
                   <span className="text-base font-semibold">پیشنهادات AI</span>
                 </div>
               </Button>
