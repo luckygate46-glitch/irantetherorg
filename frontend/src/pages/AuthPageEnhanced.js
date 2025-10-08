@@ -15,6 +15,7 @@ console.log('Backend URL:', BACKEND_URL);
 console.log('API URL:', API);
 
 export default function AuthPageEnhanced({ onLogin }) {
+  console.log('AuthPageEnhanced props:', { onLogin: typeof onLogin });
   const [activeTab, setActiveTab] = useState("login");
   const { toast } = useToast();
   
