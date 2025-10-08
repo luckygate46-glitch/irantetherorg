@@ -290,6 +290,35 @@ class KYCLevel2Request(BaseModel):
     selfie_type: str  # "photo" or "video"
     selfie_data: str  # Base64 or URL
 
+# Enhanced KYC Models for Video KYC and Advanced Verification
+class VideoKYCRequest(BaseModel):
+    session_id: str
+    video_data: str  # Base64 encoded video
+    duration: float  # Video duration in seconds
+    questions_answers: List[dict]  # Video responses to verification questions
+
+class DocumentOCRResult(BaseModel):
+    document_type: str  # "national_id", "passport", "driving_license"
+    extracted_data: dict
+    confidence_score: float
+    verification_status: str  # "verified", "needs_review", "failed"
+
+class LivenessDetectionResult(BaseModel):
+    session_id: str
+    liveness_score: float
+    face_match_score: float
+    verification_status: str
+    anti_spoofing_passed: bool
+
+class AMLRiskAssessment(BaseModel):
+    user_id: str
+    risk_score: float  # 0-100
+    risk_level: str  # "low", "medium", "high", "very_high"
+    risk_factors: List[str]
+    compliance_status: str
+    review_required: bool
+    last_assessment: datetime
+
 class KYCApprovalRequest(BaseModel):
     user_id: str
     kyc_level: int  # 1 or 2
