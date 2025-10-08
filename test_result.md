@@ -257,7 +257,7 @@ metadata:
 
 test_plan:
   current_focus:
-    []
+    - "Comprehensive Upgrade Implementation (All Suggested Improvements)"
   stuck_tasks:
     []
   test_all: false
@@ -273,6 +273,7 @@ test_plan:
   staking_verified: true
   authentication_verified: true
   persian_language_verified: true
+  comprehensive_upgrade_needs_testing: true
 
   - task: "Updated Registration Form"
     implemented: true
