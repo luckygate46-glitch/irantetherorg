@@ -25,6 +25,7 @@ import UserAIAssistant from "./pages/UserAIAssistant";
 import UserAIRecommendations from "./pages/UserAIRecommendations";
 import MultiAssetTrading from "./pages/MultiAssetTrading";
 import StakingYieldFarming from "./pages/StakingYieldFarming";
+import PortfolioAnalysis from "./pages/PortfolioAnalysis";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
