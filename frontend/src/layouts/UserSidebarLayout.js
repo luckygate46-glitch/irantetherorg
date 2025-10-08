@@ -204,7 +204,7 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
         fixed md:static inset-y-0 right-0 z-50 w-80 bg-slate-800 border-l border-slate-700 
         transform ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'} 
         md:translate-x-0 transition-transform duration-300 ease-in-out
-        flex flex-col
+        flex flex-col overflow-hidden
       `}>
         {/* Sidebar Header */}
         <div className="p-4 border-b border-slate-700">
