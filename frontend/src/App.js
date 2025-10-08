@@ -124,7 +124,11 @@ function App() {
           />
           <Route 
             path="/wallet" 
-            element={user ? <Wallet user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <Wallet user={user} onLogout={handleLogout} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/trade" 
