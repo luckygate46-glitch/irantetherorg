@@ -42,25 +42,25 @@ export default function AuthPageEnhanced({ onLogin }) {
     
     try {
       console.log('Starting login with:', loginData);
+      console.log('API URL:', API);
+      
       const response = await axios.post(`${API}/auth/login`, loginData);
       console.log('Login successful:', response.data);
       
-      if (onLogin) {
+      if (onLogin && typeof onLogin === 'function') {
         onLogin(response.data.access_token, response.data.user);
         console.log('onLogin called successfully');
+      } else {
+        console.error('onLogin is not a function:', onLogin);
+        alert('Login successful but redirect failed');
       }
       
-      toast({
-        title: "ورود موفق",
-        description: `خوش آمدید ${response.data.user.full_name}`,
-      });
+      // Simple alert instead of toast for now
+      alert('ورود موفق: ' + response.data.user.full_name);
+      
     } catch (error) {
       console.error('Login error:', error);
-      toast({
-        title: "خطا در ورود",
-        description: error.response?.data?.detail || "لطفا دوباره تلاش کنید",
-        variant: "destructive"
-      });
+      alert('خطا در ورود: ' + (error.response?.data?.detail || error.message || "لطفا دوباره تلاش کنید"));
     } finally {
       setLoading(false);
     }
