@@ -27,6 +27,11 @@ import MultiAssetTrading from "./pages/MultiAssetTrading";
 import StakingYieldFarming from "./pages/StakingYieldFarming";
 import PortfolioAnalysis from "./pages/PortfolioAnalysis";
 import KYCWaitingGame from "./pages/KYCWaitingGame";
+import CurrencyExchange from "./pages/CurrencyExchange";
+import SupportTickets from "./pages/SupportTickets";
+import ContactUs from "./pages/ContactUs";
+import Rewards from "./pages/Rewards";
+import UserSidebarLayout from "./layouts/UserSidebarLayout";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
