@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://irancraft.preview.emergentagent.com/api"
+BACKEND_URL = "https://agitrader-platform.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 
