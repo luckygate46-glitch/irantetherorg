@@ -133,21 +133,26 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
     if (item.expandable) {
       const isExpanded = expandedSections[item.id];
       return (
-        <div key={item.id}>
+        <div key={item.id} className="w-full">
           <Button
             variant="ghost"
-            className={`w-full justify-between text-right h-12 ${isChild ? 'pr-8' : 'pr-4'}`}
+            className={`w-full h-auto py-3 px-4 ${isChild ? 'mr-4' : ''} text-white hover:bg-slate-700`}
             onClick={() => toggleSection(item.id)}
           >
-            <div className="flex items-center gap-3">
-              <Icon className="w-5 h-5" />
-              <span>{item.title}</span>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3 flex-1">
+                <Icon className="w-5 h-5 shrink-0" />
+                <span className="text-sm font-medium text-right">{item.title}</span>
+              </div>
+              {isExpanded ? 
+                <ChevronDown className="w-4 h-4 shrink-0" /> : 
+                <ChevronRight className="w-4 h-4 shrink-0" />
+              }
             </div>
-            {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </Button>
           
           {isExpanded && (
-            <div className="mr-4 mt-1 space-y-1">
+            <div className="mr-6 mt-1 space-y-1 border-r border-slate-600">
               {item.children.map(child => renderMenuItem(child, true))}
             </div>
           )}
@@ -157,22 +162,24 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
 
     return (
       <Button
-        key={item.path}
+        key={item.path || item.id}
         variant={isActive ? "secondary" : "ghost"}
-        className={`w-full justify-start text-right h-12 ${isChild ? 'pr-8' : 'pr-4'} ${
+        className={`w-full h-auto py-3 px-4 ${isChild ? 'mr-4' : ''} text-white hover:bg-slate-700 ${
           isDisabled ? 'opacity-50 cursor-not-allowed' : ''
         } ${item.className || ''}`}
         onClick={() => !isDisabled && navigate(item.path)}
         disabled={isDisabled}
       >
-        <div className="flex items-center gap-3 w-full">
-          <Icon className="w-5 h-5" />
-          <span className="flex-1">{item.title}</span>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <Icon className="w-5 h-5 shrink-0" />
+            <span className="text-sm font-medium text-right truncate">{item.title}</span>
+          </div>
           {item.badge && (
             <Badge 
               variant={item.badge === 'جدید' || item.badge === 'بازی کنید!' ? "default" : 
                      item.badge === 'اقدام کنید' ? "destructive" : "secondary"}
-              className="text-xs"
+              className="text-xs shrink-0 mr-2"
             >
               {item.badge}
             </Badge>
