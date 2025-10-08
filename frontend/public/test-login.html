@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست ورود</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            background: #334155;
+            color: white;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #059669;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #047857;
+        }
+        #result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #065f46;
+            color: #a7f3d0;
+        }
+        .error {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>تست ورود ساده</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>ایمیل:</label>
+                <input type="text" id="email" value="admin" required>
+            </div>
+            <div class="form-group">
+                <label>رمز عبور:</label>
+                <input type="password" id="password" value="istari118" required>
+            </div>
+            <button type="submit">ورود</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://agitrader-platform.preview.emergentagent.com';
+        const API = `${BACKEND_URL}/api`;
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const result = document.getElementById('result');
+            
+            result.innerHTML = 'در حال ورود...';
+            result.className = '';
+            
+            try {
+                const response = await fetch(`${API}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    result.innerHTML = `ورود موفق: ${data.user.full_name}<br>Token: ${data.access_token}`;
+                    result.className = 'success';
+                    
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        if (data.user.is_admin) {
+                            window.location.href = '/admin';
+                        } else {
+                            window.location.href = '/dashboard';
+                        }
+                    }, 2000);
+                } else {
+                    result.innerHTML = `خطا: ${data.detail || 'مشکلی پیش آمده'}`;
+                    result.className = 'error';
+                }
+            } catch (error) {
+                result.innerHTML = `خطا در اتصال: ${error.message}`;
+                result.className = 'error';
+            }
+        });
+    </script>
+</body>
+</html>
