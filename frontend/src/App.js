@@ -172,6 +172,14 @@ function App() {
             element={user && !user.is_admin ? <UserAIRecommendations user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/multi-asset" 
+            element={user && !user.is_admin ? <MultiAssetTrading user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/staking" 
+            element={user && !user.is_admin ? <StakingYieldFarming user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/" 
             element={<Navigate to={user ? (user.is_admin ? "/admin" : "/dashboard") : "/auth"} />} 
           />
