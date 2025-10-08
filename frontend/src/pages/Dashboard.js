@@ -326,7 +326,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                 className="h-20 bg-gradient-to-br from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800"
               >
                 <div className="text-center">
-                  <RefreshCw className="w-6 h-6 mx-auto mb-1" />
+                  <BarChart3 className="w-6 h-6 mx-auto mb-1" />
                   <span className="text-base font-semibold">بازارهای متنوع</span>
                 </div>
               </Button>
@@ -337,7 +337,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                 disabled={currentUser.kyc_level < 1}
               >
                 <div className="text-center">
-                  <TrendingUp className="w-6 h-6 mx-auto mb-1" />
+                  <Coins className="w-6 h-6 mx-auto mb-1" />
                   <span className="text-base font-semibold">استیکینگ</span>
                 </div>
               </Button>
@@ -347,7 +347,7 @@ export default function Dashboard({ user, onLogout, onUserUpdate }) {
                 className="h-20 bg-gradient-to-br from-teal-600 to-cyan-700 hover:from-teal-700 hover:to-cyan-800"
               >
                 <div className="text-center">
-                  <TrendingUp className="w-6 h-6 mx-auto mb-1" />
+                  <PieChart className="w-6 h-6 mx-auto mb-1" />
                   <span className="text-base font-semibold">تحلیل پرتفوی</span>
                 </div>
               </Button>
