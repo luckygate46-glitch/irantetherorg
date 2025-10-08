@@ -3006,6 +3006,372 @@ async def get_user_ai_dashboard(current_user: User = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== ADVANCED TRADING ROUTES ====================
+
+@api_router.post("/trading/limit-order")
+async def create_limit_order(order_data: dict, current_user: User = Depends(get_current_user)):
+    """Create a limit order for advanced trading"""
+    try:
+        if current_user.kyc_level < 2:
+            raise HTTPException(status_code=403, detail="برای معاملات پیشرفته به احراز هویت کامل نیاز دارید")
+        
+        # Create limit order
+        limit_order = {
+            'id': str(uuid.uuid4()),
+            'user_id': current_user.id,
+            'order_type': order_data['order_type'],  # limit_buy, limit_sell
+            'coin_symbol': order_data['coin_symbol'],
+            'coin_id': order_data['coin_id'],
+            'amount_crypto': float(order_data['amount_crypto']),
+            'target_price_tmn': float(order_data['target_price_tmn']),
+            'expiry_date': order_data.get('expiry_date'),
+            'status': 'active',
+            'filled_amount': 0.0,
+            'remaining_amount': float(order_data['amount_crypto']),
+            'created_at': datetime.now(timezone.utc),
+            'updated_at': datetime.now(timezone.utc)
+        }
+        
+        # Store in database (mock)
+        result = await db.limit_orders.insert_one(limit_order)
+        
+        return {
+            'message': 'سفارش محدود با موفقیت ایجاد شد',
+            'order_id': limit_order['id'],
+            'status': 'active',
+            'estimated_execution': 'زمانی که قیمت به سطح تعیین شده برسد'
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/trading/stop-loss")
+async def create_stop_loss_order(order_data: dict, current_user: User = Depends(get_current_user)):
+    """Create a stop-loss order"""
+    try:
+        if current_user.kyc_level < 2:
+            raise HTTPException(status_code=403, detail="برای معاملات پیشرفته به احراز هویت کامل نیاز دارید")
+        
+        # Create stop-loss order
+        stop_loss_order = {
+            'id': str(uuid.uuid4()),
+            'user_id': current_user.id,
+            'coin_symbol': order_data['coin_symbol'],
+            'coin_id': order_data['coin_id'],
+            'amount_crypto': float(order_data['amount_crypto']),
+            'stop_price_tmn': float(order_data['stop_price_tmn']),
+            'limit_price_tmn': order_data.get('limit_price_tmn'),
+            'status': 'active',
+            'created_at': datetime.now(timezone.utc)
+        }
+        
+        # Store in database (mock)
+        result = await db.stop_loss_orders.insert_one(stop_loss_order)
+        
+        return {
+            'message': 'سفارش حد ضرر با موفقیت ایجاد شد',
+            'order_id': stop_loss_order['id'],
+            'status': 'active',
+            'protection_level': f"محافظت در قیمت {order_data['stop_price_tmn']} تومان"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/trading/dca-strategy")
+async def create_dca_strategy(strategy_data: dict, current_user: User = Depends(get_current_user)):
+    """Create Dollar Cost Averaging strategy"""
+    try:
+        # Create DCA strategy
+        dca_strategy = {
+            'id': str(uuid.uuid4()),
+            'user_id': current_user.id,
+            'coin_symbol': strategy_data['coin_symbol'],
+            'coin_id': strategy_data['coin_id'],
+            'amount_tmn_per_purchase': float(strategy_data['amount_tmn_per_purchase']),
+            'frequency': strategy_data['frequency'],  # daily, weekly, monthly
+            'total_budget_tmn': float(strategy_data['total_budget_tmn']),
+            'spent_amount_tmn': 0.0,
+            'next_purchase_date': datetime.now(timezone.utc) + timedelta(days=1),
+            'status': 'active',
+            'auto_rebalance': strategy_data.get('auto_rebalance', False),
+            'created_at': datetime.now(timezone.utc)
+        }
+        
+        # Store in database (mock)
+        result = await db.dca_strategies.insert_one(dca_strategy)
+        
+        return {
+            'message': 'استراتژی DCA با موفقیت ایجاد شد',
+            'strategy_id': dca_strategy['id'],
+            'status': 'active',
+            'next_purchase': dca_strategy['next_purchase_date'].strftime('%Y-%m-%d %H:%M'),
+            'estimated_purchases': int(strategy_data['total_budget_tmn'] / strategy_data['amount_tmn_per_purchase'])
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== ADVANCED AI ROUTES ====================
+
+@api_router.get("/ai/predictive-analysis/{asset_symbol}")
+async def get_predictive_analysis(asset_symbol: str, timeframe: str = "1d", current_user: User = Depends(get_current_user)):
+    """Get AI-powered predictive market analysis"""
+    try:
+        # Get historical data (mock)
+        historical_data = []  # Replace with real historical data
+        
+        # Generate prediction
+        prediction = await predictive_market_analysis.predict_price_movement(
+            asset_symbol, timeframe, historical_data
+        )
+        
+        return prediction
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/ai/sentiment-analysis/{asset_symbol}")
+async def get_sentiment_analysis(asset_symbol: str, current_user: User = Depends(get_current_user)):
+    """Get comprehensive sentiment analysis"""
+    try:
+        sentiment_data = await sentiment_analysis_engine.analyze_market_sentiment(asset_symbol)
+        return sentiment_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/ai/portfolio-optimization")
+async def get_portfolio_optimization(current_user: User = Depends(get_current_user)):
+    """Get AI-powered portfolio optimization"""
+    try:
+        # Get user's current portfolio
+        holdings = await db.user_holdings.find({"user_id": current_user.id}).to_list(None)
+        current_portfolio = {
+            'holdings': {holding.get('crypto_symbol', 'BTC'): holding.get('amount_tmn', 0) 
+                        for holding in holdings}
+        }
+        
+        # Get user preferences (mock)
+        preferences = {
+            'risk_tolerance': 'moderate',
+            'investment_goals': ['growth', 'diversification'],
+            'time_horizon': '1_year'
+        }
+        
+        # Get market data
+        price_result = await price_service.get_prices()
+        market_data = price_result.get("data", {}) if price_result.get("success") else {}
+        
+        # Generate optimization
+        optimization = await portfolio_optimizer.optimize_portfolio(
+            current_user.id, current_portfolio, preferences, market_data
+        )
+        
+        return optimization
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== MULTI-ASSET TRADING ROUTES ====================
+
+@api_router.get("/assets/stocks")
+async def get_stock_assets(current_user: User = Depends(get_current_user)):
+    """Get available Iranian stock assets"""
+    try:
+        # Mock Iranian stock data
+        stocks = [
+            {
+                'symbol': 'TEPIX',
+                'name': 'شاخص کل بورس تهران',
+                'price_tmn': 2150000,
+                'daily_change': random.uniform(-3, 5),
+                'market': 'TSE',
+                'sector': 'Index'
+            },
+            {
+                'symbol': 'IKCO',
+                'name': 'ایران خودرو',
+                'price_tmn': 1250,
+                'daily_change': random.uniform(-5, 8),
+                'market': 'TSE',
+                'sector': 'خودرو'
+            },
+            {
+                'symbol': 'SAIPA',
+                'name': 'سایپا',
+                'price_tmn': 890,
+                'daily_change': random.uniform(-4, 6),
+                'market': 'TSE',
+                'sector': 'خودرو'
+            }
+        ]
+        
+        return {
+            'stocks': stocks,
+            'market_status': 'open',  # open, closed, pre_market, after_market
+            'last_updated': datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/assets/commodities")
+async def get_commodity_assets(current_user: User = Depends(get_current_user)):
+    """Get available commodity assets"""
+    try:
+        # Mock commodity data
+        commodities = [
+            {
+                'symbol': 'GOLD',
+                'name': 'طلا',
+                'price_tmn': 2850000,  # per gram
+                'daily_change': random.uniform(-2, 3),
+                'unit': 'گرم',
+                'quality_grade': '18 عیار'
+            },
+            {
+                'symbol': 'SILVER',
+                'name': 'نقره',
+                'price_tmn': 45000,  # per gram
+                'daily_change': random.uniform(-3, 4),
+                'unit': 'گرم',
+                'quality_grade': '925'
+            },
+            {
+                'symbol': 'OIL',
+                'name': 'نفت برنت',
+                'price_tmn': 3250000,  # per barrel equivalent
+                'daily_change': random.uniform(-4, 5),
+                'unit': 'بشکه',
+                'quality_grade': 'Brent Crude'
+            }
+        ]
+        
+        return {
+            'commodities': commodities,
+            'market_status': 'open',
+            'last_updated': datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/assets/forex")
+async def get_forex_pairs(current_user: User = Depends(get_current_user)):
+    """Get available forex trading pairs"""
+    try:
+        # Mock forex data
+        forex_pairs = [
+            {
+                'pair_symbol': 'USDTMN',
+                'base_currency': 'USD',
+                'quote_currency': 'TMN',
+                'bid_price': 42500,
+                'ask_price': 42750,
+                'spread': 250,
+                'daily_change': random.uniform(-2, 3)
+            },
+            {
+                'pair_symbol': 'EURTMN',
+                'base_currency': 'EUR',
+                'quote_currency': 'TMN',
+                'bid_price': 46200,
+                'ask_price': 46500,
+                'spread': 300,
+                'daily_change': random.uniform(-1.5, 2.5)
+            }
+        ]
+        
+        return {
+            'forex_pairs': forex_pairs,
+            'market_status': '24/7',
+            'last_updated': datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== STAKING & YIELD FARMING ROUTES ====================
+
+@api_router.get("/staking/pools")
+async def get_staking_pools(current_user: User = Depends(get_current_user)):
+    """Get available staking pools"""
+    try:
+        staking_pools = [
+            {
+                'id': str(uuid.uuid4()),
+                'asset_symbol': 'ETH',
+                'pool_name': 'Ethereum 2.0 Staking',
+                'annual_percentage_yield': 5.2,
+                'minimum_stake': 0.01,
+                'lock_period_days': 0,  # Flexible
+                'status': 'active',
+                'description': 'استیک کردن اتریوم با بازده ثابت'
+            },
+            {
+                'id': str(uuid.uuid4()),
+                'asset_symbol': 'ADA',
+                'pool_name': 'Cardano Delegation Pool',
+                'annual_percentage_yield': 4.8,
+                'minimum_stake': 10,
+                'lock_period_days': 0,
+                'status': 'active',
+                'description': 'تفویض کاردانو برای کسب پاداش'
+            },
+            {
+                'id': str(uuid.uuid4()),
+                'asset_symbol': 'DOT',
+                'pool_name': 'Polkadot Nominated Pool',
+                'annual_percentage_yield': 12.5,
+                'minimum_stake': 1,
+                'lock_period_days': 28,
+                'status': 'active',
+                'description': 'نامینیت پولکادات با بازده بالا'
+            }
+        ]
+        
+        return {
+            'staking_pools': staking_pools,
+            'total_staked_value': random.randint(50000000, 200000000),
+            'average_apy': 7.5,
+            'last_updated': datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/staking/stake")
+async def create_staking_position(stake_data: dict, current_user: User = Depends(get_current_user)):
+    """Create a new staking position"""
+    try:
+        if current_user.kyc_level < 1:
+            raise HTTPException(status_code=403, detail="برای استیکینگ به احراز هویت نیاز دارید")
+        
+        # Create staking position
+        staking_position = {
+            'id': str(uuid.uuid4()),
+            'user_id': current_user.id,
+            'pool_id': stake_data['pool_id'],
+            'staked_amount': float(stake_data['staked_amount']),
+            'current_value': float(stake_data['staked_amount']),
+            'rewards_earned': 0.0,
+            'start_date': datetime.now(timezone.utc),
+            'auto_compound': stake_data.get('auto_compound', True),
+            'status': 'active'
+        }
+        
+        # Store in database (mock)
+        result = await db.staking_positions.insert_one(staking_position)
+        
+        return {
+            'message': 'استیکینگ با موفقیت شروع شد',
+            'position_id': staking_position['id'],
+            'estimated_annual_reward': float(stake_data['staked_amount']) * 0.05,  # 5% example
+            'reward_frequency': 'روزانه',
+            'status': 'active'
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/")
 async def root():
     return {"message": "Persian Crypto Exchange API with AI", "version": "2.0.0"}
