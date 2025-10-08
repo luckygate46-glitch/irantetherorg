@@ -181,6 +181,10 @@ function App() {
             element={user && !user.is_admin ? <StakingYieldFarming user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/ai/portfolio-analysis" 
+            element={user && !user.is_admin ? <PortfolioAnalysis user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/" 
             element={<Navigate to={user ? (user.is_admin ? "/admin" : "/dashboard") : "/auth"} />} 
           />
