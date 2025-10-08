@@ -29,20 +29,27 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const AdvancedTrade = ({ user, onLogout }) => {
-  const [selectedCoin, setSelectedCoin] = useState(null);
-  const [coins, setCoins] = useState([]);
-  const [orderType, setOrderType] = useState('market'); // market, limit, stop_loss, take_profit
-  const [orderSide, setOrderSide] = useState('buy'); // buy, sell
+  const [activeTab, setActiveTab] = useState('limit_orders');
+  const [loading, setLoading] = useState(false);
   const [orderData, setOrderData] = useState({
-    amount: '',
-    price: '',
-    stopPrice: '',
-    takeProfitPrice: ''
+    coin_symbol: 'BTC',
+    coin_id: 'bitcoin',
+    amount_crypto: '',
+    target_price_tmn: '',
+    stop_price_tmn: '',
+    order_type: 'limit_buy'
   });
-  const [activeOrders, setActiveOrders] = useState([]);
-  const [priceAlerts, setPriceAlerts] = useState([]);
-  const [portfolio, setPortfolio] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [dcaData, setDcaData] = useState({
+    coin_symbol: 'BTC',
+    coin_id: 'bitcoin',
+    amount_tmn_per_purchase: '',
+    frequency: 'weekly',
+    total_budget_tmn: '',
+    auto_rebalance: false
+  });
+  const [userOrders, setUserOrders] = useState([]);
+  const [cryptoPrices, setCryptoPrices] = useState({});
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
