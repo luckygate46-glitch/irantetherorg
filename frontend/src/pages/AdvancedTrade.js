@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { 
-  TrendingUp, 
-  TrendingDown, 
-  Target, 
-  Shield, 
-  Bell, 
-  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  Target,
   Clock,
+  Shield,
   Zap,
+  BarChart3,
+  DollarSign,
+  Calendar,
+  Settings,
   AlertTriangle,
   CheckCircle,
-  Settings,
-  Eye,
-  Play,
-  Pause,
-  Trash2
+  PlayCircle,
+  PauseCircle,
+  RefreshCw,
+  Coins
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
