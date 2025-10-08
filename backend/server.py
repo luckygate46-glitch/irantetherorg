@@ -1687,6 +1687,146 @@ class Leaderboard(BaseModel):
     trading_volume: Optional[float] = None
     signals_accuracy: Optional[float] = None
     last_updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Business Intelligence & Analytics Models
+class SystemMetrics(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    metric_type: str  # "user_activity", "trading_volume", "revenue", "system_performance"
+    metric_name: str
+    value: float
+    unit: str
+    period: str  # "5m", "1h", "1d", "1w", "1m"
+    metadata: dict = {}
+    recorded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserEngagementMetrics(BaseModel):
+    user_id: str
+    date: str  # YYYY-MM-DD format
+    page_views: int = 0
+    session_duration_minutes: float = 0.0
+    trades_executed: int = 0
+    signals_created: int = 0
+    forum_posts: int = 0
+    educational_content_viewed: int = 0
+    features_used: List[str] = []
+    last_activity: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class RevenueAnalytics(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date: str  # YYYY-MM-DD format
+    trading_fees_tmn: float = 0.0
+    withdrawal_fees_tmn: float = 0.0
+    premium_subscriptions_tmn: float = 0.0
+    margin_interest_tmn: float = 0.0
+    staking_fees_tmn: float = 0.0
+    total_revenue_tmn: float = 0.0
+    active_users: int = 0
+    new_users: int = 0
+    total_trading_volume_tmn: float = 0.0
+
+class RegulatoryReport(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    report_type: str  # "aml", "transaction_monitoring", "user_verification", "tax_reporting"
+    report_period: str  # "daily", "monthly", "quarterly", "yearly"
+    start_date: datetime
+    end_date: datetime
+    data: dict
+    compliance_status: str = "compliant"  # compliant, requires_attention, non_compliant
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    submitted_at: Optional[datetime] = None
+
+class ABTest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    test_name: str
+    description: str
+    feature_flag: str
+    control_group_size: int = 50  # Percentage
+    treatment_group_size: int = 50  # Percentage
+    success_metric: str
+    start_date: datetime
+    end_date: datetime
+    is_active: bool = True
+    results: dict = {}
+    statistical_significance: Optional[float] = None
+    winner: Optional[str] = None  # "control", "treatment", "inconclusive"
+
+class ABTestParticipant(BaseModel):
+    user_id: str
+    test_id: str
+    group: str  # "control", "treatment"
+    assigned_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    converted: bool = False
+    conversion_value: float = 0.0
+    conversion_at: Optional[datetime] = None
+
+# Notification & Communication Models
+class NotificationTemplate(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    template_name: str
+    notification_type: str  # "email", "sms", "push", "in_app"
+    subject_template: str
+    content_template: str
+    variables: List[str] = []  # Template variables like {user_name}, {amount}
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserNotification(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    notification_type: str
+    title: str
+    message: str
+    is_read: bool = False
+    action_url: Optional[str] = None
+    metadata: dict = {}
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    read_at: Optional[datetime] = None
+
+class PushNotificationSubscription(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    endpoint: str
+    keys: dict  # Push notification keys
+    device_type: str  # "android", "ios", "web"
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Advanced Market Data Models
+class MarketAlert(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    asset_symbol: str
+    alert_type: str  # "price_above", "price_below", "volume_spike", "news_sentiment"
+    trigger_value: float
+    current_value: float
+    is_triggered: bool = False
+    is_active: bool = True
+    notification_sent: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    triggered_at: Optional[datetime] = None
+
+class MarketSentiment(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    asset_symbol: str
+    sentiment_score: float  # -100 to 100
+    sentiment_label: str  # "very_bearish", "bearish", "neutral", "bullish", "very_bullish"
+    news_sentiment: float = 0.0
+    social_sentiment: float = 0.0
+    technical_sentiment: float = 0.0
+    volume_sentiment: float = 0.0
+    confidence_score: float = 0.0
+    recorded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PriceAlert(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    asset_symbol: str
+    target_price: float
+    comparison: str  # "above", "below"
+    is_active: bool = True
+    triggered: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    triggered_at: Optional[datetime] = None
 # ==================== TRADING ORDER ROUTES ====================
 
 @api_router.post("/trading/order", response_model=TradingOrderResponse)
