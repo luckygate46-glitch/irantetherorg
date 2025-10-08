@@ -11,6 +11,9 @@ import { ArrowRight, Mail, Lock, User, Phone, TrendingUp, CreditCard, Calendar }
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+console.log('Backend URL:', BACKEND_URL);
+console.log('API URL:', API);
+
 export default function AuthPageEnhanced({ onLogin }) {
   const [activeTab, setActiveTab] = useState("login");
   const { toast } = useToast();
