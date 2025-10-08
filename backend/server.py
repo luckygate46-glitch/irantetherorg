@@ -1385,6 +1385,168 @@ class UserBehaviorAnalytics(BaseModel):
     favorite_assets: List[str] = []
     behavioral_patterns: dict = {}
     last_analysis: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Advanced Financial Tools Models
+class MarginTradingAccount(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    account_type: str = "cross_margin"  # "isolated", "cross_margin"
+    total_balance_tmn: float = 0.0
+    borrowed_balance_tmn: float = 0.0
+    available_margin_tmn: float = 0.0
+    maintenance_margin_ratio: float = 0.25  # 25%
+    liquidation_price: Optional[float] = None
+    leverage_ratio: float = 1.0  # 1x to 10x
+    interest_rate: float = 0.1  # Daily interest rate
+    status: str = "active"  # active, margin_call, liquidated, suspended
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class FuturesContract(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    symbol: str  # "BTCUSDT-PERP", "ETHUSDT-MAR25"
+    underlying_asset: str
+    contract_type: str  # "perpetual", "quarterly", "monthly"
+    contract_size: float
+    tick_size: float
+    expiry_date: Optional[datetime] = None
+    mark_price: float
+    index_price: float
+    funding_rate: float = 0.0
+    open_interest: float = 0.0
+    volume_24h: float = 0.0
+    status: str = "active"
+
+class FuturesPosition(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    contract_id: str
+    position_side: str  # "long", "short"
+    size: float
+    entry_price: float
+    mark_price: float
+    liquidation_price: Optional[float] = None
+    unrealized_pnl: float = 0.0
+    realized_pnl: float = 0.0
+    margin_used: float
+    leverage: float
+    status: str = "open"  # open, closed, liquidated
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class OptionsContract(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    underlying_asset: str
+    option_type: str  # "call", "put"
+    strike_price: float
+    expiry_date: datetime
+    premium: float
+    implied_volatility: float
+    delta: float
+    gamma: float
+    theta: float
+    vega: float
+    open_interest: float
+    status: str = "active"
+
+class OptionsPosition(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    contract_id: str
+    position_type: str  # "long", "short"
+    quantity: float
+    entry_premium: float
+    current_premium: float
+    unrealized_pnl: float = 0.0
+    status: str = "open"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class StakingPool(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    asset_symbol: str
+    pool_name: str
+    annual_percentage_yield: float
+    minimum_stake: float
+    maximum_stake: Optional[float] = None
+    lock_period_days: int = 0  # 0 for flexible staking
+    total_staked: float = 0.0
+    pool_capacity: Optional[float] = None
+    status: str = "active"  # active, full, maintenance, closed
+    rewards_distributed_daily: bool = True
+
+class StakingPosition(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    pool_id: str
+    staked_amount: float
+    current_value: float
+    rewards_earned: float = 0.0
+    start_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    end_date: Optional[datetime] = None
+    auto_compound: bool = True
+    status: str = "active"  # active, unstaking, completed
+
+class YieldFarmingPool(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    pool_name: str
+    token_a_symbol: str
+    token_b_symbol: str
+    pool_ratio: str  # "50:50", "80:20"
+    total_value_locked: float = 0.0
+    annual_percentage_yield: float
+    farming_rewards_token: str
+    impermanent_loss_protection: bool = False
+    status: str = "active"
+
+class YieldFarmingPosition(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    pool_id: str
+    liquidity_token_balance: float
+    token_a_amount: float
+    token_b_amount: float
+    farming_rewards_earned: float = 0.0
+    impermanent_loss: float = 0.0
+    entry_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    status: str = "active"
+
+# Payment System Models
+class PaymentGateway(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    gateway_name: str  # "mellat_bank", "parsian_bank", "crypto_wallet", "perfect_money"
+    gateway_type: str  # "bank", "crypto", "digital_wallet", "card"
+    supported_currencies: List[str]
+    minimum_amount: float
+    maximum_amount: float
+    processing_fee_percent: float
+    processing_fee_fixed: float
+    processing_time_minutes: int
+    is_active: bool = True
+    api_credentials: dict = {}  # Encrypted API keys and settings
+
+class PaymentTransaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    gateway_id: str
+    transaction_type: str  # "deposit", "withdrawal"
+    amount: float
+    currency: str
+    gateway_reference: Optional[str] = None
+    status: str = "pending"  # pending, processing, completed, failed, cancelled
+    gateway_response: dict = {}
+    processing_fee: float = 0.0
+    net_amount: float = 0.0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    completed_at: Optional[datetime] = None
+
+class CryptoWallet(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    cryptocurrency: str
+    wallet_address: str
+    private_key_encrypted: str  # Encrypted private key
+    balance: float = 0.0
+    is_active: bool = True
+    last_sync: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 # ==================== TRADING ORDER ROUTES ====================
 
 @api_router.post("/trading/order", response_model=TradingOrderResponse)
