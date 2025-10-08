@@ -1547,6 +1547,146 @@ class CryptoWallet(BaseModel):
     is_active: bool = True
     last_sync: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Social Trading & Community Models
+class TradingSignal(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    creator_id: str
+    signal_type: str  # "buy", "sell", "hold"
+    asset_symbol: str
+    target_price: float
+    stop_loss: Optional[float] = None
+    take_profit: Optional[float] = None
+    confidence_level: float  # 0-100
+    analysis: str
+    expiry_date: Optional[datetime] = None
+    followers_count: int = 0
+    success_rate: float = 0.0
+    status: str = "active"  # active, executed, expired, cancelled
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SocialTradingProfile(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    display_name: str
+    bio: Optional[str] = None
+    profile_image: Optional[str] = None
+    is_public: bool = True
+    allow_copying: bool = True
+    copying_fee_percent: float = 0.0
+    total_followers: int = 0
+    total_following: int = 0
+    signals_posted: int = 0
+    success_rate: float = 0.0
+    total_profit_percent: float = 0.0
+    risk_score: float = 50.0
+    verified_trader: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CopyTrading(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    follower_id: str
+    trader_id: str
+    copy_percentage: float = 100.0  # Percentage of portfolio to allocate
+    max_copy_amount: Optional[float] = None
+    copy_stop_loss: bool = True
+    copy_take_profit: bool = True
+    copy_new_trades: bool = True
+    status: str = "active"  # active, paused, stopped
+    total_copied_trades: int = 0
+    total_profit_loss: float = 0.0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ForumCategory(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str
+    icon: Optional[str] = None
+    sort_order: int = 0
+    is_active: bool = True
+    moderator_ids: List[str] = []
+
+class ForumTopic(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    category_id: str
+    creator_id: str
+    title: str
+    content: str
+    tags: List[str] = []
+    views: int = 0
+    replies_count: int = 0
+    likes_count: int = 0
+    is_pinned: bool = False
+    is_locked: bool = False
+    last_reply_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ForumReply(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    topic_id: str
+    author_id: str
+    content: str
+    parent_reply_id: Optional[str] = None  # For nested replies
+    likes_count: int = 0
+    is_solution: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class EducationalContent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    content_type: str  # "article", "video", "course", "webinar"
+    content_url: Optional[str] = None
+    content_text: Optional[str] = None
+    difficulty_level: str  # "beginner", "intermediate", "advanced"
+    category: str  # "trading", "analysis", "blockchain", "defi"
+    tags: List[str] = []
+    author_id: str
+    duration_minutes: Optional[int] = None
+    views: int = 0
+    likes: int = 0
+    rating: float = 0.0
+    is_premium: bool = False
+    price: float = 0.0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserAchievement(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    achievement_type: str  # "first_trade", "profit_milestone", "learning_completion"
+    title: str
+    description: str
+    badge_icon: str
+    points_awarded: int
+    unlocked_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ReferralProgram(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    referrer_id: str
+    referee_id: str
+    referral_code: str
+    status: str = "pending"  # pending, active, completed, cancelled
+    referrer_reward_percent: float = 10.0
+    referee_reward_percent: float = 5.0
+    minimum_trading_volume: float = 1000000  # TMN
+    current_trading_volume: float = 0.0
+    rewards_paid: float = 0.0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    completed_at: Optional[datetime] = None
+
+class Leaderboard(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    leaderboard_type: str  # "profit", "volume", "signals", "education"
+    period: str  # "daily", "weekly", "monthly", "all_time"
+    rank: int
+    score: float
+    display_name: str
+    profit_percent: Optional[float] = None
+    trading_volume: Optional[float] = None
+    signals_accuracy: Optional[float] = None
+    last_updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 # ==================== TRADING ORDER ROUTES ====================
 
 @api_router.post("/trading/order", response_model=TradingOrderResponse)
