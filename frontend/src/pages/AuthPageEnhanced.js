@@ -311,10 +311,23 @@ export default function AuthPageEnhanced({ onLogin }) {
                         type="submit"
                         data-testid="register-submit-button"
                         disabled={loading}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-6 rounded-lg"
+                        className={`w-full font-semibold py-6 rounded-lg transition-all duration-300 ${
+                          loading 
+                            ? "bg-slate-600 cursor-not-allowed" 
+                            : "bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg transform hover:scale-[1.02]"
+                        } text-white`}
                       >
-                        {loading ? "در حال ثبت‌نام..." : "ثبت‌نام"}
-                        {!loading && <ArrowRight className="mr-2 w-5 h-5" />}
+                        {loading ? (
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            در حال ثبت‌نام...
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center gap-2">
+                            ثبت‌نام
+                            <ArrowRight className="w-5 h-5" />
+                          </div>
+                        )}
                       </Button>
                       
                       <p className="text-xs text-slate-400 text-center">
