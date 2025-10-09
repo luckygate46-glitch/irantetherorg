@@ -14,7 +14,7 @@ import re
 
 # Configuration
 BACKEND_URL = "https://agitrader-platform.preview.emergentagent.com/api"
-TEST_USER_EMAIL = "wallet.test.user@example.com"
+TEST_USER_EMAIL = f"wallet.test.{datetime.now().strftime('%Y%m%d%H%M%S')}@example.com"
 TEST_USER_PASSWORD = "testpass123"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
