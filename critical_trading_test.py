@@ -213,7 +213,7 @@ class CriticalTradingTester:
                 }
                 
                 excessive_response = await self.client.post(
-                    f"{BACKEND_URL}/trading/orders",
+                    f"{BACKEND_URL}/trading/order",
                     headers=headers,
                     json=excessive_order_data
                 )
