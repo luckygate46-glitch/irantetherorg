@@ -135,17 +135,17 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
 
   const menuItems = getMenuItems();
 
-  // Special items (outside sections)
-  const specialItems = [
+  // Special items (outside sections) - only show game if KYC is pending
+  const specialItems = user?.kyc_level < 2 ? [
     {
       id: 'kyc-game',
       title: 'بازی انتظار KYC',
       icon: Gamepad2,
       path: '/kyc-game',
-      badge: user?.kyc_level < 2 ? 'بازی کنید!' : null,
+      badge: 'بازی کنید!',
       className: 'bg-purple-600/20 border border-purple-500/30 hover:bg-purple-600/30'
     }
-  ];
+  ] : [];
 
   const isActiveRoute = (path) => {
     return location.pathname === path;
