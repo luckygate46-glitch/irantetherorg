@@ -6,6 +6,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Trade = ({ user, onLogout }) => {
+  const { asset } = useParams(); // Get asset from URL parameter
   const [activeTab, setActiveTab] = useState('buy');
   const [selectedCoin, setSelectedCoin] = useState(null);
   const [coins, setCoins] = useState([]);
