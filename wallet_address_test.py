@@ -33,13 +33,23 @@ class WalletAddressSystemTester:
         print("🔧 Setting up Wallet Address System testing environment...")
         
         # Create test user if needed
-        await self.create_test_user()
+        user_created = await self.create_test_user()
+        
+        if not user_created:
+            print("❌ Failed to create test user")
+            return False
         
         # Login as test user
-        await self.login_user()
+        user_login = await self.login_user()
+        
+        if not user_login:
+            print("❌ Failed to login test user")
+            return False
         
         # Login as admin
         await self.login_admin()
+        
+        return True
         
     async def create_test_user(self):
         """Create a test user for wallet testing"""
