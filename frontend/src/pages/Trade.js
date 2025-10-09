@@ -26,6 +26,19 @@ const Trade = ({ user, onLogout }) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // If asset parameter is provided, select it automatically
+    if (asset && coins.length > 0) {
+      const assetCoin = coins.find(coin => 
+        coin.symbol.toLowerCase() === asset.toLowerCase() ||
+        coin.name.toLowerCase() === asset.toLowerCase()
+      );
+      if (assetCoin) {
+        setSelectedCoin(assetCoin);
+      }
+    }
+  }, [asset, coins]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
