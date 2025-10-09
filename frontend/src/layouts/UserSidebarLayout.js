@@ -111,6 +111,30 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
     }
   ];
 
+    // Filter items based on KYC level
+    if (user?.kyc_level < 2) {
+      // Remove trading-related items for users without KYC level 2
+      const tradingSection = baseItems.find(item => item.id === 'trading');
+      if (tradingSection) {
+        tradingSection.children = tradingSection.children.filter(child => 
+          !['معاملات', 'سابقه معاملات', 'سفارشات باز'].includes(child.title)
+        );
+      }
+      
+      // Remove advanced AI features for users without proper KYC
+      const aiSection = baseItems.find(item => item.id === 'ai');
+      if (aiSection) {
+        aiSection.children = aiSection.children.filter(child => 
+          !['ربات معاملاتی', 'سیگنال‌های هوشمند'].includes(child.title)
+        );
+      }
+    }
+
+    return baseItems;
+  };
+
+  const menuItems = getMenuItems();
+
   // Special items (outside sections)
   const specialItems = [
     {
