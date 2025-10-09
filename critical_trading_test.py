@@ -190,7 +190,7 @@ class CriticalTradingTester:
             }
             
             buy_response = await self.client.post(
-                f"{BACKEND_URL}/trading/orders",
+                f"{BACKEND_URL}/trading/order",
                 headers=headers,
                 json=buy_order_data
             )
