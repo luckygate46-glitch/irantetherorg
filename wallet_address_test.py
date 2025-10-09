@@ -44,25 +44,34 @@ class WalletAddressSystemTester:
     async def create_test_user(self):
         """Create a test user for wallet testing"""
         try:
+            # Generate unique email and phone
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            unique_email = f"wallet.test.{timestamp}@example.com"
+            unique_phone = f"0912345{timestamp[-4:]}"
+            
             response = await self.client.post(f"{BACKEND_URL}/auth/register", json={
                 "first_name": "کاربر",
                 "last_name": "تست کیف پول",
-                "email": TEST_USER_EMAIL,
-                "phone": "09123456789",
+                "email": unique_email,
+                "phone": unique_phone,
                 "password": TEST_USER_PASSWORD
             })
             
             if response.status_code == 200:
                 data = response.json()
                 self.test_user_id = data["user"]["id"]
-                print(f"✅ Test user created: {data['user'].get('full_name', 'Test User')}")
-            elif response.status_code == 400 and "قبلاً ثبت شده" in response.text:
-                print("✅ Test user already exists")
+                # Update the global email for login
+                global TEST_USER_EMAIL
+                TEST_USER_EMAIL = unique_email
+                print(f"✅ Test user created: {data['user'].get('full_name', 'Test User')} - {unique_email}")
+                return True
             else:
-                print(f"⚠️  Test user creation response: {response.status_code} - {response.text}")
+                print(f"❌ Test user creation failed: {response.status_code} - {response.text}")
+                return False
                 
         except Exception as e:
-            print(f"⚠️  Test user creation error: {str(e)}")
+            print(f"❌ Test user creation error: {str(e)}")
+            return False
     
     async def login_user(self):
         """Login as test user"""
