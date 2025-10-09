@@ -30,14 +30,16 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
     }));
   };
 
-  const menuItems = [
-    {
-      id: 'dashboard',
-      title: 'داشبورد اصلی',
-      icon: Home,
-      path: '/dashboard',
-      badge: null
-    },
+  // Filter menu items based on KYC level
+  const getMenuItems = () => {
+    const baseItems = [
+      {
+        id: 'dashboard',
+        title: 'داشبورد اصلی',
+        icon: Home,
+        path: '/dashboard',
+        badge: null
+      },
     {
       id: 'profile',
       title: 'پروفایل و تنظیمات',
