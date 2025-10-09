@@ -244,6 +244,55 @@ class UserUpdate(BaseModel):
     is_admin: Optional[bool] = None
     wallet_balance_tmn: Optional[float] = None
 
+class WalletAddress(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    symbol: str  # BTC, ETH, USDT, etc.
+    address: str
+    label: Optional[str] = None
+    verified: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class WalletAddressCreate(BaseModel):
+    symbol: str
+    address: str
+    label: Optional[str] = None
+
+class WalletAddressResponse(BaseModel):
+    id: str
+    symbol: str
+    address: str
+    label: Optional[str] = None
+    verified: bool
+    created_at: datetime
+
+class BankingInfo(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    card_number: str
+    bank_name: str
+    account_holder: str
+    iban: Optional[str] = None
+    verified: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class BankingInfoCreate(BaseModel):
+    card_number: str
+    bank_name: str
+    account_holder: str
+    iban: Optional[str] = None
+
+class BankingInfoResponse(BaseModel):
+    id: str
+    card_number: str
+    bank_name: str
+    account_holder: str
+    iban: Optional[str] = None
+    verified: bool
+    created_at: datetime
+
 class AdminStats(BaseModel):
     total_users: int
     active_users: int
