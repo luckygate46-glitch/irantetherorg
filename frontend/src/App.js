@@ -276,6 +276,14 @@ function App() {
             ) : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/portfolio" 
+            element={user && !user.is_admin ? (
+              <UserSidebarLayout user={user} onLogout={handleLogout}>
+                <Portfolio user={user} />
+              </UserSidebarLayout>
+            ) : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/" 
             element={<Navigate to={user ? (user.is_admin ? "/admin" : "/dashboard") : "/auth"} />} 
           />
