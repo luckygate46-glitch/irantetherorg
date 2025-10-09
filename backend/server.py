@@ -914,6 +914,142 @@ async def get_kyc_status(current_user: User = Depends(get_current_user)):
         "bank_card_number": current_user.bank_card_number
     }
 
+# ==================== USER PROFILE & WALLET ROUTES ====================
+
+@api_router.put("/user/profile")
+async def update_user_profile(profile_data: dict, current_user: User = Depends(get_current_user)):
+    """Update user profile information"""
+    
+    # Only allow updating specific fields
+    allowed_fields = ['first_name', 'last_name', 'phone']
+    update_data = {k: v for k, v in profile_data.items() if k in allowed_fields}
+    
+    if update_data:
+        # Update full_name if first_name or last_name changed
+        if 'first_name' in update_data or 'last_name' in update_data:
+            first_name = update_data.get('first_name', current_user.first_name)
+            last_name = update_data.get('last_name', current_user.last_name)
+            update_data['full_name'] = f"{first_name} {last_name}"
+        
+        update_data['updated_at'] = datetime.now(timezone.utc)
+        
+        await db.users.update_one(
+            {"id": current_user.id},
+            {"$set": update_data}
+        )
+        
+        # Get updated user
+        updated_user = await db.users.find_one({"id": current_user.id})
+        return User(**updated_user)
+    
+    return current_user
+
+@api_router.post("/user/wallet-addresses", response_model=WalletAddressResponse)
+async def add_wallet_address(wallet_data: WalletAddressCreate, current_user: User = Depends(get_current_user)):
+    """Add a new wallet address for the user"""
+    
+    # Create wallet address
+    wallet_address = WalletAddress(
+        user_id=current_user.id,
+        symbol=wallet_data.symbol.upper(),
+        address=wallet_data.address,
+        label=wallet_data.label
+    )
+    
+    # Check if address already exists
+    existing = await db.wallet_addresses.find_one({
+        "user_id": current_user.id,
+        "symbol": wallet_address.symbol,
+        "address": wallet_address.address
+    })
+    
+    if existing:
+        raise HTTPException(
+            status_code=400,
+            detail="این آدرس کیف پول قبلاً اضافه شده است"
+        )
+    
+    # Insert into database
+    await db.wallet_addresses.insert_one(wallet_address.dict())
+    
+    return WalletAddressResponse(**wallet_address.dict())
+
+@api_router.get("/user/wallet-addresses", response_model=List[WalletAddressResponse])
+async def get_wallet_addresses(current_user: User = Depends(get_current_user)):
+    """Get all wallet addresses for the current user"""
+    
+    wallet_addresses = await db.wallet_addresses.find({"user_id": current_user.id}).to_list(None)
+    
+    return [WalletAddressResponse(**address) for address in wallet_addresses]
+
+@api_router.delete("/user/wallet-addresses/{wallet_id}")
+async def delete_wallet_address(wallet_id: str, current_user: User = Depends(get_current_user)):
+    """Delete a wallet address"""
+    
+    # Check if wallet belongs to current user
+    wallet = await db.wallet_addresses.find_one({
+        "id": wallet_id,
+        "user_id": current_user.id
+    })
+    
+    if not wallet:
+        raise HTTPException(
+            status_code=404,
+            detail="کیف پول یافت نشد"
+        )
+    
+    # Delete wallet
+    await db.wallet_addresses.delete_one({
+        "id": wallet_id,
+        "user_id": current_user.id
+    })
+    
+    return {"success": True, "message": "کیف پول حذف شد"}
+
+@api_router.post("/user/banking-info", response_model=BankingInfoResponse)
+async def add_banking_info(banking_data: BankingInfoCreate, current_user: User = Depends(get_current_user)):
+    """Add or update banking information"""
+    
+    # Create banking info
+    banking_info = BankingInfo(
+        user_id=current_user.id,
+        card_number=banking_data.card_number,
+        bank_name=banking_data.bank_name,
+        account_holder=banking_data.account_holder,
+        iban=banking_data.iban
+    )
+    
+    # Check if banking info already exists and update instead
+    existing = await db.banking_info.find_one({"user_id": current_user.id})
+    
+    if existing:
+        # Update existing
+        update_data = banking_info.dict()
+        update_data['updated_at'] = datetime.now(timezone.utc)
+        
+        await db.banking_info.update_one(
+            {"user_id": current_user.id},
+            {"$set": update_data}
+        )
+        
+        updated = await db.banking_info.find_one({"user_id": current_user.id})
+        return BankingInfoResponse(**updated)
+    else:
+        # Insert new
+        await db.banking_info.insert_one(banking_info.dict())
+        return BankingInfoResponse(**banking_info.dict())
+
+@api_router.get("/user/banking-info", response_model=Optional[BankingInfoResponse])
+async def get_banking_info(current_user: User = Depends(get_current_user)):
+    """Get banking information for the current user"""
+    
+    banking_info = await db.banking_info.find_one({"user_id": current_user.id})
+    
+    if banking_info:
+        return BankingInfoResponse(**banking_info)
+    
+    return None
+
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats", response_model=AdminStats)
