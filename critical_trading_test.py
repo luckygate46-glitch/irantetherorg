@@ -366,7 +366,7 @@ class CriticalTradingTester:
                     }
                     
                     approval_response = await self.client.post(
-                        f"{BACKEND_URL}/admin/orders/approve",
+                        f"{BACKEND_URL}/admin/trading/orders/approve",
                         headers=admin_headers,
                         json=approval_data
                     )
