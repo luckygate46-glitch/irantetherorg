@@ -32,6 +32,7 @@ import SupportTickets from "./pages/SupportTickets";
 import ContactUs from "./pages/ContactUs";
 import Rewards from "./pages/Rewards";
 import Portfolio from "./pages/Portfolio";
+import UserProfile from "./pages/UserProfile";
 import UserSidebarLayout from "./layouts/UserSidebarLayout";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
