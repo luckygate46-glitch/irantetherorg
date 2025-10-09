@@ -109,6 +109,14 @@ const Trade = ({ user, onLogout }) => {
           alert('لطفا مبلغ معتبری وارد کنید');
           return;
         }
+        
+        // Check if user has sufficient balance
+        const userBalance = user?.wallet_balance_tmn || 0;
+        if (amount > userBalance) {
+          alert(`موجودی شما کافی نیست. موجودی فعلی: ${new Intl.NumberFormat('fa-IR').format(userBalance)} تومان`);
+          return;
+        }
+        
         orderData.amount_tmn = amount;
       } else if (orderType === 'sell') {
         const amount = parseFloat(sellAmount);
