@@ -63,8 +63,8 @@ class CriticalTradingTester:
             user_data = {
                 "first_name": "علی",
                 "last_name": "تستی",
-                "email": "trading.test.user@example.com",
-                "phone": "09123456789",
+                "email": f"trading.test.user.{datetime.now().strftime('%Y%m%d%H%M%S')}@example.com",
+                "phone": f"0912345{datetime.now().strftime('%H%M')}",
                 "password": "testpass123"
             }
             
