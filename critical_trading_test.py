@@ -297,7 +297,7 @@ class CriticalTradingTester:
                     }
                     
                     trading_response = await self.client.post(
-                        f"{BACKEND_URL}/trading/orders",
+                        f"{BACKEND_URL}/trading/order",
                         headers=low_kyc_headers,
                         json=trading_order_data
                     )
