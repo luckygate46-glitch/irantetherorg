@@ -578,9 +578,9 @@ class WalletAddressSystemTester:
         print("🚀 Starting Wallet Address Management System Testing...")
         print("=" * 70)
         
-        await self.setup()
+        setup_success = await self.setup()
         
-        if not self.user_token:
+        if not setup_success or not self.user_token:
             print("❌ Cannot proceed without user authentication")
             return
         
