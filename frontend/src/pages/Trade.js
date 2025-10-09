@@ -7,6 +7,7 @@ const API = `${BACKEND_URL}/api`;
 
 const Trade = ({ user, onLogout }) => {
   const { asset } = useParams(); // Get asset from URL parameter
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('buy');
   const [selectedCoin, setSelectedCoin] = useState(null);
   const [coins, setCoins] = useState([]);
