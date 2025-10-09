@@ -256,8 +256,8 @@ class CriticalTradingTester:
             low_kyc_user_data = {
                 "first_name": "محمد",
                 "last_name": "کم‌احراز",
-                "email": "low.kyc.user@example.com",
-                "phone": "09987654321",
+                "email": f"low.kyc.user.{datetime.now().strftime('%Y%m%d%H%M%S')}@example.com",
+                "phone": f"0998765{datetime.now().strftime('%H%M')}",
                 "password": "testpass123"
             }
             
