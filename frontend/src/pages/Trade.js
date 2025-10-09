@@ -89,10 +89,49 @@ const Trade = ({ user, onLogout }) => {
     return imageMap[coinId] || 1;
   };
 
+  const checkWalletAddress = async (coinSymbol) => {
+    try {
+      const token = localStorage.getItem('token');
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      
+      const response = await axios.get(`${API}/user/wallet-addresses`, config);
+      const walletAddresses = response.data || [];
+      
+      // Check if user has a wallet for this specific coin
+      const hasWallet = walletAddresses.some(wallet => 
+        wallet.symbol === coinSymbol && wallet.verified
+      );
+      
+      return { hasWallet, walletAddresses };
+    } catch (error) {
+      console.error('Error checking wallet addresses:', error);
+      return { hasWallet: false, walletAddresses: [] };
+    }
+  };
+
   const handleOrder = async (orderType) => {
     if (!selectedCoin) {
       alert('لطفا یک ارز انتخاب کنید');
       return;
+    }
+
+    // Check for wallet address before placing buy order
+    if (orderType === 'buy') {
+      const { hasWallet } = await checkWalletAddress(selectedCoin.symbol);
+      
+      if (!hasWallet) {
+        const shouldAddWallet = window.confirm(
+          `برای خرید ${selectedCoin.symbol} نیاز به آدرس کیف پول دارید.\n\nآیا می‌خواهید الان آدرس کیف پول خود را اضافه کنید؟`
+        );
+        
+        if (shouldAddWallet) {
+          // Redirect to profile page
+          navigate('/profile?tab=wallets');
+          return;
+        } else {
+          return; // Cancel the order
+        }
+      }
     }
 
     setOrderLoading(true);
