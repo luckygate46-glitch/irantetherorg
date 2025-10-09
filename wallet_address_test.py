@@ -339,7 +339,7 @@ class WalletAddressSystemTester:
         
         try:
             headers = {"Authorization": f"Bearer {self.user_token}"}
-            response = await self.client.post(f"{BACKEND_URL}/trading/orders", 
+            response = await self.client.post(f"{BACKEND_URL}/trading/order", 
                                             headers=headers, json=buy_order)
             
             if response.status_code == 400:
