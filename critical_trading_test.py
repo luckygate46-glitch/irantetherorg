@@ -525,7 +525,7 @@ class CriticalTradingTester:
                 }
                 
                 btc_response = await self.client.post(
-                    f"{BACKEND_URL}/trading/orders",
+                    f"{BACKEND_URL}/trading/order",
                     headers=headers,
                     json=btc_order_data
                 )
