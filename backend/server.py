@@ -21,6 +21,7 @@ from crypto_prices import price_service
 from ai_admin_services import fraud_detector, market_intelligence, system_intelligence, predictive_analytics
 from ai_user_services import personal_assistant, portfolio_manager, notification_system
 from advanced_ai_services import predictive_market_analysis, sentiment_analysis_engine, portfolio_optimizer
+from comprehensive_ai_services import get_ai_service
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
