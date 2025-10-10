@@ -3629,12 +3629,9 @@ async def get_ai_security_center(admin: User = Depends(get_current_admin)):
         raise HTTPException(status_code=500, detail="خطا در بارگذاری مرکز امنیت")
 
 @api_router.get("/admin/ai/user-analytics")
-async def get_ai_user_analytics(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_ai_user_analytics(admin: User = Depends(get_current_admin)):
     """Get comprehensive AI user analytics data"""
     try:
-        user = await verify_token(credentials.credentials)
-        if not user.get('is_admin'):
-            raise HTTPException(status_code=403, detail="دسترسی محدود به ادمین")
         
         ai_svc = get_ai_service(db)
         
