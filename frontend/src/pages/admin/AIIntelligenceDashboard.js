@@ -28,72 +28,56 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
   const fetchAIData = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       
-      // Simulate AI data - in real implementation, these would be actual AI endpoints
+      // Fetch real AI intelligence dashboard data from backend
+      const response = await axios.get(`${API}/admin/ai/intelligence-dashboard`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const data = response.data;
+      
+      // Set metrics from backend
       setAiMetrics({
-        fraudDetectionAccuracy: 97.8,
-        riskScoreAverage: 2.3,
-        automatedDecisions: 1247,
-        mlModelPerformance: 94.2,
-        predictiveAccuracy: 91.5,
-        alertsGenerated: 23,
-        threatsBlocked: 8,
-        complianceScore: 98.1
+        fraudDetectionAccuracy: data.metrics.fraud_detection_accuracy,
+        riskScoreAverage: data.metrics.risk_score_average,
+        automatedDecisions: data.metrics.automated_decisions,
+        mlModelPerformance: data.metrics.ml_model_performance,
+        predictiveAccuracy: data.metrics.predictive_accuracy,
+        alertsGenerated: data.metrics.alerts_generated,
+        threatsBlocked: data.metrics.threats_blocked,
+        complianceScore: data.metrics.compliance_score
       });
 
-      setRealTimeAlerts([
-        {
-          id: 1,
-          type: 'security',
-          severity: 'high',
-          title: 'شناسایی الگوی تراکنش مشکوک',
-          description: 'کاربر با شناسه 12847 الگوی غیرعادی معاملات نشان می‌دهد',
-          timestamp: new Date().toISOString(),
-          aiConfidence: 89.2
-        },
-        {
-          id: 2,
-          type: 'fraud',
-          severity: 'medium',
-          title: 'تلاش ورود مشکوک',
-          description: '۳ تلاش ورود ناموفق از IP خارجی',
-          timestamp: new Date(Date.now() - 300000).toISOString(),
-          aiConfidence: 76.5
-        },
-        {
-          id: 3,
-          type: 'compliance',
-          severity: 'low',
-          title: 'نیاز به بررسی KYC',
-          description: 'تراکنش بالای حد مجاز بدون KYC کامل',
-          timestamp: new Date(Date.now() - 600000).toISOString(),
-          aiConfidence: 82.1
-        }
-      ]);
+      // Set real-time alerts
+      setRealTimeAlerts(data.real_time_alerts || []);
 
+      // Set market intelligence
       setMarketIntelligence({
-        bitcoinTrend: 'صعودی',
-        marketSentiment: 'مثبت',
-        volumePrediction: '+12.5%',
-        priceVolatility: 'متوسط',
-        iranianMarketHealth: 95.2,
-        liquidityScore: 87.3,
-        tradingPatterns: 'عادی'
+        bitcoinTrend: data.market_intelligence.bitcoin_trend,
+        marketSentiment: data.market_intelligence.market_sentiment,
+        volumePrediction: data.market_intelligence.volume_prediction,
+        priceVolatility: data.market_intelligence.price_volatility,
+        iranianMarketHealth: data.market_intelligence.iranian_market_health,
+        liquidityScore: data.market_intelligence.liquidity_score,
+        tradingPatterns: data.market_intelligence.trading_patterns
       });
 
+      // Set system health
       setSystemHealth({
-        overallHealth: 96.7,
-        apiResponseTime: 45,
-        databasePerformance: 92.1,
-        serverLoad: 23.4,
-        memoryUsage: 67.8,
-        diskSpace: 43.2,
-        networkLatency: 12,
-        errorRate: 0.03
+        overallHealth: data.system_health.overall_health,
+        apiResponseTime: data.system_health.api_response_time,
+        databasePerformance: data.system_health.database_performance,
+        serverLoad: data.system_health.server_load,
+        memoryUsage: data.system_health.memory_usage,
+        diskSpace: data.system_health.disk_space,
+        networkLatency: data.system_health.network_latency,
+        errorRate: data.system_health.error_rate
       });
 
     } catch (error) {
       console.error('Error fetching AI data:', error);
+      // Keep existing data on error, don't clear it
     } finally {
       setLoading(false);
     }
