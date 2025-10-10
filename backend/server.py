@@ -2421,6 +2421,7 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
         if not holding or holding["amount"] < order_data.amount_crypto:
             raise HTTPException(status_code=400, detail="موجودی ارز کافی ندارید")
         
+        calculated_amount_crypto = order_data.amount_crypto  # Use provided amount for sell
         total_value_tmn = order_data.amount_crypto * current_price_tmn
         
     elif order_data.order_type == "trade":
