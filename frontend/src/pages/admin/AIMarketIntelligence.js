@@ -28,20 +28,29 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
   const fetchMarketIntelligence = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       
-      // Simulate AI market intelligence data
-      setMarketMetrics({
-        globalVolume24h: 89540000000,
-        iranianVolume24h: 45600000000,
-        marketCap: 2340000000000,
-        dominanceBTC: 45.7,
-        volatilityIndex: 62.3,
-        fearGreedIndex: 67,
-        liquidityScore: 89.2,
-        arbitrageOpportunities: 12
+      // Fetch real AI market intelligence data from backend
+      const response = await axios.get(`${API}/admin/ai/market-intelligence`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      setPriceAnalysis([
+      const data = response.data;
+      
+      // Set market metrics from backend
+      setMarketMetrics({
+        globalVolume24h: data.market_metrics.global_volume_24h,
+        iranianVolume24h: data.market_metrics.iranian_volume_24h,
+        marketCap: data.market_metrics.market_cap,
+        dominanceBTC: data.market_metrics.dominance_btc,
+        volatilityIndex: data.market_metrics.volatility_index,
+        fearGreedIndex: data.market_metrics.fear_greed_index,
+        liquidityScore: data.market_metrics.liquidity_score,
+        arbitrageOpportunities: data.market_metrics.arbitrage_opportunities
+      });
+
+      // Set price analysis from backend
+      setPriceAnalysis(data.price_analysis || []);
         {
           symbol: 'BTC',
           name: 'Bitcoin',
