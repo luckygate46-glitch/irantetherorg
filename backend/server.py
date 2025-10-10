@@ -2326,14 +2326,14 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
             detail="برای معامله باید احراز هویت سطح ۲ را تکمیل کنید"
         )
     
-    # Get current price
-    coin_data = await price_service.get_coin_details(order_data.coin_id)
-    if not coin_data["success"]:
-        raise HTTPException(status_code=404, detail="ارز مورد نظر یافت نشد")
+    # Get current price in Toman from Nobitex
+    nobitex_service = get_price_service(db)
+    coin_price_data = await nobitex_service.get_coin_price(order_data.coin_id)
     
-    current_price_usd = coin_data["data"]["market_data"]["current_price"]["usd"]
-    # Approximate USD to IRR conversion (1 USD = 50,000 IRR)
-    current_price_tmn = current_price_usd * 50000
+    if not coin_price_data:
+        raise HTTPException(status_code=404, detail="قیمت ارز یافت نشد")
+    
+    current_price_tmn = coin_price_data['price_tmn']
     
     total_value_tmn = 0
     
