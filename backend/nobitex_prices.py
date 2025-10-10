@@ -164,7 +164,7 @@ class NobitexPriceService:
     async def _store_prices_in_db(self, prices: Dict):
         """Store prices in MongoDB"""
         try:
-            if not self.db:
+            if self.db is None:
                 return
             
             # Store each price with timestamp
