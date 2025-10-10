@@ -85,9 +85,13 @@ class NobitexPriceService:
             return self._get_fallback_prices()
     
     async def _fetch_abantether_api(self) -> Dict:
-        """Fetch prices from Abantether API"""
+        """Fetch prices from Abantether API - with improved error handling"""
         try:
-            async with httpx.AsyncClient(timeout=20.0, follow_redirects=True) as client:
+            async with httpx.AsyncClient(
+                timeout=httpx.Timeout(20.0, connect=10.0),
+                follow_redirects=True,
+                verify=False  # Skip SSL verification if needed
+            ) as client:
                 headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
                     'Accept': 'application/json, text/plain, */*',
