@@ -51,116 +51,15 @@ const AIUserAnalytics = ({ user, onLogout }) => {
 
       // Set user segments from backend
       setUserSegments(data.user_segments || []);
-        {
-          id: 1,
-          name: 'معامله‌گران حرفه‌ای',
-          users: 342,
-          avgVolume: 15000000,
-          riskLevel: 'low',
-          characteristics: ['حجم بالا', 'فعالیت منظم', 'KYC کامل'],
-          growthRate: '+15.2%'
-        },
-        {
-          id: 2,
-          name: 'سرمایه‌گذاران مبتدی',
-          users: 1245,
-          avgVolume: 2500000,
-          riskLevel: 'medium',
-          characteristics: ['حجم کم', 'یادگیری', 'احتیاط بالا'],
-          growthRate: '+8.7%'
-        },
-        {
-          id: 3,
-          name: 'معامله‌گران روزانه',
-          users: 567,
-          avgVolume: 8500000,
-          riskLevel: 'medium',
-          characteristics: ['فعالیت روزانه', 'سود کوتاه مدت', 'ریسک پذیر'],
-          growthRate: '+22.1%'
-        },
-        {
-          id: 4,
-          name: 'کاربران غیرفعال',
-          users: 693,
-          avgVolume: 0,
-          riskLevel: 'high',
-          characteristics: ['بدون فعالیت', 'احتمال ترک', 'نیاز به تشویق'],
-          growthRate: '-5.3%'
-        }
-      ]);
 
-      setRiskScores([
-        {
-          userId: 'usr_12847',
-          name: 'احمد محمدی',
-          riskScore: 8.7,
-          riskLevel: 'high',
-          reason: 'الگوی غیرعادی تراکنش',
-          lastActivity: new Date(Date.now() - 3600000).toISOString(),
-          confidence: 89.2
-        },
-        {
-          userId: 'usr_34521',
-          name: 'فاطمه رضایی',
-          riskScore: 6.3,
-          riskLevel: 'medium',
-          reason: 'ورود از مکان جدید',
-          lastActivity: new Date(Date.now() - 7200000).toISOString(),
-          confidence: 76.5
-        },
-        {
-          userId: 'usr_78965',
-          name: 'علی حسینی',
-          riskScore: 2.1,
-          riskLevel: 'low',
-          reason: 'کاربر معتبر',
-          lastActivity: new Date(Date.now() - 1800000).toISOString(),
-          confidence: 94.8
-        }
-      ]);
+      // Set risk scores (keep empty for now, can be extended later)
+      setRiskScores([]);
 
-      setBehaviorInsights([
-        {
-          id: 1,
-          insight: 'کاربران در ساعات 9-11 صبح بیشترین فعالیت را دارند',
-          category: 'زمان‌بندی',
-          impact: 'high',
-          recommendation: 'ارسال اطلاعیه‌های مهم در این بازه زمانی'
-        },
-        {
-          id: 2,
-          insight: 'کاربرانی که KYC کامل دارند ۳ برابر بیشتر معامله می‌کنند',
-          category: 'احراز هویت',
-          impact: 'high',
-          recommendation: 'تشویق کاربران برای تکمیل فرآیند KYC'
-        },
-        {
-          id: 3,
-          insight: 'موبایل اپ ۶۷٪ از معاملات را شامل می‌شود',
-          category: 'پلتفرم',
-          impact: 'medium',
-          recommendation: 'بهبود تجربه کاربری موبایل'
-        }
-      ]);
+      // Set behavior insights from backend
+      setBehaviorInsights(data.behavior_insights || []);
 
-      setChurnPredictions([
-        {
-          userId: 'usr_45231',
-          name: 'مریم صادقی',
-          churnProbability: 87.3,
-          daysToChurn: 5,
-          reason: 'کاهش فعالیت و عدم ورود',
-          suggestedAction: 'ارسال پیام تشویقی و پیشنهاد ویژه'
-        },
-        {
-          userId: 'usr_89674',
-          name: 'حسن کریمی',
-          churnProbability: 72.1,
-          daysToChurn: 12,
-          reason: 'استفاده کمتر از پلتفرم',
-          suggestedAction: 'آموزش ویژگی‌های جدید'
-        }
-      ]);
+      // Set churn predictions from backend
+      setChurnPredictions(data.churn_predictions || []);
 
     } catch (error) {
       console.error('Error fetching user analytics:', error);
