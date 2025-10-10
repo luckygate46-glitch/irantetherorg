@@ -2404,6 +2404,8 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
                 detail=f"برای خرید {order_data.coin_symbol} ابتدا باید آدرس کیف پول تایید شده اضافه کنید"
             )
         
+        # Calculate how much crypto user will receive
+        calculated_amount_crypto = order_data.amount_tmn / current_price_tmn
         total_value_tmn = order_data.amount_tmn
         
     elif order_data.order_type == "sell":
