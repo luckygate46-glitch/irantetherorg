@@ -28,20 +28,29 @@ const AIUserAnalytics = ({ user, onLogout }) => {
   const fetchUserAnalytics = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       
-      // Simulate AI user analytics data
-      setUserMetrics({
-        totalUsers: 2847,
-        activeUsers: 1923,
-        newUsersToday: 47,
-        highValueUsers: 156,
-        averageRiskScore: 2.3,
-        churnRate: 12.5,
-        lifetimeValue: 2350000,
-        engagementScore: 78.9
+      // Fetch real AI user analytics data from backend
+      const response = await axios.get(`${API}/admin/ai/user-analytics`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      setUserSegments([
+      const data = response.data;
+      
+      // Set metrics from backend
+      setUserMetrics({
+        totalUsers: data.analytics_metrics.total_users,
+        activeUsers: data.analytics_metrics.active_users,
+        newUsersToday: data.analytics_metrics.new_users_today,
+        highValueUsers: data.analytics_metrics.high_value_users,
+        averageRiskScore: data.analytics_metrics.average_risk_score,
+        churnRate: data.analytics_metrics.churn_rate,
+        lifetimeValue: data.analytics_metrics.lifetime_value,
+        engagementScore: data.analytics_metrics.engagement_score
+      });
+
+      // Set user segments from backend
+      setUserSegments(data.user_segments || []);
         {
           id: 1,
           name: 'معامله‌گران حرفه‌ای',
