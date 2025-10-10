@@ -162,15 +162,9 @@ export default function Market({ user }) {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-slate-400 text-xs mb-1">حجم معاملات</p>
-                        <p className="text-white font-semibold">
-                          ${(volume / 1e9).toFixed(2)}B
-                        </p>
-                      </div>
+                    <div className="flex items-center justify-center">
                       <Button 
-                        className="bg-emerald-600 hover:bg-emerald-700"
+                        className="bg-emerald-600 hover:bg-emerald-700 w-full md:w-auto"
                         onClick={() => {
                           if (user?.kyc_level >= 1) {
                             navigate(`/trade/${coin.id}`);
