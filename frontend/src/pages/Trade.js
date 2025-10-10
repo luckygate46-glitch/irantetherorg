@@ -213,8 +213,8 @@ const Trade = ({ user, onLogout }) => {
   };
 
   const formatPrice = (price) => {
-    const tmn_price = price * 50000; // USD to IRR conversion
-    return new Intl.NumberFormat('fa-IR').format(Math.round(tmn_price));
+    // Price is already in Toman from backend, no conversion needed
+    return new Intl.NumberFormat('fa-IR').format(Math.round(price));
   };
 
   if (loading) {
