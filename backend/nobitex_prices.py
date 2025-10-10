@@ -45,7 +45,7 @@ COIN_MAP = {
 }
 
 class NobitexPriceService:
-    """Scrape and manage cryptocurrency prices in Toman from Nobitex"""
+    """Scrape and manage cryptocurrency prices in Toman from Abantether"""
     
     def __init__(self, db=None):
         self.db = db
@@ -54,52 +54,97 @@ class NobitexPriceService:
         self.update_interval = 30 * 60  # 30 minutes in seconds
         
     async def scrape_nobitex_prices(self) -> Dict:
-        """Scrape prices from Nobitex.ir website"""
+        """Fetch real prices from Abantether.com"""
         try:
-            logger.info("🔄 Scraping Nobitex prices...")
+            logger.info("🔄 Fetching prices from Abantether.com...")
             
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                # Add headers to mimic browser
+            # Method 1: Try Abantether API first
+            prices = await self._fetch_abantether_api()
+            
+            # Method 2: If API fails, scrape individual coin pages
+            if not prices or len(prices) < 5:
+                logger.warning("API yielded few results, trying web scraping...")
+                prices = await self._scrape_abantether_pages()
+            
+            if prices:
+                logger.info(f"✅ Successfully fetched {len(prices)} prices from Abantether")
+                self.cached_prices = prices
+                self.last_update = datetime.now(timezone.utc)
+                
+                # Store in database
+                if self.db is not None:
+                    await self._store_prices_in_db(prices)
+                
+                return {'success': True, 'data': prices}
+            else:
+                logger.warning("No prices found, using fallback")
+                return self._get_fallback_prices()
+                    
+        except Exception as e:
+            logger.error(f"Error fetching Abantether prices: {str(e)}")
+            return self._get_fallback_prices()
+    
+    async def _fetch_abantether_api(self) -> Dict:
+        """Fetch prices from Abantether API"""
+        try:
+            async with httpx.AsyncClient(timeout=20.0, follow_redirects=True) as client:
                 headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                    'Accept-Language': 'fa-IR,fa;q=0.9,en-US;q=0.8,en;q=0.7',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    'Accept': 'application/json, text/plain, */*',
+                    'Accept-Language': 'fa-IR,fa;q=0.9',
+                    'Referer': 'https://abantether.com/coins',
                 }
                 
-                response = await client.get('https://nobitex.ir/price/', headers=headers)
+                response = await client.get(ABANTETHER_API_URL, headers=headers)
                 
-                if response.status_code != 200:
-                    logger.error(f"Failed to fetch Nobitex page: {response.status_code}")
-                    return self._get_fallback_prices()
-                
-                # Parse HTML
-                soup = BeautifulSoup(response.text, 'html.parser')
-                prices = {}
-                
-                # Find all crypto price elements
-                # Nobitex uses various structures, we'll try to find price data
-                
-                # Method 1: Look for price table or list
-                price_elements = soup.find_all(['tr', 'div'], class_=re.compile(r'price|coin|crypto', re.I))
-                
-                for element in price_elements:
+                if response.status_code == 200:
                     try:
-                        # Try to extract coin symbol and price
-                        text = element.get_text()
-                        
-                        # Look for known symbols
-                        for symbol, coin_info in NOBITEX_COIN_MAP.items():
-                            if symbol in text or coin_info['name'] in text:
-                                # Extract price (numbers with commas)
-                                price_match = re.search(r'([\d,]+)\s*(?:تومان|TMN|IRT)', text)
-                                if price_match:
-                                    price_str = price_match.group(1).replace(',', '')
-                                    price_tmn = float(price_str)
-                                    
-                                    # Extract 24h change if available
-                                    change_match = re.search(r'([-+]?\d+\.?\d*)\s*%', text)
-                                    change_24h = float(change_match.group(1)) if change_match else 0
-                                    
+                        data = response.json()
+                    except:
+                        data = json.loads(response.text)
+                    
+                    prices = {}
+                    
+                    # Parse response - Abantether returns list of coins
+                    if isinstance(data, list):
+                        coins_data = data
+                    elif isinstance(data, dict) and 'data' in data:
+                        coins_data = data['data']
+                    elif isinstance(data, dict) and 'coins' in data:
+                        coins_data = data['coins']
+                    else:
+                        coins_data = []
+                    
+                    for coin_data in coins_data:
+                        try:
+                            # Get symbol (might be 'symbol', 'code', or 'ticker')
+                            symbol = (coin_data.get('symbol') or 
+                                    coin_data.get('code') or 
+                                    coin_data.get('ticker', '')).upper()
+                            
+                            if symbol in COIN_MAP:
+                                coin_info = COIN_MAP[symbol]
+                                
+                                # Get price - try different field names
+                                price_tmn = (coin_data.get('sell_price') or
+                                           coin_data.get('price') or
+                                           coin_data.get('buy_price') or
+                                           coin_data.get('last_price') or 0)
+                                
+                                # Convert to float if string
+                                if isinstance(price_tmn, str):
+                                    price_tmn = float(price_tmn.replace(',', ''))
+                                else:
+                                    price_tmn = float(price_tmn)
+                                
+                                # Get 24h change
+                                change_24h = coin_data.get('change_24h') or coin_data.get('change') or 0
+                                if isinstance(change_24h, str):
+                                    change_24h = float(change_24h.replace('%', '').replace(',', ''))
+                                else:
+                                    change_24h = float(change_24h)
+                                
+                                if price_tmn > 0:
                                     prices[coin_info['id']] = {
                                         'symbol': symbol,
                                         'name': coin_info['name'],
@@ -107,65 +152,108 @@ class NobitexPriceService:
                                         'change_24h': change_24h,
                                         'last_updated': datetime.now(timezone.utc).isoformat()
                                     }
-                    except Exception as e:
-                        continue
-                
-                # If scraping didn't work, try API approach (Nobitex has public API)
-                if len(prices) < 5:
-                    logger.warning("Scraping yielded few results, trying Nobitex API...")
-                    prices = await self._fetch_nobitex_api()
-                
-                if prices:
-                    logger.info(f"✅ Successfully fetched {len(prices)} prices from Nobitex")
-                    self.cached_prices = prices
-                    self.last_update = datetime.now(timezone.utc)
+                                    
+                                    logger.info(f"✅ {symbol}: {price_tmn:,.0f} تومان")
+                        
+                        except Exception as e:
+                            logger.debug(f"Error parsing coin data: {str(e)}")
+                            continue
                     
-                    # Store in database
-                    if self.db:
-                        await self._store_prices_in_db(prices)
-                    
-                    return {'success': True, 'data': prices}
+                    if prices:
+                        logger.info(f"✅ Fetched {len(prices)} prices from Abantether API")
+                    return prices
                 else:
-                    logger.warning("No prices found, using fallback")
-                    return self._get_fallback_prices()
+                    logger.warning(f"Abantether API returned status {response.status_code}")
+                    return {}
                     
         except Exception as e:
-            logger.error(f"Error scraping Nobitex: {str(e)}")
-            return self._get_fallback_prices()
+            logger.error(f"Error fetching Abantether API: {str(e)}")
+            return {}
     
-    async def _fetch_nobitex_api(self) -> Dict:
-        """Fetch prices from Nobitex public API"""
+    async def _scrape_abantether_pages(self) -> Dict:
+        """Scrape individual coin pages from Abantether as fallback"""
         try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                response = await client.get('https://api.nobitex.ir/v2/orderbook/all')
+            prices = {}
+            
+            # Priority coins to scrape
+            priority_coins = ['BTC', 'ETH', 'USDT', 'BNB', 'XRP', 'ADA', 'SOL', 'DOGE']
+            
+            async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml',
+                    'Accept-Language': 'fa-IR,fa;q=0.9',
+                }
                 
-                if response.status_code == 200:
-                    data = response.json()
-                    prices = {}
-                    
-                    # Parse API response
-                    for symbol, coin_info in NOBITEX_COIN_MAP.items():
-                        # Nobitex uses pairs like BTCIRT, ETHIRT
-                        pair_key = f"{symbol}IRT"
+                for symbol in priority_coins:
+                    try:
+                        if symbol not in COIN_MAP:
+                            continue
                         
-                        if pair_key in data:
-                            pair_data = data[pair_key]
+                        coin_info = COIN_MAP[symbol]
+                        url = f"{ABANTETHER_BASE_URL}/coin/{symbol}"
+                        
+                        response = await client.get(url, headers=headers)
+                        
+                        if response.status_code == 200:
+                            soup = BeautifulSoup(response.text, 'html.parser')
                             
-                            # Get last price
-                            last_price = float(pair_data.get('lastTradePrice', 0))
-                            if last_price > 0:
+                            # Try to find price in various places
+                            price_tmn = 0
+                            change_24h = 0
+                            
+                            # Look for price elements
+                            price_elements = soup.find_all(['div', 'span', 'p'], 
+                                                          class_=re.compile(r'price|value|amount', re.I))
+                            
+                            for elem in price_elements:
+                                text = elem.get_text().strip()
+                                # Look for large numbers (prices in Toman)
+                                price_match = re.search(r'([\d,]+(?:\.\d+)?)\s*(?:تومان|TMN)?', text)
+                                if price_match:
+                                    try:
+                                        potential_price = float(price_match.group(1).replace(',', ''))
+                                        # Reasonable price check
+                                        if potential_price > 100:
+                                            price_tmn = potential_price
+                                            break
+                                    except:
+                                        continue
+                            
+                            # Look for change percentage
+                            change_elements = soup.find_all(['div', 'span'], 
+                                                           class_=re.compile(r'change|percent', re.I))
+                            for elem in change_elements:
+                                text = elem.get_text().strip()
+                                change_match = re.search(r'([-+]?\d+\.?\d*)\s*%', text)
+                                if change_match:
+                                    try:
+                                        change_24h = float(change_match.group(1))
+                                        break
+                                    except:
+                                        continue
+                            
+                            if price_tmn > 0:
                                 prices[coin_info['id']] = {
                                     'symbol': symbol,
                                     'name': coin_info['name'],
-                                    'price_tmn': last_price,
-                                    'change_24h': 0,  # API might not provide this
+                                    'price_tmn': price_tmn,
+                                    'change_24h': change_24h,
                                     'last_updated': datetime.now(timezone.utc).isoformat()
                                 }
-                    
-                    return prices
-                    
+                                logger.info(f"✅ Scraped {symbol}: {price_tmn:,.0f} تومان")
+                        
+                        # Small delay between requests
+                        await asyncio.sleep(0.5)
+                        
+                    except Exception as e:
+                        logger.debug(f"Error scraping {symbol}: {str(e)}")
+                        continue
+            
+            return prices
+            
         except Exception as e:
-            logger.error(f"Error fetching Nobitex API: {str(e)}")
+            logger.error(f"Error in page scraping: {str(e)}")
             return {}
     
     async def _store_prices_in_db(self, prices: Dict):
