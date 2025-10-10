@@ -216,11 +216,11 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge className={getSeverityColor(alert.severity)}>
-                          {alert.severity === 'high' ? 'بالا' : 
+                          {alert.severity === 'high' || alert.severity === 'critical' ? 'بالا' : 
                            alert.severity === 'medium' ? 'متوسط' : 'پایین'}
                         </Badge>
                         <Badge variant="outline" className="text-green-400 border-green-400">
-                          اعتماد AI: {alert.aiConfidence}%
+                          اعتماد AI: {alert.ai_confidence || alert.aiConfidence}%
                         </Badge>
                       </div>
                     </div>
