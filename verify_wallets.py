@@ -21,7 +21,7 @@ async def verify_wallets():
     for wallet in wallets:
         print(f'  - {wallet["symbol"]}: verified={wallet["verified"]}')
     
-    await client.close()
+    client.close()
 
 if __name__ == "__main__":
     asyncio.run(verify_wallets())
