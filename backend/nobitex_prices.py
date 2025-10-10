@@ -61,9 +61,14 @@ class NobitexPriceService:
             # Method 1: Try Abantether API first
             prices = await self._fetch_abantether_api()
             
-            # Method 2: If API fails, scrape individual coin pages
+            # Method 2: Try Nobitex API (reliable Iranian source)
             if not prices or len(prices) < 5:
-                logger.warning("API yielded few results, trying web scraping...")
+                logger.warning("Abantether API yielded few results, trying Nobitex API...")
+                prices = await self._fetch_nobitex_api()
+            
+            # Method 3: If both APIs fail, scrape Abantether pages
+            if not prices or len(prices) < 5:
+                logger.warning("APIs yielded few results, trying web scraping...")
                 prices = await self._scrape_abantether_pages()
             
             if prices:
