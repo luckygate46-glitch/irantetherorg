@@ -394,30 +394,23 @@ class BuyOrderTester:
         print("\n✅ Verifying Wallet Address for Testing...")
         
         try:
-            # Since there's no API endpoint to verify wallet addresses,
-            # we'll use MongoDB directly through a simple script
-            import subprocess
+            # Use pymongo to directly update the database
+            from motor.motor_asyncio import AsyncIOMotorClient
+            import os
             
-            mongo_command = f'''
-            mongo --eval "
-            db = db.getSiblingDB('test_database');
-            result = db.wallet_addresses.updateMany(
-                {{user_id: '{self.test_user_id}', symbol: 'BTC'}},
-                {{\$set: {{verified: true}}}}
-            );
-            print('Updated ' + result.modifiedCount + ' wallet addresses');
-            "
-            '''
+            mongo_url = "mongodb://localhost:27017"
+            client = AsyncIOMotorClient(mongo_url)
+            db = client["test_database"]
             
-            result = subprocess.run(['bash', '-c', mongo_command], 
-                                  capture_output=True, text=True, timeout=10)
+            result = await db.wallet_addresses.update_many(
+                {"user_id": self.test_user_id, "symbol": "BTC"},
+                {"$set": {"verified": True}}
+            )
             
-            if result.returncode == 0:
-                print("✅ Wallet address verified successfully")
-                return True
-            else:
-                print(f"❌ Failed to verify wallet address: {result.stderr}")
-                return False
+            await client.close()
+            
+            print(f"✅ Wallet address verified successfully (updated {result.modified_count} addresses)")
+            return True
                 
         except Exception as e:
             print(f"❌ Verify wallet address error: {str(e)}")
