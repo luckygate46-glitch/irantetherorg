@@ -358,6 +358,34 @@ class BuyOrderTester:
             print(f"❌ Add balance error: {str(e)}")
             return False
 
+    async def add_wallet_address(self):
+        """Add a wallet address for testing successful buy orders"""
+        print("\n🏦 Adding Wallet Address for Testing...")
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.user_token}"}
+            wallet_data = {
+                "symbol": "BTC",
+                "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",  # Genesis block address
+                "label": "Test BTC Wallet"
+            }
+            
+            response = await self.client.post(f"{BACKEND_URL}/user/wallet-addresses", 
+                                            headers=headers, json=wallet_data)
+            
+            print(f"📊 Response Status: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ Wallet address added successfully")
+                return True
+            else:
+                print(f"❌ Failed to add wallet address: {response.status_code} - {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Add wallet address error: {str(e)}")
+            return False
+
     async def run_all_tests(self):
         """Run all buy order tests"""
         print("🚀 Starting Buy Order Functionality Testing...")
