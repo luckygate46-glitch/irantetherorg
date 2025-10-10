@@ -2347,9 +2347,9 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
             detail="برای معامله باید احراز هویت سطح ۲ را تکمیل کنید"
         )
     
-    # Get current price in Toman from Nobitex
-    nobitex_service = get_price_service(db)
-    coin_price_data = await nobitex_service.get_coin_price(order_data.coin_id)
+    # Get current price in Toman from Wallex
+    wallex_service = get_wallex_service()
+    coin_price_data = await wallex_service.get_coin_price(order_data.coin_id)
     
     if not coin_price_data:
         raise HTTPException(status_code=404, detail="قیمت ارز یافت نشد")
