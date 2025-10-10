@@ -378,12 +378,49 @@ class BuyOrderTester:
             if response.status_code == 200:
                 print("✅ Wallet address added successfully")
                 return True
+            elif response.status_code == 400 and "قبلاً اضافه شده" in response.text:
+                print("✅ Wallet address already exists")
+                return True
             else:
                 print(f"❌ Failed to add wallet address: {response.status_code} - {response.text}")
                 return False
                 
         except Exception as e:
             print(f"❌ Add wallet address error: {str(e)}")
+            return False
+
+    async def verify_wallet_address_directly(self):
+        """Verify wallet address by directly updating the database"""
+        print("\n✅ Verifying Wallet Address for Testing...")
+        
+        try:
+            # Since there's no API endpoint to verify wallet addresses,
+            # we'll use MongoDB directly through a simple script
+            import subprocess
+            
+            mongo_command = f'''
+            mongo --eval "
+            db = db.getSiblingDB('test_database');
+            result = db.wallet_addresses.updateMany(
+                {{user_id: '{self.test_user_id}', symbol: 'BTC'}},
+                {{\$set: {{verified: true}}}}
+            );
+            print('Updated ' + result.modifiedCount + ' wallet addresses');
+            "
+            '''
+            
+            result = subprocess.run(['bash', '-c', mongo_command], 
+                                  capture_output=True, text=True, timeout=10)
+            
+            if result.returncode == 0:
+                print("✅ Wallet address verified successfully")
+                return True
+            else:
+                print(f"❌ Failed to verify wallet address: {result.stderr}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Verify wallet address error: {str(e)}")
             return False
 
     async def run_all_tests(self):
