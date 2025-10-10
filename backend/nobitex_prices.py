@@ -348,7 +348,7 @@ class NobitexPriceService:
 
 # Background task scheduler
 class PriceUpdateScheduler:
-    """Schedule regular price updates from Nobitex"""
+    """Schedule regular price updates from Abantether"""
     
     def __init__(self, db):
         self.db = db
@@ -362,7 +362,7 @@ class PriceUpdateScheduler:
             return
         
         self.is_running = True
-        logger.info("🚀 Starting Nobitex price update scheduler (every 30 minutes)")
+        logger.info("🚀 Starting Abantether price update scheduler (every 30 minutes)")
         
         # Initial fetch
         await self.price_service.scrape_nobitex_prices()
