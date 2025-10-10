@@ -7,6 +7,7 @@ import {
   Users, TrendingUp, UserCheck, UserX, Brain, Target, 
   Activity, BarChart3, PieChart, Clock, Star, AlertCircle, RefreshCw
 } from 'lucide-react';
+import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
