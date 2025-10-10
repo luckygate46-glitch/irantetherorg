@@ -1564,20 +1564,42 @@ async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_cu
 
 @api_router.get("/crypto/prices")
 async def get_crypto_prices():
-    """Get current prices for top cryptocurrencies"""
-    # Check cache first
-    cache_key = "crypto_prices"
-    cached_result = get_from_cache(cache_key)
-    if cached_result:
-        return cached_result
-    
-    result = await price_service.get_prices()
-    if not result["success"]:
-        raise HTTPException(status_code=500, detail=result.get("error"))
-    
-    # Cache the result
-    set_cache(cache_key, result)
-    return result
+    """Get current prices for top cryptocurrencies in Toman (from Nobitex)"""
+    try:
+        # Get Nobitex price service
+        nobitex_service = get_price_service(db)
+        
+        # Get prices from database (cached) or fetch fresh
+        result = await nobitex_service.get_prices_from_db()
+        
+        if not result.get("success"):
+            raise HTTPException(status_code=500, detail="خطا در دریافت قیمت‌ها")
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error getting crypto prices: {str(e)}")
+        raise HTTPException(status_code=500, detail="خطا در دریافت قیمت‌ها")
+
+@api_router.post("/admin/crypto/refresh-prices")
+async def refresh_crypto_prices(admin: User = Depends(get_current_admin)):
+    """Manually trigger price update from Nobitex (Admin only)"""
+    try:
+        nobitex_service = get_price_service(db)
+        result = await nobitex_service.scrape_nobitex_prices()
+        
+        if result.get("success"):
+            return {
+                "message": "قیمت‌ها با موفقیت به‌روزرسانی شدند",
+                "prices_count": len(result.get("data", {})),
+                "last_update": nobitex_service.last_update.isoformat() if nobitex_service.last_update else None
+            }
+        else:
+            raise HTTPException(status_code=500, detail="خطا در به‌روزرسانی قیمت‌ها")
+            
+    except Exception as e:
+        logger.error(f"Error refreshing prices: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/crypto/{coin_id}")
 async def get_coin_details(coin_id: str):
