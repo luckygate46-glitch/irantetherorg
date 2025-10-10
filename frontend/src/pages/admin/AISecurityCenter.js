@@ -29,17 +29,25 @@ const AISecurityCenter = ({ user, onLogout }) => {
   const fetchSecurityData = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       
-      // Simulate AI security data
+      // Fetch real AI security data from backend
+      const response = await axios.get(`${API}/admin/ai/security-center`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const data = response.data;
+      
+      // Set metrics from backend
       setSecurityMetrics({
-        threatsBlocked: 127,
-        fraudDetected: 8,
-        suspiciousLogins: 23,
-        amlViolations: 3,
-        riskScore: 2.1,
-        falsePositives: 0.02,
-        responseTime: 0.3,
-        confidenceLevel: 96.7
+        threatsBlocked: data.security_metrics.threats_blocked,
+        fraudDetected: data.security_metrics.fraud_detected,
+        suspiciousLogins: data.security_metrics.suspicious_logins,
+        amlViolations: data.security_metrics.aml_violations,
+        riskScore: data.security_metrics.risk_score,
+        falsePositives: data.security_metrics.false_positives,
+        responseTime: data.security_metrics.response_time,
+        confidenceLevel: data.security_metrics.confidence_level
       });
 
       setFraudAlerts([
