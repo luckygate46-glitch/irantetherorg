@@ -18,6 +18,7 @@ import time
 import asyncio
 from ai_services import chatbot, market_analyst, portfolio_advisor, price_predictor, risk_analyzer, news_summarizer
 from crypto_prices import price_service
+from nobitex_prices import get_price_service, start_price_scheduler
 from ai_admin_services import fraud_detector, market_intelligence, system_intelligence, predictive_analytics
 from ai_user_services import personal_assistant, portfolio_manager, notification_system
 from advanced_ai_services import predictive_market_analysis, sentiment_analysis_engine, portfolio_optimizer
