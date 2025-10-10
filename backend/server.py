@@ -2442,12 +2442,15 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
         total_value_tmn = order_data.amount_crypto * current_price_tmn
     
     # Create trading order
+    # For buy orders, use calculated_amount_crypto; for sell/trade, use provided amount_crypto
+    final_amount_crypto = calculated_amount_crypto if order_data.order_type == "buy" else order_data.amount_crypto
+    
     trading_order = TradingOrder(
         user_id=current_user.id,
         order_type=order_data.order_type,
         coin_symbol=order_data.coin_symbol,
         coin_id=order_data.coin_id,
-        amount_crypto=order_data.amount_crypto,
+        amount_crypto=final_amount_crypto,
         amount_tmn=order_data.amount_tmn,
         target_coin_symbol=order_data.target_coin_symbol,
         target_coin_id=order_data.target_coin_id,
