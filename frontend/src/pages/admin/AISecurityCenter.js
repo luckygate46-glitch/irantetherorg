@@ -50,74 +50,20 @@ const AISecurityCenter = ({ user, onLogout }) => {
         confidenceLevel: data.security_metrics.confidence_level
       });
 
-      setFraudAlerts([
-        {
-          id: 1,
-          type: 'money_laundering',
-          severity: 'critical',
-          userId: 'usr_12847',
-          title: 'الگوی مشکوک پولشویی',
-          description: 'تراکنش‌های متعدد کوچک برای پنهان کردن منشأ پول',
-          amount: 15000000,
-          confidence: 94.2,
-          timestamp: new Date().toISOString(),
-          status: 'investigating',
-          aiTags: ['suspicious_pattern', 'high_frequency', 'small_amounts']
-        },
-        {
-          id: 2,
-          type: 'identity_theft',
-          severity: 'high',
-          userId: 'usr_89234',
-          title: 'سرقت هویت احتمالی',
-          description: 'ورود از IP جدید با اطلاعات تغییر یافته',
-          confidence: 89.1,
-          timestamp: new Date(Date.now() - 600000).toISOString(),
-          status: 'pending_review',
-          aiTags: ['geo_anomaly', 'device_mismatch', 'behavior_change']
-        },
-        {
-          id: 3,
-          type: 'trading_manipulation',
-          severity: 'medium',
-          userId: 'usr_45612',
-          title: 'دستکاری احتمالی معاملات',
-          description: 'الگوی غیرعادی خرید و فروش در زمان‌های خاص',
-          confidence: 76.8,
-          timestamp: new Date(Date.now() - 1200000).toISOString(),
-          status: 'auto_resolved',
-          aiTags: ['timing_pattern', 'volume_spike', 'market_manipulation']
-        }
-      ]);
+      // Set fraud alerts from backend
+      setFraudAlerts(data.fraud_alerts || []);
 
-      setSuspiciousActivities([
-        {
-          id: 1,
-          user: 'کاربر ناشناس',
-          activity: 'تلاش ورود با رمز عبور اشتباه',
-          ip: '185.143.234.111',
-          location: 'ترکیه',
-          riskLevel: 'high',
-          timestamp: new Date(Date.now() - 300000).toISOString()
-        },
-        {
-          id: 2,
-          user: 'احمد رضایی',
-          activity: 'تغییر آدرس کیف پول بلافاصله پس از تراکنش بزرگ',
-          ip: '78.39.114.25',
-          location: 'تهران، ایران',
-          riskLevel: 'medium',
-          timestamp: new Date(Date.now() - 900000).toISOString()
-        }
-      ]);
+      // Keep suspicious activities as mock for now (can be added to backend later)
+      setSuspiciousActivities([]);
 
+      // Set threat intelligence from backend
       setThreatIntelligence({
-        globalThreats: 1247,
-        iranianThreats: 23,
-        blockedIPs: 89,
-        maliciousTransactions: 15,
-        phishingAttempts: 7,
-        ddosAttempts: 2
+        globalThreats: data.threat_intelligence.global_threats,
+        iranianThreats: data.threat_intelligence.iranian_threats,
+        blockedIPs: data.threat_intelligence.blocked_ips,
+        maliciousTransactions: data.threat_intelligence.malicious_transactions,
+        phishingAttempts: data.threat_intelligence.phishing_attempts,
+        ddosAttempts: data.threat_intelligence.ddos_attempts
       });
 
     } catch (error) {
