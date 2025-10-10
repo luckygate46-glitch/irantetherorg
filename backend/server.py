@@ -3571,6 +3571,135 @@ async def create_staking_position(stake_data: dict, current_user: User = Depends
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== COMPREHENSIVE AI ADMIN ENDPOINTS ====================
+
+@api_router.get("/admin/ai/intelligence-dashboard")
+async def get_ai_intelligence_dashboard(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Get comprehensive AI intelligence dashboard data"""
+    try:
+        user = await verify_token(credentials.credentials)
+        if not user.get('is_admin'):
+            raise HTTPException(status_code=403, detail="دسترسی محدود به ادمین")
+        
+        ai_svc = get_ai_service(db)
+        
+        # Get all intelligence dashboard metrics
+        metrics = await ai_svc.get_ai_intelligence_metrics()
+        alerts = await ai_svc.get_real_time_ai_alerts()
+        market_intel = await ai_svc.get_market_intelligence()
+        system_health = await ai_svc.get_system_health_metrics()
+        
+        return {
+            'status': 'success',
+            'metrics': metrics,
+            'real_time_alerts': alerts,
+            'market_intelligence': market_intel,
+            'system_health': system_health,
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"AI Intelligence Dashboard Error: {str(e)}")
+        raise HTTPException(status_code=500, detail="خطا در بارگذاری داشبورد هوشمند")
+
+@api_router.get("/admin/ai/security-center")
+async def get_ai_security_center(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Get comprehensive AI security center data"""
+    try:
+        user = await verify_token(credentials.credentials)
+        if not user.get('is_admin'):
+            raise HTTPException(status_code=403, detail="دسترسی محدود به ادمین")
+        
+        ai_svc = get_ai_service(db)
+        
+        # Get all security center data
+        security_metrics = await ai_svc.get_security_metrics()
+        fraud_alerts = await ai_svc.get_fraud_alerts()
+        threat_intel = await ai_svc.get_threat_intelligence()
+        
+        return {
+            'status': 'success',
+            'security_metrics': security_metrics,
+            'fraud_alerts': fraud_alerts,
+            'threat_intelligence': threat_intel,
+            'ai_status': 'active',
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"AI Security Center Error: {str(e)}")
+        raise HTTPException(status_code=500, detail="خطا در بارگذاری مرکز امنیت")
+
+@api_router.get("/admin/ai/user-analytics")
+async def get_ai_user_analytics(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Get comprehensive AI user analytics data"""
+    try:
+        user = await verify_token(credentials.credentials)
+        if not user.get('is_admin'):
+            raise HTTPException(status_code=403, detail="دسترسی محدود به ادمین")
+        
+        ai_svc = get_ai_service(db)
+        
+        # Get all user analytics data
+        analytics_metrics = await ai_svc.get_user_analytics_metrics()
+        user_segments = await ai_svc.get_user_segmentation()
+        behavior_insights = await ai_svc.get_behavior_insights()
+        churn_predictions = await ai_svc.predict_user_churn(limit=10)
+        
+        return {
+            'status': 'success',
+            'analytics_metrics': analytics_metrics,
+            'user_segments': user_segments,
+            'behavior_insights': behavior_insights,
+            'churn_predictions': churn_predictions,
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"AI User Analytics Error: {str(e)}")
+        raise HTTPException(status_code=500, detail="خطا در بارگذاری تحلیل کاربران")
+
+@api_router.get("/admin/ai/market-intelligence")
+async def get_ai_market_intelligence(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Get comprehensive AI market intelligence data"""
+    try:
+        user = await verify_token(credentials.credentials)
+        if not user.get('is_admin'):
+            raise HTTPException(status_code=403, detail="دسترسی محدود به ادمین")
+        
+        ai_svc = get_ai_service(db)
+        
+        # Get all market intelligence data
+        market_metrics = await ai_svc.get_market_metrics()
+        price_analysis = await ai_svc.get_price_analysis()
+        trading_patterns = await ai_svc.get_trading_patterns()
+        iranian_market = await ai_svc.get_iranian_market_data()
+        revenue_forecast = await ai_svc.forecast_revenue(days=30)
+        
+        return {
+            'status': 'success',
+            'market_metrics': market_metrics,
+            'price_analysis': price_analysis,
+            'trading_patterns': trading_patterns,
+            'iranian_market': iranian_market,
+            'revenue_forecast': revenue_forecast,
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"AI Market Intelligence Error: {str(e)}")
+        raise HTTPException(status_code=500, detail="خطا در بارگذاری هوش بازار")
+
+# ==================== END COMPREHENSIVE AI ENDPOINTS ====================
+
 @api_router.get("/")
 async def root():
     return {"message": "Persian Crypto Exchange API with AI", "version": "2.0.0"}
