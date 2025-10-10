@@ -1,6 +1,6 @@
 """
-Nobitex Price Scraper Service
-Fetches real-time crypto prices in Toman from Nobitex.ir
+Abantether Price Scraper Service
+Fetches real-time crypto prices in Toman from Abantether.com
 Updates every 30 minutes in background
 """
 import httpx
@@ -10,11 +10,16 @@ from datetime import datetime, timezone
 from typing import Dict, Optional
 from bs4 import BeautifulSoup
 import re
+import json
 
 logger = logging.getLogger(__name__)
 
-# Map Nobitex symbols to our internal coin IDs
-NOBITEX_COIN_MAP = {
+# Abantether API endpoint
+ABANTETHER_API_URL = "https://abantether.com/api/v1/otc/coins"
+ABANTETHER_BASE_URL = "https://abantether.com"
+
+# Map Abantether symbols to our internal coin IDs
+COIN_MAP = {
     'BTC': {'id': 'bitcoin', 'name': 'Bitcoin', 'symbol': 'BTC'},
     'ETH': {'id': 'ethereum', 'name': 'Ethereum', 'symbol': 'ETH'},
     'USDT': {'id': 'tether', 'name': 'Tether', 'symbol': 'USDT'},
@@ -35,6 +40,8 @@ NOBITEX_COIN_MAP = {
     'XLM': {'id': 'stellar', 'name': 'Stellar', 'symbol': 'XLM'},
     'ETC': {'id': 'ethereum-classic', 'name': 'Ethereum Classic', 'symbol': 'ETC'},
     'BCH': {'id': 'bitcoin-cash', 'name': 'Bitcoin Cash', 'symbol': 'BCH'},
+    'TON': {'id': 'the-open-network', 'name': 'Toncoin', 'symbol': 'TON'},
+    'DAI': {'id': 'dai', 'name': 'Dai', 'symbol': 'DAI'},
 }
 
 class NobitexPriceService:
