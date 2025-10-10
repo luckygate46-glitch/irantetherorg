@@ -217,11 +217,10 @@ class BuyOrderTester:
             print(f"📊 Response Status: {response.status_code}")
             
             if response.status_code == 200:
-                data = response.json()
+                holdings = response.json()  # Direct array response
                 print("✅ Trading holdings endpoint working")
-                print(f"📊 Holdings Count: {len(data.get('holdings', []))}")
+                print(f"📊 Holdings Count: {len(holdings)}")
                 
-                holdings = data.get('holdings', [])
                 if holdings:
                     for holding in holdings[:3]:  # Show first 3
                         print(f"  - {holding.get('coin_symbol', 'N/A')}: {holding.get('amount', 0)} coins")
