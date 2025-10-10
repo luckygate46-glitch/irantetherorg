@@ -176,7 +176,9 @@ const Trade = ({ user, onLogout }) => {
         orderData.target_coin_id = targetCoin.id;
       }
 
-      await axios.post(`${API}/trading/order`, orderData);
+      const token = localStorage.getItem('token');
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      await axios.post(`${API}/trading/order`, orderData, config);
       
       alert('سفارش شما ثبت شد و در انتظار تایید ادمین است');
       
