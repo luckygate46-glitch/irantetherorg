@@ -1099,6 +1099,282 @@ async def delete_user(user_id: str, admin: User = Depends(get_current_admin)):
         raise HTTPException(status_code=404, detail="کاربر یافت نشد")
     return {"message": "کاربر با موفقیت حذف شد"}
 
+# ==================== ENHANCED USER MANAGEMENT ROUTES ====================
+
+@api_router.post("/admin/users/{user_id}/suspend")
+async def suspend_user(user_id: str, suspension_data: dict, admin: User = Depends(get_current_admin)):
+    """Suspend a user temporarily or permanently"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+    
+    duration = suspension_data.get("duration")  # in days, None for permanent
+    reason = suspension_data.get("reason", "")
+    
+    suspension_end = None
+    if duration:
+        suspension_end = (datetime.now(timezone.utc) + timedelta(days=duration)).isoformat()
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "is_suspended": True,
+            "suspension_reason": reason,
+            "suspension_end": suspension_end,
+            "suspended_at": datetime.now(timezone.utc).isoformat(),
+            "suspended_by": admin.id
+        }}
+    )
+    
+    # Log activity
+    await db.user_activity_logs.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "action": "user_suspended",
+        "performed_by": admin.id,
+        "details": {"reason": reason, "duration": duration},
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"message": "کاربر با موفقیت تعلیق شد", "suspension_end": suspension_end}
+
+@api_router.post("/admin/users/{user_id}/unsuspend")
+async def unsuspend_user(user_id: str, admin: User = Depends(get_current_admin)):
+    """Remove suspension from a user"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "is_suspended": False,
+            "suspension_reason": None,
+            "suspension_end": None,
+            "unsuspended_at": datetime.now(timezone.utc).isoformat(),
+            "unsuspended_by": admin.id
+        }}
+    )
+    
+    # Log activity
+    await db.user_activity_logs.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "action": "user_unsuspended",
+        "performed_by": admin.id,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"message": "تعلیق کاربر با موفقیت لغو شد"}
+
+@api_router.post("/admin/users/{user_id}/notes")
+async def add_user_note(user_id: str, note_data: dict, admin: User = Depends(get_current_admin)):
+    """Add a private admin note to a user"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+    
+    note = {
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "note": note_data.get("note"),
+        "created_by": admin.id,
+        "created_by_name": admin.full_name,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.user_notes.insert_one(note)
+    
+    return {"message": "یادداشت با موفقیت اضافه شد", "note": note}
+
+@api_router.get("/admin/users/{user_id}/notes")
+async def get_user_notes(user_id: str, admin: User = Depends(get_current_admin)):
+    """Get all notes for a user"""
+    notes = await db.user_notes.find({"user_id": user_id}).sort("created_at", -1).to_list(None)
+    return notes
+
+@api_router.post("/admin/users/{user_id}/tags")
+async def add_user_tag(user_id: str, tag_data: dict, admin: User = Depends(get_current_admin)):
+    """Add a tag to a user"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+    
+    tag = tag_data.get("tag")
+    current_tags = user.get("tags", [])
+    
+    if tag not in current_tags:
+        current_tags.append(tag)
+        await db.users.update_one(
+            {"id": user_id},
+            {"$set": {"tags": current_tags}}
+        )
+    
+    return {"message": "برچسب با موفقیت اضافه شد", "tags": current_tags}
+
+@api_router.delete("/admin/users/{user_id}/tags/{tag}")
+async def remove_user_tag(user_id: str, tag: str, admin: User = Depends(get_current_admin)):
+    """Remove a tag from a user"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+    
+    current_tags = user.get("tags", [])
+    if tag in current_tags:
+        current_tags.remove(tag)
+        await db.users.update_one(
+            {"id": user_id},
+            {"$set": {"tags": current_tags}}
+        )
+    
+    return {"message": "برچسب با موفقیت حذف شد", "tags": current_tags}
+
+@api_router.get("/admin/users/{user_id}/activity")
+async def get_user_activity(user_id: str, admin: User = Depends(get_current_admin)):
+    """Get activity log for a user"""
+    activities = await db.user_activity_logs.find({"user_id": user_id}).sort("timestamp", -1).limit(50).to_list(None)
+    return activities
+
+@api_router.post("/admin/users/search")
+async def search_users(search_params: dict, admin: User = Depends(get_current_admin)):
+    """Advanced user search with multiple filters"""
+    query = {}
+    
+    # Text search
+    if search_params.get("search_text"):
+        text = search_params["search_text"]
+        query["$or"] = [
+            {"email": {"$regex": text, "$options": "i"}},
+            {"phone": {"$regex": text, "$options": "i"}},
+            {"full_name": {"$regex": text, "$options": "i"}},
+            {"first_name": {"$regex": text, "$options": "i"}},
+            {"last_name": {"$regex": text, "$options": "i"}}
+        ]
+    
+    # KYC level filter
+    if search_params.get("kyc_level") is not None:
+        query["kyc_level"] = search_params["kyc_level"]
+    
+    # KYC status filter
+    if search_params.get("kyc_status"):
+        query["kyc_status"] = search_params["kyc_status"]
+    
+    # Admin filter
+    if search_params.get("is_admin") is not None:
+        query["is_admin"] = search_params["is_admin"]
+    
+    # Suspension filter
+    if search_params.get("is_suspended") is not None:
+        query["is_suspended"] = search_params["is_suspended"]
+    
+    # Tag filter
+    if search_params.get("tag"):
+        query["tags"] = search_params["tag"]
+    
+    # Date range filter
+    if search_params.get("created_after"):
+        query["created_at"] = {"$gte": search_params["created_after"]}
+    if search_params.get("created_before"):
+        if "created_at" in query:
+            query["created_at"]["$lte"] = search_params["created_before"]
+        else:
+            query["created_at"] = {"$lte": search_params["created_before"]}
+    
+    users = await db.users.find(query).to_list(None)
+    return [user_to_response(User(**user)) for user in users]
+
+@api_router.post("/admin/users/bulk-action")
+async def bulk_user_action(bulk_data: dict, admin: User = Depends(get_current_admin)):
+    """Perform bulk actions on multiple users"""
+    user_ids = bulk_data.get("user_ids", [])
+    action = bulk_data.get("action")
+    
+    if not user_ids or not action:
+        raise HTTPException(status_code=400, detail="شناسه کاربران و نوع عملیات الزامی است")
+    
+    result = {"success": 0, "failed": 0, "errors": []}
+    
+    for user_id in user_ids:
+        try:
+            if action == "suspend":
+                await db.users.update_one(
+                    {"id": user_id},
+                    {"$set": {
+                        "is_suspended": True,
+                        "suspension_reason": bulk_data.get("reason", "عملیات گروهی"),
+                        "suspended_at": datetime.now(timezone.utc).isoformat(),
+                        "suspended_by": admin.id
+                    }}
+                )
+            elif action == "unsuspend":
+                await db.users.update_one(
+                    {"id": user_id},
+                    {"$set": {
+                        "is_suspended": False,
+                        "unsuspended_at": datetime.now(timezone.utc).isoformat(),
+                        "unsuspended_by": admin.id
+                    }}
+                )
+            elif action == "add_tag":
+                tag = bulk_data.get("tag")
+                if tag:
+                    await db.users.update_one(
+                        {"id": user_id},
+                        {"$addToSet": {"tags": tag}}
+                    )
+            elif action == "remove_tag":
+                tag = bulk_data.get("tag")
+                if tag:
+                    await db.users.update_one(
+                        {"id": user_id},
+                        {"$pull": {"tags": tag}}
+                    )
+            elif action == "delete":
+                await db.users.delete_one({"id": user_id})
+            
+            result["success"] += 1
+        except Exception as e:
+            result["failed"] += 1
+            result["errors"].append({"user_id": user_id, "error": str(e)})
+    
+    return {
+        "message": f"عملیات انجام شد: {result['success']} موفق، {result['failed']} ناموفق",
+        "result": result
+    }
+
+@api_router.get("/admin/users/stats")
+async def get_user_stats(admin: User = Depends(get_current_admin)):
+    """Get user statistics for admin dashboard"""
+    total_users = await db.users.count_documents({})
+    active_users = await db.users.count_documents({"last_login": {"$gte": (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()}})
+    suspended_users = await db.users.count_documents({"is_suspended": True})
+    admin_users = await db.users.count_documents({"is_admin": True})
+    
+    # KYC stats
+    kyc_level_0 = await db.users.count_documents({"kyc_level": 0})
+    kyc_level_1 = await db.users.count_documents({"kyc_level": 1})
+    kyc_level_2 = await db.users.count_documents({"kyc_level": 2})
+    
+    pending_kyc = await db.users.count_documents({"kyc_status": "pending"})
+    
+    # Recent registrations
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    new_today = await db.users.count_documents({"created_at": {"$gte": today_start.isoformat()}})
+    
+    return {
+        "total_users": total_users,
+        "active_users": active_users,
+        "suspended_users": suspended_users,
+        "admin_users": admin_users,
+        "kyc_stats": {
+            "level_0": kyc_level_0,
+            "level_1": kyc_level_1,
+            "level_2": kyc_level_2,
+            "pending": pending_kyc
+        },
+        "new_today": new_today
+    }
+
 # ==================== CARD NUMBER ROUTES ====================
 
 @api_router.get("/cards", response_model=List[CardNumberResponse])
