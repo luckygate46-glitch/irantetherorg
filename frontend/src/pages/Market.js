@@ -118,9 +118,9 @@ export default function Market({ user }) {
             const coinData = prices[coin.id];
             if (!coinData) return null;
 
-            const price = coinData.usd || 0;
-            const change = coinData.usd_24h_change || 0;
-            const volume = coinData.usd_24h_vol || 0;
+            // Now prices are in Toman from Nobitex
+            const price = coinData.price_tmn || 0;
+            const change = coinData.change_24h || 0;
             const isPositive = change >= 0;
 
             return (
@@ -144,7 +144,7 @@ export default function Market({ user }) {
                     <div className="text-center md:text-right">
                       <p className="text-slate-400 text-xs mb-1">قیمت فعلی</p>
                       <p className="text-white font-bold text-xl">
-                        ${price < 1 ? price.toFixed(6) : price.toLocaleString('en-US', {minimumFractionDigits: 2})}
+                        {price.toLocaleString('fa-IR')} تومان
                       </p>
                     </div>
 
