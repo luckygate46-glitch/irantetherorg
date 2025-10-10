@@ -370,10 +370,15 @@ class BuyOrderTester:
         
         # Run all tests
         await self.test_user_profile_endpoint()
-        await self.test_buy_order_with_valid_token()
         await self.test_buy_order_without_token()
         await self.test_buy_order_insufficient_balance()
         await self.test_buy_order_malformed_request()
+        
+        # Add balance and test successful buy order
+        balance_added = await self.add_balance_to_user()
+        if balance_added:
+            await self.test_buy_order_with_valid_token()
+        
         await self.test_trading_holdings_endpoint()
         await self.test_trading_orders_endpoint()
         
