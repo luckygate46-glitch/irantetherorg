@@ -346,7 +346,7 @@ const Trade = ({ user, onLogout }) => {
                   />
                   {buyAmount && selectedCoin && (
                     <div className="text-sm text-slate-400 mt-1">
-                      ≈ {(parseFloat(buyAmount) / (selectedCoin.current_price * 50000)).toFixed(8)} {selectedCoin.symbol}
+                      ≈ {(parseFloat(buyAmount) / selectedCoin.current_price).toFixed(8)} {selectedCoin.symbol}
                     </div>
                   )}
                 </div>
