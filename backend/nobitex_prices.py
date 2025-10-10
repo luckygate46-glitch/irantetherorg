@@ -325,19 +325,19 @@ class NobitexPriceService:
         return None
     
     def _get_fallback_prices(self) -> Dict:
-        """Return realistic fallback prices in Toman"""
-        # These are approximate prices as of now
+        """Return fallback prices in Toman (only used if Abantether is unavailable)"""
+        # WARNING: These are fallback prices only - real prices come from Abantether
         fallback = {
-            'bitcoin': {'symbol': 'BTC', 'name': 'Bitcoin', 'price_tmn': 3500000000, 'change_24h': 2.5},
-            'ethereum': {'symbol': 'ETH', 'name': 'Ethereum', 'price_tmn': 175000000, 'change_24h': 1.8},
-            'tether': {'symbol': 'USDT', 'name': 'Tether', 'price_tmn': 63000, 'change_24h': 0.1},
-            'binancecoin': {'symbol': 'BNB', 'name': 'Binance Coin', 'price_tmn': 35000000, 'change_24h': 3.2},
-            'ripple': {'symbol': 'XRP', 'name': 'XRP', 'price_tmn': 35000, 'change_24h': -1.5},
-            'cardano': {'symbol': 'ADA', 'name': 'Cardano', 'price_tmn': 25000, 'change_24h': 4.1},
-            'solana': {'symbol': 'SOL', 'name': 'Solana', 'price_tmn': 9500000, 'change_24h': 5.3},
-            'dogecoin': {'symbol': 'DOGE', 'name': 'Dogecoin', 'price_tmn': 7500, 'change_24h': -0.8},
-            'polkadot': {'symbol': 'DOT', 'name': 'Polkadot', 'price_tmn': 280000, 'change_24h': 2.1},
-            'tron': {'symbol': 'TRX', 'name': 'TRON', 'price_tmn': 12000, 'change_24h': 1.2},
+            'bitcoin': {'symbol': 'BTC', 'name': 'Bitcoin', 'price_tmn': 4200000000, 'change_24h': 1.5},
+            'ethereum': {'symbol': 'ETH', 'name': 'Ethereum', 'price_tmn': 165000000, 'change_24h': 2.1},
+            'tether': {'symbol': 'USDT', 'name': 'Tether', 'price_tmn': 67500, 'change_24h': 0.05},
+            'binancecoin': {'symbol': 'BNB', 'name': 'Binance Coin', 'price_tmn': 42000000, 'change_24h': 1.8},
+            'ripple': {'symbol': 'XRP', 'name': 'XRP', 'price_tmn': 45000, 'change_24h': -0.5},
+            'cardano': {'symbol': 'ADA', 'name': 'Cardano', 'price_tmn': 22000, 'change_24h': 3.2},
+            'solana': {'symbol': 'SOL', 'name': 'Solana', 'price_tmn': 8500000, 'change_24h': 4.1},
+            'dogecoin': {'symbol': 'DOGE', 'name': 'Dogecoin', 'price_tmn': 6800, 'change_24h': -1.2},
+            'polkadot': {'symbol': 'DOT', 'name': 'Polkadot', 'price_tmn': 310000, 'change_24h': 1.9},
+            'tron': {'symbol': 'TRX', 'name': 'TRON', 'price_tmn': 13500, 'change_24h': 0.8},
         }
         
         for coin_id, data in fallback.items():
