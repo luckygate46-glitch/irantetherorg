@@ -7,7 +7,7 @@ import asyncio
 import httpx
 import json
 
-BACKEND_URL = "https://agitrader-platform.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-genius-7.preview.emergentagent.com/api"
 
 async def test_basic_endpoints():
     """Test basic endpoints without authentication"""
@@ -17,7 +17,7 @@ async def test_basic_endpoints():
         
         # Test 1: Root endpoint
         try:
-            response = await client.get("https://agitrader-platform.preview.emergentagent.com/")
+            response = await client.get("https://crypto-genius-7.preview.emergentagent.com/")
             print(f"✅ Root endpoint: {response.status_code} - {response.json()}")
         except Exception as e:
             print(f"❌ Root endpoint failed: {e}")

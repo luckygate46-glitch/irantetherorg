@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://agitrader-platform.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-genius-7.preview.emergentagent.com/api"
 TEST_TIMEOUT = 30.0
 
 async def check_mamad_status():

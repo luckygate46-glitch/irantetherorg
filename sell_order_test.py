@@ -8,7 +8,7 @@ import httpx
 import json
 from datetime import datetime
 
-BACKEND_URL = "https://agitrader-platform.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-genius-7.preview.emergentagent.com/api"
 
 async def test_sell_order_workflow():
     """Test complete sell order workflow"""
