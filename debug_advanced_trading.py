@@ -8,7 +8,7 @@ import httpx
 import json
 import uuid
 
-BACKEND_URL = "https://agitrader-platform.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-genius-7.preview.emergentagent.com/api"
 ADMIN_CREDENTIALS = {"email": "admin", "password": "istari118"}
 
 async def debug_advanced_trading():
