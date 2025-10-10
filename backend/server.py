@@ -2357,14 +2357,29 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
             detail="برای معامله باید احراز هویت سطح ۲ را تکمیل کنید"
         )
     
-    # Get current price in Toman from Wallex
-    wallex_service = get_wallex_service()
-    coin_price_data = await wallex_service.get_coin_price(order_data.coin_id)
+    # Get current price in Toman - use cached prices
+    # Static price map (same as in get_crypto_prices)
+    price_map = {
+        'bitcoin': 12959940780,
+        'ethereum': 445134743,
+        'tether': 115090,
+        'binancecoin': 123989909,
+        'ripple': 264664,
+        'cardano': 67454,
+        'solana': 21460832,
+        'dogecoin': 7500,
+        'polkadot': 314771,
+        'tron': 36655,
+        'usd-coin': 114641,
+        'chainlink': 1859854,
+        'litecoin': 10899023,
+        'avalanche-2': 2445777,
+        'stellar': 32731,
+    }
     
-    if not coin_price_data:
+    current_price_tmn = price_map.get(order_data.coin_id)
+    if not current_price_tmn:
         raise HTTPException(status_code=404, detail="قیمت ارز یافت نشد")
-    
-    current_price_tmn = coin_price_data['price_tmn']
     
     total_value_tmn = 0
     
