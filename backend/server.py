@@ -3574,12 +3574,9 @@ async def create_staking_position(stake_data: dict, current_user: User = Depends
 # ==================== COMPREHENSIVE AI ADMIN ENDPOINTS ====================
 
 @api_router.get("/admin/ai/intelligence-dashboard")
-async def get_ai_intelligence_dashboard(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_ai_intelligence_dashboard(admin: User = Depends(get_current_admin)):
     """Get comprehensive AI intelligence dashboard data"""
     try:
-        user = await verify_token(credentials.credentials)
-        if not user.get('is_admin'):
-            raise HTTPException(status_code=403, detail="دسترسی محدود به ادمین")
         
         ai_svc = get_ai_service(db)
         
