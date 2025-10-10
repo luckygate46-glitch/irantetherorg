@@ -179,6 +179,58 @@ class NobitexPriceService:
             logger.error(f"Error fetching Abantether API: {str(e)}")
             return {}
     
+    async def _fetch_nobitex_api(self) -> Dict:
+        """Fetch prices from Nobitex API (reliable Iranian exchange)"""
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                response = await client.post(
+                    'https://api.nobitex.ir/v2/orderbook',
+                    json={'type': 'all'},
+                    headers={'Content-Type': 'application/json'}
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    prices = {}
+                    
+                    # Nobitex returns orderbook data
+                    if isinstance(data, dict):
+                        for symbol, coin_info in COIN_MAP.items():
+                            # Try different pair formats
+                            for pair_key in [f"{symbol}IRT", f"{symbol}USDT", f"{symbol}TMN"]:
+                                if pair_key in data:
+                                    try:
+                                        orderbook = data[pair_key]
+                                        
+                                        # Get last trade price or best bid/ask average
+                                        if 'lastTradePrice' in orderbook:
+                                            price = float(orderbook['lastTradePrice'])
+                                        elif 'bestSell' in orderbook and 'bestBuy' in orderbook:
+                                            price = (float(orderbook['bestSell']) + float(orderbook['bestBuy'])) / 2
+                                        else:
+                                            continue
+                                        
+                                        if price > 0 and pair_key.endswith('IRT'):  # Only IRTpairs
+                                            prices[coin_info['id']] = {
+                                                'symbol': symbol,
+                                                'name': coin_info['name'],
+                                                'price_tmn': price / 10,  # Nobitex uses Rial, convert to Toman
+                                                'change_24h': 0,
+                                                'last_updated': datetime.now(timezone.utc).isoformat()
+                                            }
+                                            logger.info(f"✅ Nobitex {symbol}: {price/10:,.0f} تومان")
+                                            break
+                                    except Exception as e:
+                                        continue
+                    
+                    if prices:
+                        logger.info(f"✅ Fetched {len(prices)} prices from Nobitex API")
+                    return prices
+                    
+        except Exception as e:
+            logger.error(f"Error fetching Nobitex API: {str(e)}")
+            return {}
+    
     async def _scrape_abantether_pages(self) -> Dict:
         """Scrape individual coin pages from Abantether as fallback"""
         try:
