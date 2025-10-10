@@ -43,10 +43,13 @@ const Trade = ({ user, onLogout }) => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      
       const [pricesRes, holdingsRes, ordersRes] = await Promise.all([
         axios.get(`${API}/crypto/prices`),
-        axios.get(`${API}/trading/holdings/my`),
-        axios.get(`${API}/trading/orders/my`)
+        axios.get(`${API}/trading/holdings/my`, config),
+        axios.get(`${API}/trading/orders/my`, config)
       ]);
 
       if (pricesRes.data.success) {
