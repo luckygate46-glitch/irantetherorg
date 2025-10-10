@@ -3657,12 +3657,9 @@ async def get_ai_user_analytics(admin: User = Depends(get_current_admin)):
         raise HTTPException(status_code=500, detail="خطا در بارگذاری تحلیل کاربران")
 
 @api_router.get("/admin/ai/market-intelligence")
-async def get_ai_market_intelligence(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_ai_market_intelligence(admin: User = Depends(get_current_admin)):
     """Get comprehensive AI market intelligence data"""
     try:
-        user = await verify_token(credentials.credentials)
-        if not user.get('is_admin'):
-            raise HTTPException(status_code=403, detail="دسترسی محدود به ادمین")
         
         ai_svc = get_ai_service(db)
         
