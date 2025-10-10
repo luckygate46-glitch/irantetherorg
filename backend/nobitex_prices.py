@@ -233,89 +233,101 @@ class NobitexPriceService:
             return {}
     
     async def _scrape_abantether_pages(self) -> Dict:
-        """Scrape individual coin pages from Abantether as fallback"""
+        """Scrape main coins page from Abantether - the smart way"""
         try:
-            prices = {}
+            logger.info("📊 Scraping Abantether coins page...")
             
-            # Priority coins to scrape
-            priority_coins = ['BTC', 'ETH', 'USDT', 'BNB', 'XRP', 'ADA', 'SOL', 'DOGE']
-            
-            async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+            async with httpx.AsyncClient(
+                timeout=20.0, 
+                follow_redirects=True,
+                verify=False
+            ) as client:
                 headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml',
-                    'Accept-Language': 'fa-IR,fa;q=0.9',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Accept-Language': 'fa-IR,fa;q=0.9,en-US;q=0.8,en;q=0.7',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Connection': 'keep-alive',
+                    'Upgrade-Insecure-Requests': '1',
                 }
                 
-                for symbol in priority_coins:
-                    try:
-                        if symbol not in COIN_MAP:
-                            continue
-                        
-                        coin_info = COIN_MAP[symbol]
-                        url = f"{ABANTETHER_BASE_URL}/coin/{symbol}"
-                        
-                        response = await client.get(url, headers=headers)
-                        
-                        if response.status_code == 200:
-                            soup = BeautifulSoup(response.text, 'html.parser')
+                response = await client.get('https://abantether.com/coins', headers=headers)
+                
+                if response.status_code == 200:
+                    html_content = response.text
+                    soup = BeautifulSoup(html_content, 'html.parser')
+                    
+                    prices = {}
+                    
+                    # Method 1: Parse table rows
+                    table_rows = soup.find_all('tr')
+                    for row in table_rows:
+                        try:
+                            # Look for coin symbol link
+                            link = row.find('a', href=re.compile(r'/coin/[A-Z]+'))
+                            if not link:
+                                continue
                             
-                            # Try to find price in various places
-                            price_tmn = 0
+                            # Extract symbol from URL
+                            href = link.get('href', '')
+                            symbol_match = re.search(r'/coin/([A-Z]+)', href)
+                            if not symbol_match:
+                                continue
+                            
+                            symbol = symbol_match.group(1)
+                            if symbol not in COIN_MAP:
+                                continue
+                            
+                            coin_info = COIN_MAP[symbol]
+                            
+                            # Get all text from row
+                            row_text = row.get_text()
+                            
+                            # Extract buy price (خرید)
+                            price_match = re.search(r'([\d,]+)\s*خرید', row_text)
+                            if not price_match:
+                                continue
+                            
+                            price_tmn = float(price_match.group(1).replace(',', ''))
+                            
+                            # Extract 24h change
+                            change_match = re.search(r'([-+]?\d+\.?\d*)\s*%', row_text)
                             change_24h = 0
+                            if change_match:
+                                # Get the first percentage (usually the daily change)
+                                changes = re.findall(r'([-+]?\d+\.?\d*)\s*%', row_text)
+                                if len(changes) >= 2:  # Get the 2nd one (daily change)
+                                    change_24h = float(changes[1])
+                                elif changes:
+                                    change_24h = float(changes[0])
                             
-                            # Look for price elements
-                            price_elements = soup.find_all(['div', 'span', 'p'], 
-                                                          class_=re.compile(r'price|value|amount', re.I))
+                            prices[coin_info['id']] = {
+                                'symbol': symbol,
+                                'name': coin_info['name'],
+                                'price_tmn': price_tmn,
+                                'change_24h': change_24h,
+                                'last_updated': datetime.now(timezone.utc).isoformat(),
+                                'source': 'abantether'
+                            }
                             
-                            for elem in price_elements:
-                                text = elem.get_text().strip()
-                                # Look for large numbers (prices in Toman)
-                                price_match = re.search(r'([\d,]+(?:\.\d+)?)\s*(?:تومان|TMN)?', text)
-                                if price_match:
-                                    try:
-                                        potential_price = float(price_match.group(1).replace(',', ''))
-                                        # Reasonable price check
-                                        if potential_price > 100:
-                                            price_tmn = potential_price
-                                            break
-                                    except:
-                                        continue
+                            logger.info(f"✅ {symbol}: {price_tmn:,.0f} تومان ({change_24h:+.2f}%)")
                             
-                            # Look for change percentage
-                            change_elements = soup.find_all(['div', 'span'], 
-                                                           class_=re.compile(r'change|percent', re.I))
-                            for elem in change_elements:
-                                text = elem.get_text().strip()
-                                change_match = re.search(r'([-+]?\d+\.?\d*)\s*%', text)
-                                if change_match:
-                                    try:
-                                        change_24h = float(change_match.group(1))
-                                        break
-                                    except:
-                                        continue
-                            
-                            if price_tmn > 0:
-                                prices[coin_info['id']] = {
-                                    'symbol': symbol,
-                                    'name': coin_info['name'],
-                                    'price_tmn': price_tmn,
-                                    'change_24h': change_24h,
-                                    'last_updated': datetime.now(timezone.utc).isoformat()
-                                }
-                                logger.info(f"✅ Scraped {symbol}: {price_tmn:,.0f} تومان")
-                        
-                        # Small delay between requests
-                        await asyncio.sleep(0.5)
-                        
-                    except Exception as e:
-                        logger.debug(f"Error scraping {symbol}: {str(e)}")
-                        continue
-            
-            return prices
+                        except Exception as e:
+                            logger.debug(f"Error parsing row: {str(e)}")
+                            continue
+                    
+                    if prices:
+                        logger.info(f"✅ Scraped {len(prices)} prices from Abantether")
+                        return prices
+                    else:
+                        logger.warning("No prices found in HTML")
+                        return {}
+                else:
+                    logger.error(f"Failed to fetch Abantether page: {response.status_code}")
+                    return {}
             
         except Exception as e:
-            logger.error(f"Error in page scraping: {str(e)}")
+            logger.error(f"Error scraping Abantether page: {str(e)}")
             return {}
     
     async def _store_prices_in_db(self, prices: Dict):
