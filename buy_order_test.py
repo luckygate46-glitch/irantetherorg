@@ -442,7 +442,9 @@ class BuyOrderTester:
         # Add balance and wallet address, then test successful buy order
         balance_added = await self.add_balance_to_user()
         wallet_added = await self.add_wallet_address()
-        # Test buy order even if wallet already exists (it should work)
+        wallet_verified = await self.verify_wallet_address_directly()
+        
+        # Test buy order with all prerequisites met
         await self.test_buy_order_with_valid_token()
         
         await self.test_trading_holdings_endpoint()
