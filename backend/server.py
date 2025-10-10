@@ -4012,9 +4012,9 @@ logger = logging.getLogger(__name__)
 @app.on_event("startup")
 async def startup_event():
     """Start background tasks on startup"""
-    logger.info("🚀 Starting Nobitex price update scheduler...")
-    await start_price_scheduler(db)
-    logger.info("✅ Price scheduler started")
+    # Price scheduler disabled - causes delays
+    logger.info("⚠️  Price scheduler disabled - using static prices")
+    pass
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
