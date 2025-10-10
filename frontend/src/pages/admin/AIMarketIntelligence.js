@@ -51,107 +51,23 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
 
       // Set price analysis from backend
       setPriceAnalysis(data.price_analysis || []);
-        {
-          symbol: 'BTC',
-          name: 'Bitcoin',
-          price: 2150000000,
-          change24h: 3.45,
-          prediction: 'صعودی',
-          confidence: 87.2,
-          resistance: 2200000000,
-          support: 2050000000,
-          volume: 1250000000,
-          aiSignal: 'خرید'
-        },
-        {
-          symbol: 'ETH',
-          name: 'Ethereum',
-          price: 145000000,
-          change24h: -1.23,
-          prediction: 'نزولی کوتاه مدت',
-          confidence: 72.8,
-          resistance: 150000000,
-          support: 140000000,
-          volume: 850000000,
-          aiSignal: 'نگهداری'
-        },
-        {
-          symbol: 'USDT',
-          name: 'Tether',
-          price: 525000,
-          change24h: 0.02,
-          prediction: 'ثبات',
-          confidence: 98.5,
-          resistance: 530000,
-          support: 520000,
-          volume: 2100000000,
-          aiSignal: 'خنثی'
-        }
-      ]);
 
-      setTradingPatterns([
-        {
-          id: 1,
-          pattern: 'الگوی کف دوگانه در BTC',
-          timeframe: '4 ساعته',
-          probability: 78.9,
-          action: 'خرید',
-          target: 2300000000,
-          stopLoss: 2080000000
-        },
-        {
-          id: 2,
-          pattern: 'شکست مقاومت در ETH',
-          timeframe: '1 ساعته',
-          probability: 65.4,
-          action: 'خرید محتاطانه',
-          target: 152000000,
-          stopLoss: 143000000
-        },
-        {
-          id: 3,
-          pattern: 'واگرایی نزولی در ADA',
-          timeframe: '6 ساعته',
-          probability: 82.1,
-          action: 'فروش',
-          target: 11500,
-          stopLoss: 13200
-        }
-      ]);
+      // Set trading patterns from backend
+      setTradingPatterns(data.trading_patterns || []);
 
-      setMarketPredictions([
-        {
-          crypto: 'BTC',
-          timeframe: '24 ساعت',
-          prediction: '+4.2%',
-          confidence: 73.5,
-          factors: ['شاخص ترس و طمع', 'حجم معاملات', 'تحلیل تکنیکال']
-        },
-        {
-          crypto: 'ETH',
-          timeframe: '1 هفته',
-          prediction: '+12.8%',
-          confidence: 68.9,
-          factors: ['ترقی شبکه', 'DeFi رشد', 'حجم نهادی']
-        },
-        {
-          crypto: 'BNB',
-          timeframe: '1 ماه',
-          prediction: '+25.4%',
-          confidence: 61.2,
-          factors: ['رشد اکوسیستم', 'سوختن توکن', 'شراکت‌های جدید']
-        }
-      ]);
+      // Set market predictions (keep empty for now, can use trading patterns data)
+      setMarketPredictions([]);
 
+      // Set Iranian market data from backend
       setIranianMarketData({
-        dailyVolume: 45600000000,
-        activeTraders: 12847,
-        topCoin: 'BTC',
-        sentiment: 'مثبت',
-        iranianPremium: 2.3,
-        regulatoryScore: 7.5,
-        adoptionRate: 23.7,
-        marketMaturity: 'در حال رشد'
+        dailyVolume: data.iranian_market.daily_volume,
+        activeTraders: data.iranian_market.active_traders,
+        topCoin: data.iranian_market.top_coin,
+        sentiment: data.iranian_market.sentiment,
+        iranianPremium: data.iranian_market.iranian_premium,
+        regulatoryScore: data.iranian_market.regulatory_score,
+        adoptionRate: data.iranian_market.adoption_rate,
+        marketMaturity: data.iranian_market.market_maturity
       });
 
     } catch (error) {
