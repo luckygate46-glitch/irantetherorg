@@ -4019,7 +4019,4 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     """Cleanup on shutdown"""
-    from nobitex_prices import stop_price_scheduler
-    logger.info("🛑 Stopping price scheduler...")
-    stop_price_scheduler()
     client.close()
