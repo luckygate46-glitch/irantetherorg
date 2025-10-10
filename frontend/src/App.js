@@ -201,6 +201,20 @@ function App() {
             path="/admin/ai/assistant" 
             element={user?.is_admin ? <AdminAIAssistant user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
+          
+          {/* NEW AI ADMIN ROUTES */}
+          <Route 
+            path="/admin/ai/intelligence" 
+            element={user?.is_admin ? <AIIntelligenceDashboard user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/admin/ai/security" 
+            element={user?.is_admin ? <AISecurityCenter user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
+            path="/admin/ai/users" 
+            element={user?.is_admin ? <AIUserAnalytics user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
           <Route 
             path="/ai/dashboard" 
             element={user && !user.is_admin ? (
