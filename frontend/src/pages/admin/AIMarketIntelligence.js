@@ -7,6 +7,7 @@ import {
   TrendingUp, TrendingDown, BarChart3, PieChart, Activity, Globe,
   DollarSign, Bitcoin, Zap, Target, Brain, AlertTriangle, RefreshCw
 } from 'lucide-react';
+import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
