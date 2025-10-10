@@ -11,6 +11,7 @@ from typing import Dict, Optional
 from bs4 import BeautifulSoup
 import re
 import json
+from abantether_scraper import parse_abantether_prices
 
 logger = logging.getLogger(__name__)
 
