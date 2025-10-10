@@ -57,10 +57,11 @@ const Trade = ({ user, onLogout }) => {
           id,
           symbol: data.symbol?.toUpperCase() || id.toUpperCase(),
           name: data.name || id,
-          current_price: data.usd || 0,
-          price_change_24h: data.usd_24h_change || 0,
-          image: `https://assets.coingecko.com/coins/images/${getImageId(id)}/small/${id}.png`
-        })).slice(0, 50);
+          current_price: data.price_tmn || 0,  // Now in Toman from Nobitex
+          price_change_24h: data.change_24h || 0,
+          image: `https://assets.coingecko.com/coins/images/${getImageId(id)}/small/${id}.png`,
+          last_updated: data.last_updated
+        }));
         
         setCoins(coinsList);
         if (!selectedCoin && coinsList.length > 0) {
