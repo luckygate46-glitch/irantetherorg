@@ -330,6 +330,34 @@ class BuyOrderTester:
             print(f"❌ User profile error: {str(e)}")
             self.test_results.append({"test": "user_profile", "status": "❌ ERROR", "details": str(e)})
 
+    async def add_balance_to_user(self):
+        """Add balance to user for testing successful buy orders"""
+        print("\n💰 Adding Balance to User for Testing...")
+        
+        if not self.admin_token:
+            print("⚠️  No admin token available, cannot add balance")
+            return False
+            
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            update_data = {"wallet_balance_tmn": 1000000}  # 1M TMN
+            
+            response = await self.client.put(f"{BACKEND_URL}/admin/users/{self.test_user_id}", 
+                                           headers=headers, json=update_data)
+            
+            print(f"📊 Response Status: {response.status_code}")
+            
+            if response.status_code == 200:
+                print("✅ Balance added successfully")
+                return True
+            else:
+                print(f"❌ Failed to add balance: {response.status_code} - {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Add balance error: {str(e)}")
+            return False
+
     async def run_all_tests(self):
         """Run all buy order tests"""
         print("🚀 Starting Buy Order Functionality Testing...")
