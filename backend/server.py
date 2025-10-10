@@ -1564,32 +1564,39 @@ async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_cu
 
 @api_router.get("/crypto/prices")
 async def get_crypto_prices():
-    """Get current prices for top cryptocurrencies in Toman - Static prices"""
+    """Get current prices for top cryptocurrencies in Toman - From Wallex API"""
     try:
-        # Return static prices (based on real Abantether data - Oct 10, 2025)
-        prices = {
-            'bitcoin': {'symbol': 'BTC', 'name': 'Bitcoin', 'price_tmn': 12959940780, 'change_24h': -6.38},
-            'ethereum': {'symbol': 'ETH', 'name': 'Ethereum', 'price_tmn': 445134743, 'change_24h': -10.38},
-            'tether': {'symbol': 'USDT', 'name': 'Tether', 'price_tmn': 115090, 'change_24h': 0.19},
-            'binancecoin': {'symbol': 'BNB', 'name': 'Binance Coin', 'price_tmn': 123989909, 'change_24h': -12.76},
-            'ripple': {'symbol': 'XRP', 'name': 'XRP', 'price_tmn': 264664, 'change_24h': -17.75},
-            'cardano': {'symbol': 'ADA', 'name': 'Cardano', 'price_tmn': 67454, 'change_24h': -24.91},
-            'solana': {'symbol': 'SOL', 'name': 'Solana', 'price_tmn': 21460832, 'change_24h': -13.72},
-            'dogecoin': {'symbol': 'DOGE', 'name': 'Dogecoin', 'price_tmn': 7500, 'change_24h': -1.2},
-            'polkadot': {'symbol': 'DOT', 'name': 'Polkadot', 'price_tmn': 314771, 'change_24h': -29.46},
-            'tron': {'symbol': 'TRX', 'name': 'TRON', 'price_tmn': 36655, 'change_24h': -5.03},
-            'usd-coin': {'symbol': 'USDC', 'name': 'USD Coin', 'price_tmn': 114641, 'change_24h': -0.07},
-            'chainlink': {'symbol': 'LINK', 'name': 'Chainlink', 'price_tmn': 1859854, 'change_24h': -24.6},
-            'litecoin': {'symbol': 'LTC', 'name': 'Litecoin', 'price_tmn': 10899023, 'change_24h': -19.48},
-            'avalanche-2': {'symbol': 'AVAX', 'name': 'Avalanche', 'price_tmn': 2445777, 'change_24h': -24.28},
-            'stellar': {'symbol': 'XLM', 'name': 'Stellar', 'price_tmn': 32731, 'change_24h': -23.37},
-        }
+        # Get Wallex service
+        wallex = get_wallex_service()
         
-        # Add timestamp
-        for coin_id, data in prices.items():
-            data['last_updated'] = datetime.now(timezone.utc).isoformat()
+        # Fetch fresh prices from Wallex
+        result = await wallex.fetch_prices()
         
-        return {'success': True, 'data': prices, 'source': 'static'}
+        if result.get('success'):
+            return result
+        else:
+            # Fallback to cached if available
+            cached = wallex.get_cached_prices()
+            if cached.get('success'):
+                return cached
+            
+            # Last resort: static prices
+            logger.warning("Using fallback static prices")
+            prices = {
+                'bitcoin': {'symbol': 'BTC', 'name': 'Bitcoin', 'price_tmn': 12959940780, 'change_24h': -6.38},
+                'ethereum': {'symbol': 'ETH', 'name': 'Ethereum', 'price_tmn': 445134743, 'change_24h': -10.38},
+                'tether': {'symbol': 'USDT', 'name': 'Tether', 'price_tmn': 115090, 'change_24h': 0.19},
+                'binancecoin': {'symbol': 'BNB', 'name': 'Binance Coin', 'price_tmn': 123989909, 'change_24h': -12.76},
+                'ripple': {'symbol': 'XRP', 'name': 'XRP', 'price_tmn': 264664, 'change_24h': -17.75},
+                'cardano': {'symbol': 'ADA', 'name': 'Cardano', 'price_tmn': 67454, 'change_24h': -24.91},
+                'solana': {'symbol': 'SOL', 'name': 'Solana', 'price_tmn': 21460832, 'change_24h': -13.72},
+                'dogecoin': {'symbol': 'DOGE', 'name': 'Dogecoin', 'price_tmn': 7500, 'change_24h': -1.2},
+                'polkadot': {'symbol': 'DOT', 'name': 'Polkadot', 'price_tmn': 314771, 'change_24h': -29.46},
+                'tron': {'symbol': 'TRX', 'name': 'TRON', 'price_tmn': 36655, 'change_24h': -5.03},
+            }
+            for coin_id, data in prices.items():
+                data['last_updated'] = datetime.now(timezone.utc).isoformat()
+            return {'success': True, 'data': prices, 'source': 'fallback'}
         
     except Exception as e:
         logger.error(f"Error getting crypto prices: {str(e)}")
