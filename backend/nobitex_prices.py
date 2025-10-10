@@ -193,7 +193,7 @@ class NobitexPriceService:
     async def get_prices_from_db(self) -> Dict:
         """Get cached prices from database"""
         try:
-            if not self.db:
+            if self.db is None:
                 return self._get_fallback_prices()
             
             prices_cursor = self.db.crypto_prices.find({})
