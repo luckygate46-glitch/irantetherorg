@@ -35,6 +35,11 @@ import Portfolio from "./pages/Portfolio";
 import UserProfile from "./pages/UserProfile";
 import UserSidebarLayout from "./layouts/UserSidebarLayout";
 
+// AI Admin Components
+import AIIntelligenceDashboard from "./pages/admin/AIIntelligenceDashboard";
+import AISecurityCenter from "./pages/admin/AISecurityCenter";
+import AIUserAnalytics from "./pages/admin/AIUserAnalytics";
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
