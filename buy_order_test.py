@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Buy Order Functionality Testing for Iranian Crypto Exchange
-Testing the buy order button fix and trading functionality
+Buy Order Button Complete Workflow Testing for Iranian Crypto Exchange
+Testing the complete buy order workflow as requested in the review
 """
 
 import asyncio
@@ -10,11 +10,17 @@ import json
 import os
 from datetime import datetime
 import sys
+from motor.motor_asyncio import AsyncIOMotorClient
 
 # Configuration
 BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
-TEST_USER_EMAIL = "test@test.com"
+MONGO_URL = "mongodb://localhost:27017"
+DB_NAME = "test_database"
+
+# Test user credentials as requested
+TEST_USER_EMAIL = "buyer1@test.com"
 TEST_USER_PASSWORD = "test123"
+TEST_USER_NAME = "خریدار تست"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 
