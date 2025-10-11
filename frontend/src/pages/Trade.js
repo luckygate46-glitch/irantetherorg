@@ -158,8 +158,9 @@ const Trade = ({ user, onLogout }) => {
         
         // Check if user has sufficient balance
         const userBalance = user?.wallet_balance_tmn || 0;
+        console.log('💰 Balance check:', { amount, userBalance, user });
         if (amount > userBalance) {
-          alert(`موجودی شما کافی نیست. موجودی فعلی: ${new Intl.NumberFormat('fa-IR').format(userBalance)} تومان`);
+          alert(`موجودی شما کافی نیست.\nمبلغ درخواستی: ${new Intl.NumberFormat('fa-IR').format(amount)} تومان\nموجودی فعلی: ${new Intl.NumberFormat('fa-IR').format(userBalance)} تومان`);
           return;
         }
         
