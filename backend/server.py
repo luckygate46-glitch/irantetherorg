@@ -4041,6 +4041,264 @@ async def get_ai_market_intelligence(admin: User = Depends(get_current_admin)):
 async def root():
     return {"message": "Persian Crypto Exchange API with AI", "version": "2.0.0"}
 
+# ==================== SMART TRADING AI ROUTES ====================
+
+from smart_trading_ai import SmartTradingAssistant
+
+# Model for AI settings
+class AISettingsUpdate(BaseModel):
+    openai_api_key: Optional[str] = None
+
+@api_router.get("/admin/settings/ai")
+async def get_ai_settings(admin: User = Depends(get_current_admin)):
+    """Get current AI settings (admin only)"""
+    try:
+        # Get settings from database
+        settings = await db.system_settings.find_one({"type": "ai_config"})
+        
+        if not settings:
+            # Return default settings
+            return {
+                "openai_api_key_set": False,
+                "openai_api_key_preview": None,
+                "model": "gpt-4o",
+                "provider": "openai",
+                "status": "not_configured"
+            }
+        
+        # Show masked API key (first 10 and last 4 characters)
+        api_key = settings.get("openai_api_key", "")
+        masked_key = None
+        if api_key:
+            if len(api_key) > 14:
+                masked_key = f"{api_key[:10]}...{api_key[-4:]}"
+            else:
+                masked_key = "***"
+        
+        return {
+            "openai_api_key_set": bool(api_key),
+            "openai_api_key_preview": masked_key,
+            "model": settings.get("model", "gpt-4o"),
+            "provider": settings.get("provider", "openai"),
+            "status": "configured" if api_key else "not_configured",
+            "last_updated": settings.get("updated_at")
+        }
+    except Exception as e:
+        logger.error(f"Error getting AI settings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/settings/ai")
+async def update_ai_settings(
+    settings: AISettingsUpdate,
+    admin: User = Depends(get_current_admin)
+):
+    """Update AI settings (admin only)"""
+    try:
+        # Test the API key if provided
+        if settings.openai_api_key:
+            try:
+                # Quick test of the API key
+                assistant = SmartTradingAssistant(api_key=settings.openai_api_key)
+                test_response = await assistant.chat_with_assistant(
+                    user_message="سلام، این یک تست است",
+                    user_context={"balance": 0, "kyc_level": 0, "user_id": "test"}
+                )
+                
+                if "خطا" in test_response or "error" in test_response.lower():
+                    raise HTTPException(
+                        status_code=400,
+                        detail="کلید API معتبر نیست. لطفاً کلید صحیح OpenAI را وارد کنید"
+                    )
+                
+                logger.info("✅ OpenAI API key validated successfully")
+                
+            except Exception as test_error:
+                logger.error(f"API key validation failed: {str(test_error)}")
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"کلید API معتبر نیست: {str(test_error)}"
+                )
+        
+        # Update settings in database
+        update_data = {
+            "type": "ai_config",
+            "openai_api_key": settings.openai_api_key,
+            "model": "gpt-4o",
+            "provider": "openai",
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_by": admin.id
+        }
+        
+        await db.system_settings.update_one(
+            {"type": "ai_config"},
+            {"$set": update_data},
+            upsert=True
+        )
+        
+        # Also update environment variable for this session
+        if settings.openai_api_key:
+            os.environ["OPENAI_API_KEY"] = settings.openai_api_key
+        
+        logger.info(f"✅ AI settings updated by admin: {admin.email}")
+        
+        return {
+            "success": True,
+            "message": "تنظیمات هوش مصنوعی با موفقیت به‌روزرسانی شد",
+            "openai_api_key_set": bool(settings.openai_api_key)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating AI settings: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در به‌روزرسانی تنظیمات: {str(e)}")
+
+async def get_smart_assistant():
+    """Get Smart Trading Assistant instance with configured API key"""
+    try:
+        # Try to get API key from database first
+        settings = await db.system_settings.find_one({"type": "ai_config"})
+        api_key = settings.get("openai_api_key") if settings else None
+        
+        # Fallback to environment variable
+        if not api_key:
+            api_key = os.getenv("OPENAI_API_KEY")
+        
+        if not api_key:
+            raise HTTPException(
+                status_code=503,
+                detail="سرویس هوش مصنوعی پیکربندی نشده است. لطفاً ادمین را مطلع کنید"
+            )
+        
+        return SmartTradingAssistant(api_key=api_key)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error initializing Smart Assistant: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/ai/smart-recommendation/{coin_symbol}")
+async def get_smart_trading_recommendation(
+    coin_symbol: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get AI-powered smart trading recommendation for a coin"""
+    try:
+        # Get coin price data
+        prices = await price_service.get_prices()
+        coin_id = coin_symbol.lower()
+        if coin_symbol == "USDT":
+            coin_id = "tether"
+        elif coin_symbol == "BTC":
+            coin_id = "bitcoin"
+        elif coin_symbol == "ETH":
+            coin_id = "ethereum"
+        
+        coin_data = prices.get("data", {}).get(coin_id)
+        if not coin_data:
+            raise HTTPException(status_code=404, detail=f"ارز {coin_symbol} یافت نشد")
+        
+        current_price = coin_data.get("price_tmn", 0)
+        price_change_24h = coin_data.get("change_24h", 0)
+        
+        # Get user holdings
+        holdings = await db.trading_holdings.find({"user_id": current_user.id}).to_list(length=10)
+        
+        # Get Smart Trading Assistant
+        assistant = await get_smart_assistant()
+        
+        # Get recommendation
+        recommendation = await assistant.get_trading_recommendation(
+            coin_symbol=coin_symbol,
+            current_price=current_price,
+            price_change_24h=price_change_24h,
+            user_balance=current_user.wallet_balance_tmn,
+            user_holdings=holdings
+        )
+        
+        return recommendation
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting smart recommendation: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در دریافت توصیه: {str(e)}")
+
+@api_router.get("/ai/smart-market-analysis")
+async def get_smart_market_analysis(
+    timeframe: str = "24h",
+    current_user: User = Depends(get_current_user)
+):
+    """Get AI-powered market analysis"""
+    try:
+        # Get all crypto prices
+        prices = await price_service.get_prices()
+        coins_data = []
+        
+        for coin_id, data in prices.get("data", {}).items():
+            coins_data.append({
+                "id": coin_id,
+                "symbol": data.get("symbol", coin_id.upper()),
+                "name": data.get("name", coin_id),
+                "price_tmn": data.get("price_tmn", 0),
+                "price_change_24h": data.get("change_24h", 0)
+            })
+        
+        # Get Smart Trading Assistant
+        assistant = await get_smart_assistant()
+        
+        # Get market analysis
+        analysis = await assistant.get_market_analysis(
+            coins_data=coins_data,
+            timeframe=timeframe
+        )
+        
+        return analysis
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting market analysis: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در تحلیل بازار: {str(e)}")
+
+class ChatMessage(BaseModel):
+    message: str
+
+@api_router.post("/ai/smart-chat")
+async def chat_with_smart_assistant(
+    chat_msg: ChatMessage,
+    current_user: User = Depends(get_current_user)
+):
+    """Chat with Smart Trading Assistant"""
+    try:
+        # Get Smart Trading Assistant
+        assistant = await get_smart_assistant()
+        
+        # Prepare user context
+        user_context = {
+            "user_id": current_user.id,
+            "balance": current_user.wallet_balance_tmn,
+            "kyc_level": current_user.kyc_level,
+            "email": current_user.email
+        }
+        
+        # Get response
+        response = await assistant.chat_with_assistant(
+            user_message=chat_msg.message,
+            user_context=user_context
+        )
+        
+        return {
+            "response": response,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in smart chat: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در گفتگو: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
