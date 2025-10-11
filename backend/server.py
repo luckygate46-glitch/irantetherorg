@@ -1694,6 +1694,7 @@ class TradingOrder(BaseModel):
     amount_tmn: Optional[float] = None  # Amount of TMN (for buy)
     target_coin_symbol: Optional[str] = None  # For trade orders
     target_coin_id: Optional[str] = None  # For trade orders
+    user_wallet_address: Optional[str] = None  # User's wallet address for receiving
     price_at_order: float  # Price when order was placed
     total_value_tmn: float  # Total transaction value in TMN
     status: str = "pending"  # pending, approved, rejected, completed
