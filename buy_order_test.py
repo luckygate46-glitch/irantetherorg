@@ -397,7 +397,7 @@ class BuyOrderWorkflowTester:
             self.test_results.append({"step": "test_order_approval", "status": "❌ ERROR", "details": str(e)})
             return False
 
-    async def test_buy_order_without_token(self):
+    async def run_complete_workflow(self):
         """Test buy order without authentication token"""
         print("\n🚫 Testing Buy Order without Token...")
         
