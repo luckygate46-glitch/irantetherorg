@@ -154,10 +154,7 @@ const Trade = ({ user, onLogout }) => {
           alert('لطفا مبلغ معتبری وارد کنید');
           return;
         }
-        if (!walletAddress || walletAddress.trim() === '') {
-          alert('لطفا آدرس کیف پول خود را وارد کنید');
-          return;
-        }
+        // Wallet address is optional - admin will use saved address or user can provide one
         
         // Check if user has sufficient balance
         const userBalance = user?.wallet_balance_tmn || 0;
@@ -167,7 +164,9 @@ const Trade = ({ user, onLogout }) => {
         }
         
         orderData.amount_tmn = amount;
-        orderData.user_wallet_address = walletAddress;
+        if (walletAddress && walletAddress.trim() !== '') {
+          orderData.user_wallet_address = walletAddress;
+        }
       } else if (orderType === 'sell') {
         const amount = parseFloat(sellAmount);
         if (!amount || amount <= 0) {
