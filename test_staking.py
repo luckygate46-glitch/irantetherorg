@@ -7,7 +7,7 @@ import asyncio
 import httpx
 import json
 
-BACKEND_URL = "https://crypto-genius-7.preview.emergentagent.com/api"
+BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
 ADMIN_CREDENTIALS = {"email": "admin", "password": "istari118"}
 
 async def test_staking():

@@ -8,7 +8,7 @@ import httpx
 import json
 
 # Configuration
-BACKEND_URL = "https://crypto-genius-7.preview.emergentagent.com/api"
+BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 

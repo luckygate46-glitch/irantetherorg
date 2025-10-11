@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Configuration
-BACKEND_URL = "https://crypto-genius-7.preview.emergentagent.com/api"
+BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
 TEST_TIMEOUT = 30.0
 
 class AIIntegrationTester:
