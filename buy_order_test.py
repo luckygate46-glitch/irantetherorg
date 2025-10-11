@@ -24,13 +24,16 @@ TEST_USER_NAME = "خریدار تست"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 
-class BuyOrderTester:
+class BuyOrderWorkflowTester:
     def __init__(self):
         self.client = httpx.AsyncClient(timeout=30.0)
+        self.mongo_client = AsyncIOMotorClient(MONGO_URL)
+        self.db = self.mongo_client[DB_NAME]
         self.user_token = None
         self.admin_token = None
-        self.test_results = []
         self.test_user_id = None
+        self.order_id = None
+        self.test_results = []
         
     async def setup(self):
         """Setup test environment"""
