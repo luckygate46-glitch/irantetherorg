@@ -22,6 +22,7 @@ const Trade = ({ user, onLogout }) => {
   const [sellAmount, setSellAmount] = useState('');
   const [tradeAmount, setTradeAmount] = useState('');
   const [targetCoin, setTargetCoin] = useState(null);
+  const [walletAddress, setWalletAddress] = useState('');
 
   useEffect(() => {
     fetchData();
