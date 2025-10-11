@@ -150,19 +150,30 @@ const UserProfile = ({ user, onUserUpdate }) => {
   };
 
   const validateWalletAddress = (symbol, address) => {
-    // Basic validation patterns for different cryptocurrencies
+    // Basic validation - just check if address has minimum length
+    // Admin will verify the actual address validity
+    if (!address || address.trim().length < 20) {
+      return false;
+    }
+    
+    // Very basic pattern checking - accept most common formats
     const patterns = {
       BTC: /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^bc1[a-z0-9]{39,59}$/,
       ETH: /^0x[a-fA-F0-9]{40}$/,
-      USDT: /^0x[a-fA-F0-9]{40}$|^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/,
-      BNB: /^bnb[a-z0-9]{39}$|^0x[a-fA-F0-9]{40}$/,
-      ADA: /^addr1[a-z0-9]{98}$/,
+      USDT: /^(0x[a-fA-F0-9]{40}|[13][a-km-zA-HJ-NP-Z1-9]{25,34}|T[A-Za-z1-9]{33})$/,  // ERC20, Omni, TRC20
+      BNB: /^(bnb[a-z0-9]{39}|0x[a-fA-F0-9]{40})$/,
+      ADA: /^addr1[a-z0-9]{50,}$/,
       DOT: /^1[a-zA-Z0-9]{46,47}$/,
       SOL: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
       XRP: /^r[a-zA-Z0-9]{24,34}$/
     };
 
-    return patterns[symbol]?.test(address) || false;
+    // If no pattern for this symbol, just check minimum length
+    if (!patterns[symbol]) {
+      return address.trim().length >= 20;
+    }
+
+    return patterns[symbol].test(address);
   };
 
   return (
