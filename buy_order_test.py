@@ -37,20 +37,96 @@ class BuyOrderWorkflowTester:
         
     async def setup(self):
         """Setup test environment"""
-        print("🔧 Setting up Buy Order testing environment...")
+        print("🔧 Setting up Buy Order Workflow testing environment...")
+        print(f"🌐 Backend URL: {BACKEND_URL}")
+        print(f"📧 Test User: {TEST_USER_EMAIL}")
         
-        # Try to login with test@test.com first
-        success = await self.login_test_user()
-        if not success:
-            # If that fails, try with admin credentials
-            print("⚠️  Test user login failed, trying admin credentials...")
-            success = await self.login_admin_as_user()
+    async def step1_create_test_user(self):
+        """Step 1: Create Test User with Balance"""
+        print("\n📝 STEP 1: Creating Test User with Balance...")
         
-        if not success:
-            print("❌ Could not authenticate any user for testing")
-            return False
+        try:
+            # First, check if user already exists and delete if needed
+            existing_user = await self.db.users.find_one({"email": TEST_USER_EMAIL})
+            if existing_user:
+                print(f"🗑️  Deleting existing test user: {TEST_USER_EMAIL}")
+                await self.db.users.delete_one({"email": TEST_USER_EMAIL})
+                # Also delete related data
+                await self.db.wallet_addresses.delete_many({"user_id": existing_user["id"]})
+                await self.db.trading_orders.delete_many({"user_id": existing_user["id"]})
             
-        return True
+            # Register new test user
+            registration_data = {
+                "first_name": "خریدار",
+                "last_name": "تست", 
+                "email": TEST_USER_EMAIL,
+                "phone": "09123456789",
+                "password": TEST_USER_PASSWORD
+            }
+            
+            response = await self.client.post(f"{BACKEND_URL}/auth/register", json=registration_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.user_token = data["access_token"]
+                self.test_user_id = data["user"]["id"]
+                print(f"✅ Test user registered successfully: {data['user']['full_name']}")
+                print(f"👤 User ID: {self.test_user_id}")
+                
+                # Manually set user wallet balance to 10,000,000 TMN in database
+                await self.db.users.update_one(
+                    {"id": self.test_user_id},
+                    {"$set": {
+                        "wallet_balance_tmn": 10000000.0,
+                        "kyc_level": 2,  # Set KYC level to 2 for trading access
+                        "kyc_status": "approved"
+                    }}
+                )
+                print("✅ User wallet balance set to 10,000,000 TMN")
+                print("✅ User KYC level set to 2 (trading access)")
+                
+                self.test_results.append({"step": "create_test_user", "status": "✅ PASS", "details": "User created with 10M TMN balance and KYC Level 2"})
+                return True
+                
+            else:
+                print(f"❌ User registration failed: {response.status_code} - {response.text}")
+                self.test_results.append({"step": "create_test_user", "status": "❌ FAIL", "details": f"Registration failed: {response.status_code}"})
+                return False
+                
+        except Exception as e:
+            print(f"❌ User creation error: {str(e)}")
+            self.test_results.append({"step": "create_test_user", "status": "❌ ERROR", "details": str(e)})
+            return False
+
+    async def step2_login_test_user(self):
+        """Step 2: Login to get JWT token"""
+        print("\n🔐 STEP 2: Login Test User...")
+        
+        try:
+            response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
+                "email": TEST_USER_EMAIL,
+                "password": TEST_USER_PASSWORD
+            })
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.user_token = data["access_token"]
+                user_info = data["user"]
+                print(f"✅ Login successful: {user_info.get('full_name', 'Test User')}")
+                print(f"💰 Wallet Balance: {user_info.get('wallet_balance_tmn', 0):,.0f} TMN")
+                print(f"🎫 KYC Level: {user_info.get('kyc_level', 0)}")
+                
+                self.test_results.append({"step": "login_test_user", "status": "✅ PASS", "details": f"Login successful, balance: {user_info.get('wallet_balance_tmn', 0):,.0f} TMN"})
+                return True
+            else:
+                print(f"❌ Login failed: {response.status_code} - {response.text}")
+                self.test_results.append({"step": "login_test_user", "status": "❌ FAIL", "details": f"Login failed: {response.status_code}"})
+                return False
+                
+        except Exception as e:
+            print(f"❌ Login error: {str(e)}")
+            self.test_results.append({"step": "login_test_user", "status": "❌ ERROR", "details": str(e)})
+            return False
         
     async def login_test_user(self):
         """Login as test user"""
