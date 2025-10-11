@@ -13,6 +13,10 @@ export default function AdminLayout({ user, onLogout, children, currentPage }) {
     { id: 'deposits', label: 'واریزی‌ها', icon: TrendingDown, path: '/admin/deposits' },
   ];
 
+  const aiMenuItems = [
+    { id: 'ai-settings', label: '⚙️ تنظیمات هوش مصنوعی', path: '/admin/settings/ai' },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-950" dir="rtl">
       {/* Header */}
