@@ -46,6 +46,37 @@ class BuyOrderWorkflowTester:
         print("\n📝 STEP 1: Creating Test User with Balance...")
         
         try:
+            # First, try to login with existing user
+            login_response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
+                "email": TEST_USER_EMAIL,
+                "password": TEST_USER_PASSWORD
+            })
+            
+            if login_response.status_code == 200:
+                print(f"✅ Test user already exists, logging in...")
+                data = login_response.json()
+                self.user_token = data["access_token"]
+                self.test_user_id = data["user"]["id"]
+                print(f"👤 User ID: {self.test_user_id}")
+                
+                # Update user with required settings
+                await self.db.users.update_one(
+                    {"id": self.test_user_id},
+                    {"$set": {
+                        "wallet_balance_tmn": 10000000.0,
+                        "kyc_level": 2,  # Set KYC level to 2 for trading access
+                        "kyc_status": "approved"
+                    }}
+                )
+                print("✅ User wallet balance set to 10,000,000 TMN")
+                print("✅ User KYC level set to 2 (trading access)")
+                
+                self.test_results.append({"step": "create_test_user", "status": "✅ PASS", "details": "Existing user updated with 10M TMN balance and KYC Level 2"})
+                return True
+            
+            # If login fails, try to create new user
+            print("🔄 User doesn't exist or login failed, creating new user...")
+            
             # First, check if user already exists and delete if needed
             existing_user = await self.db.users.find_one({"email": TEST_USER_EMAIL})
             if existing_user:
@@ -55,12 +86,16 @@ class BuyOrderWorkflowTester:
                 await self.db.wallet_addresses.delete_many({"user_id": existing_user["id"]})
                 await self.db.trading_orders.delete_many({"user_id": existing_user["id"]})
             
+            # Also check for phone number conflicts and delete
+            import time
+            unique_phone = f"0912345{int(time.time()) % 10000:04d}"  # Generate unique phone
+            
             # Register new test user
             registration_data = {
                 "first_name": "خریدار",
                 "last_name": "تست", 
                 "email": TEST_USER_EMAIL,
-                "phone": "09123456789",
+                "phone": unique_phone,
                 "password": TEST_USER_PASSWORD
             }
             
@@ -72,6 +107,7 @@ class BuyOrderWorkflowTester:
                 self.test_user_id = data["user"]["id"]
                 print(f"✅ Test user registered successfully: {data['user']['full_name']}")
                 print(f"👤 User ID: {self.test_user_id}")
+                print(f"📱 Phone: {unique_phone}")
                 
                 # Manually set user wallet balance to 10,000,000 TMN in database
                 await self.db.users.update_one(
