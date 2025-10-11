@@ -356,6 +356,21 @@ const Trade = ({ user, onLogout }) => {
                     </div>
                   )}
                 </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2">آدرس کیف پول {selectedCoin?.symbol}</label>
+                  <input
+                    type="text"
+                    value={walletAddress}
+                    onChange={(e) => setWalletAddress(e.target.value)}
+                    placeholder={`آدرس کیف پول ${selectedCoin?.symbol} خود را وارد کنید`}
+                    className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg text-left"
+                    dir="ltr"
+                  />
+                  <div className="text-xs text-slate-500 mt-1">
+                    ارز خریداری شده به این آدرس ارسال خواهد شد
+                  </div>
+                </div>
                 <div className="text-sm text-slate-400">
                   موجودی کیف پول: {new Intl.NumberFormat('fa-IR').format(user?.wallet_balance_tmn || 0)} تومان
                 </div>
