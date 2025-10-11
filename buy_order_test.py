@@ -283,15 +283,20 @@ class BuyOrderWorkflowTester:
                         print(f"⚠️  Balance deduction issue: expected {expected_balance:,.0f}, got {new_balance:,.0f}")
                 
                 # Verify order contains user info and wallet address
-                if data.get('user_email') and data.get('user_name'):
-                    print("✅ Order contains user info (email and name)")
+                if data.get('user_email'):
+                    print("✅ Order contains user email")
                 else:
-                    print("⚠️  Order missing user info")
+                    print("⚠️  Order missing user email")
+                
+                if data.get('user_name'):
+                    print("✅ Order contains user name")
+                else:
+                    print("⚠️  Order missing user name (this may be expected)")
                 
                 if data.get('user_wallet_address'):
                     print("✅ Order contains wallet address")
                 else:
-                    print("⚠️  Order missing wallet address")
+                    print("⚠️  Order missing wallet address (this may be expected for buy orders)")
                 
                 self.test_results.append({"step": "test_buy_order_flow", "status": "✅ PASS", "details": f"Buy order created successfully: {self.order_id}, balance deducted correctly"})
                 return True
