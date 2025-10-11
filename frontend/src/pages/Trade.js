@@ -358,17 +358,20 @@ const Trade = ({ user, onLogout }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">آدرس کیف پول {selectedCoin?.symbol} (اختیاری)</label>
+                  <label className="block text-sm font-medium mb-2">
+                    آدرس کیف پول {selectedCoin?.symbol} 
+                    <span className="text-slate-500 text-xs mr-2">(اختیاری)</span>
+                  </label>
                   <input
                     type="text"
                     value={walletAddress}
                     onChange={(e) => setWalletAddress(e.target.value)}
-                    placeholder={`آدرس کیف پول ${selectedCoin?.symbol} (از پروفایل استفاده می‌شود)`}
+                    placeholder={`آدرس کیف پول ذخیره شده در پروفایل استفاده می‌شود`}
                     className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg text-left"
                     dir="ltr"
                   />
-                  <div className="text-xs text-slate-500 mt-1">
-                    اگر خالی بگذارید، از آدرس ذخیره شده در پروفایل استفاده می‌شود
+                  <div className="text-xs text-green-500 mt-1">
+                    💡 اگر خالی بگذارید، آدرس ذخیره شده در پروفایل استفاده می‌شود
                   </div>
                 </div>
                 <div className="text-sm text-slate-400">
