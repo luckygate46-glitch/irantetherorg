@@ -256,7 +256,7 @@ class BuyOrderWorkflowTester:
                 self.order_id = data.get('id')  # The response shows 'id' field contains the order ID
                 print(f"✅ Buy order created successfully")
                 print(f"🆔 Order ID: {self.order_id}")
-                print(f"📊 Full Response: {data}")  # Debug: show full response
+                # Debug: Full response structure verified
                 print(f"💰 Order Amount: {data.get('amount_tmn', 0):,.0f} TMN")
                 print(f"🪙 Crypto Amount: {data.get('amount_crypto', 0):.6f} {data.get('coin_symbol', 'N/A')}")
                 print(f"📊 Status: {data.get('status', 'N/A')}")
