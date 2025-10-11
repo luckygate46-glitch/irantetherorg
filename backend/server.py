@@ -2391,19 +2391,6 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
         if current_user.wallet_balance_tmn < order_data.amount_tmn:
             raise HTTPException(status_code=400, detail="موجودی کافی ندارید")
         
-        # Check if user has a verified wallet address for this coin
-        wallet_address = await db.wallet_addresses.find_one({
-            "user_id": current_user.id,
-            "symbol": order_data.coin_symbol,
-            "verified": True
-        })
-        
-        if not wallet_address:
-            raise HTTPException(
-                status_code=400, 
-                detail=f"برای خرید {order_data.coin_symbol} ابتدا باید آدرس کیف پول تایید شده اضافه کنید"
-            )
-        
         # Calculate how much crypto user will receive
         calculated_amount_crypto = order_data.amount_tmn / current_price_tmn
         total_value_tmn = order_data.amount_tmn
