@@ -127,57 +127,48 @@ class BuyOrderWorkflowTester:
             print(f"❌ Login error: {str(e)}")
             self.test_results.append({"step": "login_test_user", "status": "❌ ERROR", "details": str(e)})
             return False
+
+    async def step3_add_wallet_address(self):
+        """Step 3: Add USDT Wallet Address"""
+        print("\n💳 STEP 3: Adding USDT Wallet Address...")
         
-    async def login_test_user(self):
-        """Login as test user"""
         try:
-            response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
-                "email": TEST_USER_EMAIL,
-                "password": TEST_USER_PASSWORD
-            })
+            wallet_data = {
+                "symbol": "USDT",
+                "address": "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b1",
+                "label": "My USDT Wallet"
+            }
+            
+            headers = {"Authorization": f"Bearer {self.user_token}"}
+            response = await self.client.post(f"{BACKEND_URL}/user/wallet-addresses", headers=headers, json=wallet_data)
             
             if response.status_code == 200:
                 data = response.json()
-                self.user_token = data["access_token"]
-                user_info = data["user"]
-                self.test_user_id = user_info["id"]
-                print(f"✅ Test user login successful: {user_info.get('full_name', 'Test User')}")
-                print(f"📊 User KYC Level: {user_info.get('kyc_level', 0)}")
-                print(f"📊 Wallet Balance: {user_info.get('wallet_balance_tmn', 0):,.0f} TMN")
-                return True
+                print(f"✅ USDT wallet address added successfully")
+                print(f"📍 Address: {data['address']}")
+                print(f"🏷️  Label: {data.get('label', 'N/A')}")
+                print(f"✅ Verified: {data.get('verified', False)}")
+                
+                # Verify wallet is saved by getting all wallet addresses
+                get_response = await self.client.get(f"{BACKEND_URL}/user/wallet-addresses", headers=headers)
+                if get_response.status_code == 200:
+                    wallets = get_response.json()
+                    usdt_wallets = [w for w in wallets if w['symbol'] == 'USDT']
+                    print(f"✅ Wallet verification: {len(usdt_wallets)} USDT wallet(s) found")
+                    
+                    self.test_results.append({"step": "add_wallet_address", "status": "✅ PASS", "details": f"USDT wallet added and verified: {data['address']}"})
+                    return True
+                else:
+                    print(f"⚠️  Could not verify wallet: {get_response.status_code}")
+                    
             else:
-                print(f"❌ Test user login failed: {response.status_code} - {response.text}")
+                print(f"❌ Wallet address addition failed: {response.status_code} - {response.text}")
+                self.test_results.append({"step": "add_wallet_address", "status": "❌ FAIL", "details": f"Wallet addition failed: {response.status_code}"})
                 return False
                 
         except Exception as e:
-            print(f"❌ Test user login error: {str(e)}")
-            return False
-    
-    async def login_admin_as_user(self):
-        """Login as admin user for testing"""
-        try:
-            response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
-                "email": ADMIN_EMAIL,
-                "password": ADMIN_PASSWORD
-            })
-            
-            if response.status_code == 200:
-                data = response.json()
-                self.user_token = data["access_token"]
-                self.admin_token = data["access_token"]  # Same token for admin
-                user_info = data["user"]
-                self.test_user_id = user_info["id"]
-                print(f"✅ Admin login successful: {user_info.get('full_name', 'Admin')}")
-                print(f"📊 User KYC Level: {user_info.get('kyc_level', 0)}")
-                print(f"📊 Wallet Balance: {user_info.get('wallet_balance_tmn', 0):,.0f} TMN")
-                print(f"📊 Is Admin: {user_info.get('is_admin', False)}")
-                return True
-            else:
-                print(f"❌ Admin login failed: {response.status_code} - {response.text}")
-                return False
-                
-        except Exception as e:
-            print(f"❌ Admin login error: {str(e)}")
+            print(f"❌ Wallet address error: {str(e)}")
+            self.test_results.append({"step": "add_wallet_address", "status": "❌ ERROR", "details": str(e)})
             return False
 
     async def test_buy_order_with_valid_token(self):
