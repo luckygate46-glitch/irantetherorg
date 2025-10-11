@@ -125,27 +125,36 @@ const Trade = ({ user, onLogout }) => {
       return;
     }
 
-    // Check for wallet address before placing buy order
-    if (orderType === 'buy') {
-      const { hasWallet } = await checkWalletAddress(selectedCoin.symbol);
-      
-      if (!hasWallet) {
-        const shouldAddWallet = window.confirm(
-          `برای خرید ${selectedCoin.symbol} نیاز به آدرس کیف پول دارید.\n\nآیا می‌خواهید الان آدرس کیف پول خود را اضافه کنید؟`
-        );
-        
-        if (shouldAddWallet) {
-          // Redirect to profile page
-          navigate('/profile?tab=wallets');
-          return;
-        } else {
-          return; // Cancel the order
+    setOrderLoading(true);
+    
+    try {
+      // Check for wallet address before placing buy order
+      if (orderType === 'buy') {
+        console.log('🔍 Checking wallet address...');
+        try {
+          const { hasWallet } = await checkWalletAddress(selectedCoin.symbol);
+          console.log('✅ Wallet check result:', hasWallet);
+          
+          if (!hasWallet) {
+            setOrderLoading(false);
+            const shouldAddWallet = window.confirm(
+              `برای خرید ${selectedCoin.symbol} نیاز به آدرس کیف پول دارید.\n\nآیا می‌خواهید الان آدرس کیف پول خود را اضافه کنید؟`
+            );
+            
+            if (shouldAddWallet) {
+              // Redirect to profile page
+              navigate('/profile?tab=wallets');
+              return;
+            } else {
+              return; // Cancel the order
+            }
+          }
+        } catch (walletError) {
+          console.error('⚠️ Wallet check error (continuing anyway):', walletError);
+          // Continue with order even if wallet check fails - backend will validate
         }
       }
-    }
 
-    setOrderLoading(true);
-    try {
       const orderData = {
         order_type: orderType,
         coin_symbol: selectedCoin.symbol,
@@ -154,28 +163,38 @@ const Trade = ({ user, onLogout }) => {
 
       if (orderType === 'buy') {
         const amount = parseFloat(buyAmount);
+        console.log('💵 Buy amount:', amount);
+        
         if (!amount || amount <= 0) {
           alert('لطفا مبلغ معتبری وارد کنید');
+          setOrderLoading(false);
           return;
         }
-        // Wallet address is optional - admin will use saved address or user can provide one
         
         // Check if user has sufficient balance
         const userBalance = user?.wallet_balance_tmn || 0;
         console.log('💰 Balance check:', { amount, userBalance, user });
+        
         if (amount > userBalance) {
+          setOrderLoading(false);
           alert(`موجودی شما کافی نیست.\nمبلغ درخواستی: ${new Intl.NumberFormat('fa-IR').format(amount)} تومان\nموجودی فعلی: ${new Intl.NumberFormat('fa-IR').format(userBalance)} تومان`);
           return;
         }
         
         orderData.amount_tmn = amount;
+        
+        // Include wallet address if provided, otherwise backend will use saved one
         if (walletAddress && walletAddress.trim() !== '') {
           orderData.user_wallet_address = walletAddress;
+          console.log('📬 Using provided wallet address');
+        } else {
+          console.log('📬 Will use saved wallet address from profile');
         }
       } else if (orderType === 'sell') {
         const amount = parseFloat(sellAmount);
         if (!amount || amount <= 0) {
           alert('لطفا مقدار معتبری وارد کنید');
+          setOrderLoading(false);
           return;
         }
         orderData.amount_crypto = amount;
@@ -183,6 +202,7 @@ const Trade = ({ user, onLogout }) => {
         const amount = parseFloat(tradeAmount);
         if (!amount || amount <= 0 || !targetCoin) {
           alert('لطفا مقدار معتبری وارد کنید و ارز مقصد را انتخاب کنید');
+          setOrderLoading(false);
           return;
         }
         orderData.amount_crypto = amount;
@@ -190,14 +210,27 @@ const Trade = ({ user, onLogout }) => {
         orderData.target_coin_id = targetCoin.id;
       }
 
-      console.log('📤 Sending order:', orderData);
+      console.log('📤 Sending order to backend:', orderData);
       const token = localStorage.getItem('token');
+      
+      if (!token) {
+        alert('لطفا ابتدا وارد شوید');
+        setOrderLoading(false);
+        navigate('/auth');
+        return;
+      }
+      
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
       const response = await axios.post(`${API}/trading/order`, orderData, config);
       console.log('✅ Order response:', response.data);
       
-      alert('✅ سفارش شما ثبت شد!\n💰 موجودی شما کسر شد\n⏳ منتظر تایید ادمین بمانید\n📧 ارز به آدرس کیف پول شما ارسال خواهد شد');
+      // Show detailed success message
+      const successMsg = orderType === 'buy' 
+        ? `✅ سفارش خرید شما با موفقیت ثبت شد!\n\n💰 مبلغ ${new Intl.NumberFormat('fa-IR').format(orderData.amount_tmn)} تومان از حساب شما کسر شد\n\n⏳ منتظر تایید ادمین بمانید\n\n📧 پس از تایید، ارز به آدرس کیف پول شما ارسال خواهد شد\n\n🔔 می‌توانید وضعیت سفارش را در بخش "سفارشات من" مشاهده کنید`
+        : '✅ سفارش شما با موفقیت ثبت شد!';
+      
+      alert(successMsg);
       
       // Clear form and refresh data
       setBuyAmount('');
@@ -205,15 +238,38 @@ const Trade = ({ user, onLogout }) => {
       setTradeAmount('');
       setWalletAddress('');
       setTargetCoin(null);
-      fetchData();
+      
+      // Refresh page data to show updated balance and orders
+      await fetchData();
+      
+      console.log('✅ Order completed successfully, data refreshed');
       
     } catch (error) {
       console.error('❌ Error creating order:', error);
       console.error('❌ Error details:', error.response?.data);
-      const errorMsg = error.response?.data?.detail || error.message || 'خطای نامشخص';
-      alert('خطا در ثبت سفارش:\n' + errorMsg);
+      
+      let errorMsg = 'خطای نامشخص در ثبت سفارش';
+      
+      if (error.response) {
+        // Server responded with error
+        if (error.response.status === 401 || error.response.status === 403) {
+          errorMsg = 'لطفا ابتدا وارد حساب کاربری خود شوید';
+        } else if (error.response.data?.detail) {
+          errorMsg = error.response.data.detail;
+        } else {
+          errorMsg = `خطا: ${error.response.status}`;
+        }
+      } else if (error.request) {
+        // Request made but no response
+        errorMsg = 'خطا در ارتباط با سرور. لطفا اتصال اینترنت خود را بررسی کنید';
+      } else {
+        errorMsg = error.message || 'خطای نامشخص';
+      }
+      
+      alert('❌ خطا در ثبت سفارش:\n\n' + errorMsg);
     } finally {
       setOrderLoading(false);
+      console.log('🏁 handleOrder completed');
     }
   };
 
