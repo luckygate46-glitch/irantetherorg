@@ -197,6 +197,22 @@ class BuyOrderWorkflowTester:
                 else:
                     print(f"⚠️  Could not verify wallet: {get_response.status_code}")
                     
+            elif response.status_code == 400 and "قبلاً اضافه شده" in response.text:
+                print(f"✅ USDT wallet address already exists")
+                
+                # Verify wallet exists by getting all wallet addresses
+                get_response = await self.client.get(f"{BACKEND_URL}/user/wallet-addresses", headers=headers)
+                if get_response.status_code == 200:
+                    wallets = get_response.json()
+                    usdt_wallets = [w for w in wallets if w['symbol'] == 'USDT']
+                    print(f"✅ Wallet verification: {len(usdt_wallets)} USDT wallet(s) found")
+                    
+                    if usdt_wallets:
+                        wallet_address = usdt_wallets[0]['address']
+                        print(f"📍 Existing Address: {wallet_address}")
+                        self.test_results.append({"step": "add_wallet_address", "status": "✅ PASS", "details": f"USDT wallet already exists and verified: {wallet_address}"})
+                        return True
+                    
             else:
                 print(f"❌ Wallet address addition failed: {response.status_code} - {response.text}")
                 self.test_results.append({"step": "add_wallet_address", "status": "❌ FAIL", "details": f"Wallet addition failed: {response.status_code}"})
