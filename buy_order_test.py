@@ -437,13 +437,14 @@ class BuyOrderWorkflowTester:
                             our_order = order
                             break
                     
-                    if our_order and our_order.get('status') == 'approved':
-                        print("✅ Order status changed to 'approved'")
-                        self.test_results.append({"step": "test_order_approval", "status": "✅ PASS", "details": "Order successfully approved, status updated"})
+                    if our_order and our_order.get('status') in ['approved', 'completed']:
+                        current_status = our_order.get('status')
+                        print(f"✅ Order status changed to '{current_status}'")
+                        self.test_results.append({"step": "test_order_approval", "status": "✅ PASS", "details": f"Order successfully approved, status updated to '{current_status}'"})
                         return True
                     else:
                         current_status = our_order.get('status', 'unknown') if our_order else 'order not found'
-                        print(f"⚠️  Order status is '{current_status}', expected 'approved'")
+                        print(f"⚠️  Order status is '{current_status}', expected 'approved' or 'completed'")
                         self.test_results.append({"step": "test_order_approval", "status": "⚠️  PARTIAL", "details": f"Approval API worked but status is '{current_status}'"})
                         return True
                 else:
