@@ -202,6 +202,10 @@ function App() {
             path="/admin/ai/assistant" 
             element={user?.is_admin ? <AdminAIAssistant user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
+          <Route 
+            path="/admin/settings/ai" 
+            element={user?.is_admin ? <AdminAISettings user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
           
           {/* NEW AI ADMIN ROUTES */}
           <Route 
