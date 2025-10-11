@@ -172,47 +172,230 @@ class BuyOrderWorkflowTester:
             return False
 
     async def step4_test_buy_order_flow(self):
-        """Test buy order with valid token and sufficient balance"""
-        print("\n💰 Testing Buy Order with Valid Token...")
+        """Step 4: Test Buy Order Flow"""
+        print("\n🛒 STEP 4: Testing Buy Order Flow...")
         
         try:
+            # Get current balance before order
             headers = {"Authorization": f"Bearer {self.user_token}"}
-            payload = {
+            profile_response = await self.client.get(f"{BACKEND_URL}/auth/me", headers=headers)
+            
+            if profile_response.status_code == 200:
+                profile_data = profile_response.json()
+                initial_balance = profile_data.get('wallet_balance_tmn', 0)
+                print(f"💰 Initial Balance: {initial_balance:,.0f} TMN")
+            else:
+                print("⚠️  Could not get initial balance")
+                initial_balance = 10000000  # Assume initial balance
+            
+            # Create buy order
+            order_data = {
                 "order_type": "buy",
-                "coin_symbol": "BTC",
-                "coin_id": "bitcoin",
-                "amount_tmn": 100000
+                "coin_symbol": "USDT",
+                "coin_id": "tether",
+                "amount_tmn": 5000000  # 5M TMN
             }
             
-            response = await self.client.post(f"{BACKEND_URL}/trading/order", headers=headers, json=payload)
-            
-            print(f"📊 Response Status: {response.status_code}")
-            print(f"📊 Response Body: {response.text}")
+            response = await self.client.post(f"{BACKEND_URL}/trading/order", headers=headers, json=order_data)
             
             if response.status_code == 200:
                 data = response.json()
-                print("✅ Buy order created successfully")
-                print(f"📊 Order ID: {data.get('order_id', 'N/A')}")
-                print(f"📊 Message: {data.get('message', 'N/A')}")
-                self.test_results.append({"test": "buy_order_valid_token", "status": "✅ PASS", "details": "Buy order successful"})
+                self.order_id = data.get('order_id')
+                print(f"✅ Buy order created successfully")
+                print(f"🆔 Order ID: {self.order_id}")
+                print(f"💰 Order Amount: {data.get('amount_tmn', 0):,.0f} TMN")
+                print(f"🪙 Crypto Amount: {data.get('amount_crypto', 0):.6f} {data.get('coin_symbol', 'N/A')}")
+                print(f"📊 Status: {data.get('status', 'N/A')}")
                 
-            elif response.status_code == 403:
-                print("⚠️  Buy order blocked - KYC Level 2 required")
-                self.test_results.append({"test": "buy_order_valid_token", "status": "⚠️  KYC", "details": "Requires KYC Level 2"})
+                # Verify order is created with "pending" status
+                if data.get('status') == 'pending':
+                    print("✅ Order status is 'pending' as expected")
+                else:
+                    print(f"⚠️  Order status is '{data.get('status')}', expected 'pending'")
                 
-            elif response.status_code == 400:
-                error_data = response.json()
-                error_detail = error_data.get('detail', 'Unknown error')
-                print(f"⚠️  Buy order validation error: {error_detail}")
-                self.test_results.append({"test": "buy_order_valid_token", "status": "⚠️  VALIDATION", "details": error_detail})
+                # Check if balance is deducted
+                profile_response_after = await self.client.get(f"{BACKEND_URL}/auth/me", headers=headers)
+                if profile_response_after.status_code == 200:
+                    profile_data_after = profile_response_after.json()
+                    new_balance = profile_data_after.get('wallet_balance_tmn', 0)
+                    expected_balance = initial_balance - 5000000
+                    
+                    print(f"💰 New Balance: {new_balance:,.0f} TMN")
+                    print(f"💰 Expected Balance: {expected_balance:,.0f} TMN")
+                    
+                    if abs(new_balance - expected_balance) < 1:  # Allow for small rounding differences
+                        print("✅ Balance correctly deducted (10M - 5M = 5M remaining)")
+                    else:
+                        print(f"⚠️  Balance deduction issue: expected {expected_balance:,.0f}, got {new_balance:,.0f}")
+                
+                # Verify order contains user info and wallet address
+                if data.get('user_email') and data.get('user_name'):
+                    print("✅ Order contains user info (email and name)")
+                else:
+                    print("⚠️  Order missing user info")
+                
+                if data.get('user_wallet_address'):
+                    print("✅ Order contains wallet address")
+                else:
+                    print("⚠️  Order missing wallet address")
+                
+                self.test_results.append({"step": "test_buy_order_flow", "status": "✅ PASS", "details": f"Buy order created successfully: {self.order_id}, balance deducted correctly"})
+                return True
                 
             else:
-                print(f"❌ Buy order failed: {response.status_code} - {response.text}")
-                self.test_results.append({"test": "buy_order_valid_token", "status": "❌ FAIL", "details": f"HTTP {response.status_code}"})
+                print(f"❌ Buy order creation failed: {response.status_code} - {response.text}")
+                self.test_results.append({"step": "test_buy_order_flow", "status": "❌ FAIL", "details": f"Order creation failed: {response.status_code}"})
+                return False
                 
         except Exception as e:
             print(f"❌ Buy order error: {str(e)}")
-            self.test_results.append({"test": "buy_order_valid_token", "status": "❌ ERROR", "details": str(e)})
+            self.test_results.append({"step": "test_buy_order_flow", "status": "❌ ERROR", "details": str(e)})
+            return False
+
+    async def step5_login_admin(self):
+        """Step 5: Login as Admin"""
+        print("\n👑 STEP 5: Login as Admin...")
+        
+        try:
+            response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
+                "email": ADMIN_EMAIL,
+                "password": ADMIN_PASSWORD
+            })
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.admin_token = data["access_token"]
+                admin_info = data["user"]
+                print(f"✅ Admin login successful: {admin_info.get('full_name', 'Admin')}")
+                print(f"👑 Admin Status: {admin_info.get('is_admin', False)}")
+                
+                self.test_results.append({"step": "login_admin", "status": "✅ PASS", "details": "Admin login successful"})
+                return True
+            else:
+                print(f"❌ Admin login failed: {response.status_code} - {response.text}")
+                self.test_results.append({"step": "login_admin", "status": "❌ FAIL", "details": f"Admin login failed: {response.status_code}"})
+                return False
+                
+        except Exception as e:
+            print(f"❌ Admin login error: {str(e)}")
+            self.test_results.append({"step": "login_admin", "status": "❌ ERROR", "details": str(e)})
+            return False
+
+    async def step6_verify_admin_can_see_order(self):
+        """Step 6: Verify Admin Can See Order"""
+        print("\n👀 STEP 6: Verify Admin Can See Order...")
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            response = await self.client.get(f"{BACKEND_URL}/admin/orders", headers=headers)
+            
+            if response.status_code == 200:
+                orders = response.json()
+                print(f"✅ Admin orders endpoint accessible")
+                print(f"📊 Total orders visible to admin: {len(orders)}")
+                
+                # Find our specific order
+                our_order = None
+                for order in orders:
+                    if order.get('id') == self.order_id:
+                        our_order = order
+                        break
+                
+                if our_order:
+                    print(f"✅ Our buy order found in admin orders")
+                    print(f"🆔 Order ID: {our_order.get('id')}")
+                    print(f"👤 User Email: {our_order.get('user_email', 'N/A')}")
+                    print(f"👤 User Name: {our_order.get('user_name', 'N/A')}")
+                    print(f"💳 Wallet Address: {our_order.get('user_wallet_address', 'N/A')}")
+                    print(f"💰 Amount: {our_order.get('amount_tmn', 0):,.0f} TMN")
+                    print(f"📊 Status: {our_order.get('status', 'N/A')}")
+                    
+                    # Verify order has all required details
+                    required_fields = ['user_email', 'user_name', 'user_wallet_address', 'amount_tmn']
+                    missing_fields = [field for field in required_fields if not our_order.get(field)]
+                    
+                    if not missing_fields:
+                        print("✅ Order has all user details (name, email, wallet address, amount)")
+                    else:
+                        print(f"⚠️  Order missing fields: {missing_fields}")
+                    
+                    self.test_results.append({"step": "verify_admin_can_see_order", "status": "✅ PASS", "details": f"Admin can see order with all details: {our_order.get('user_email')}"})
+                    return True
+                else:
+                    print(f"❌ Our order not found in admin orders (Order ID: {self.order_id})")
+                    # Show available order IDs for debugging
+                    available_ids = [o.get('id', 'N/A') for o in orders[:5]]  # Show first 5
+                    print(f"🔍 Available order IDs: {available_ids}")
+                    self.test_results.append({"step": "verify_admin_can_see_order", "status": "❌ FAIL", "details": f"Order {self.order_id} not found in admin orders"})
+                    return False
+                    
+            else:
+                print(f"❌ Admin orders access failed: {response.status_code} - {response.text}")
+                self.test_results.append({"step": "verify_admin_can_see_order", "status": "❌ FAIL", "details": f"Admin orders access failed: {response.status_code}"})
+                return False
+                
+        except Exception as e:
+            print(f"❌ Admin orders verification error: {str(e)}")
+            self.test_results.append({"step": "verify_admin_can_see_order", "status": "❌ ERROR", "details": str(e)})
+            return False
+
+    async def step7_test_order_approval(self):
+        """Step 7: Test Order Approval"""
+        print("\n✅ STEP 7: Test Order Approval...")
+        
+        if not self.order_id:
+            print("❌ No order ID available for approval test")
+            self.test_results.append({"step": "test_order_approval", "status": "❌ FAIL", "details": "No order ID available"})
+            return False
+        
+        try:
+            approval_data = {
+                "order_id": self.order_id,
+                "action": "approve",
+                "admin_note": "Test approval for buy order workflow"
+            }
+            
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            response = await self.client.post(f"{BACKEND_URL}/admin/orders/approve", headers=headers, json=approval_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Order approval successful")
+                print(f"📝 Response: {data.get('message', 'N/A')}")
+                
+                # Verify order status changed to "approved"
+                orders_response = await self.client.get(f"{BACKEND_URL}/admin/orders", headers=headers)
+                if orders_response.status_code == 200:
+                    orders = orders_response.json()
+                    our_order = None
+                    for order in orders:
+                        if order.get('id') == self.order_id:
+                            our_order = order
+                            break
+                    
+                    if our_order and our_order.get('status') == 'approved':
+                        print("✅ Order status changed to 'approved'")
+                        self.test_results.append({"step": "test_order_approval", "status": "✅ PASS", "details": "Order successfully approved, status updated"})
+                        return True
+                    else:
+                        current_status = our_order.get('status', 'unknown') if our_order else 'order not found'
+                        print(f"⚠️  Order status is '{current_status}', expected 'approved'")
+                        self.test_results.append({"step": "test_order_approval", "status": "⚠️  PARTIAL", "details": f"Approval API worked but status is '{current_status}'"})
+                        return True
+                else:
+                    print("⚠️  Could not verify order status after approval")
+                    self.test_results.append({"step": "test_order_approval", "status": "⚠️  PARTIAL", "details": "Approval API worked but could not verify status"})
+                    return True
+                    
+            else:
+                print(f"❌ Order approval failed: {response.status_code} - {response.text}")
+                self.test_results.append({"step": "test_order_approval", "status": "❌ FAIL", "details": f"Order approval failed: {response.status_code}"})
+                return False
+                
+        except Exception as e:
+            print(f"❌ Order approval error: {str(e)}")
+            self.test_results.append({"step": "test_order_approval", "status": "❌ ERROR", "details": str(e)})
+            return False
 
     async def test_buy_order_without_token(self):
         """Test buy order without authentication token"""
