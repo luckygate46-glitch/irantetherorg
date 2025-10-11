@@ -74,6 +74,29 @@ export default function AdminLayout({ user, onLogout, children, currentPage }) {
                 </button>
               );
             })}
+
+            {/* AI Settings Section */}
+            <div className="pt-4 mt-4 border-t border-slate-700">
+              <div className="text-xs text-slate-500 uppercase px-4 mb-2">هوش مصنوعی</div>
+              {aiMenuItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => navigate(item.path)}
+                    data-testid={`admin-menu-${item.id}`}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-right transition-colors ${
+                      isActive
+                        ? 'bg-emerald-600 text-white'
+                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    }`}
+                  >
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </nav>
         </aside>
 
