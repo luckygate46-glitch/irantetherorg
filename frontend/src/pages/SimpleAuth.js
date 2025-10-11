@@ -21,40 +21,25 @@ export default function SimpleAuth({ onLogin }) {
   const [message, setMessage] = useState("");
 
   const handleLogin = async (e) => {
-    console.log('🔴 handleLogin CALLED!', e);
     e.preventDefault();
-    console.log('🔴 preventDefault called');
-    console.log('🔴 loginData:', loginData);
-    console.log('🔴 API URL:', `${API}/auth/login`);
-    console.log('🔴 onLogin prop:', onLogin, typeof onLogin);
-    
     setLoading(true);
     setMessage("در حال ورود...");
-    console.log('🔴 Set loading=true and message');
     
     try {
-      console.log('🔴 About to make axios POST request...');
       const response = await axios.post(`${API}/auth/login`, loginData);
-      console.log('🔴 Response received:', response);
       
       if (onLogin && typeof onLogin === 'function') {
-        console.log('🔴 Calling onLogin...');
         onLogin(response.data.access_token, response.data.user);
         setMessage('ورود موفق! در حال انتقال...');
-        console.log('🔴 Login successful!');
       } else {
-        console.log('❌ onLogin is not a function!', onLogin);
         setMessage('خطا: تابع onLogin یافت نشد');
       }
       
     } catch (error) {
-      console.error('❌ Login error:', error);
-      console.error('❌ Error response:', error.response);
-      console.error('❌ Error message:', error.message);
+      console.error('Login error:', error);
       setMessage('خطا در ورود: ' + (error.response?.data?.detail || error.message));
     } finally {
       setLoading(false);
-      console.log('🔴 handleLogin completed, loading=false');
     }
   };
 
