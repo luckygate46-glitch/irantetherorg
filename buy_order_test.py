@@ -236,9 +236,11 @@ class BuyOrderWorkflowTester:
             
             if response.status_code == 200:
                 data = response.json()
-                self.order_id = data.get('order_id')
+                # Try different possible field names for order ID
+                self.order_id = data.get('order_id') or data.get('id') or data.get('order', {}).get('id')
                 print(f"✅ Buy order created successfully")
                 print(f"🆔 Order ID: {self.order_id}")
+                print(f"📊 Full Response: {data}")  # Debug: show full response
                 print(f"💰 Order Amount: {data.get('amount_tmn', 0):,.0f} TMN")
                 print(f"🪙 Crypto Amount: {data.get('amount_crypto', 0):.6f} {data.get('coin_symbol', 'N/A')}")
                 print(f"📊 Status: {data.get('status', 'N/A')}")
