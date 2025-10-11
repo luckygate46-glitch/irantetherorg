@@ -185,9 +185,12 @@ const Trade = ({ user, onLogout }) => {
         orderData.target_coin_id = targetCoin.id;
       }
 
+      console.log('📤 Sending order:', orderData);
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.post(`${API}/trading/order`, orderData, config);
+      
+      const response = await axios.post(`${API}/trading/order`, orderData, config);
+      console.log('✅ Order response:', response.data);
       
       alert('✅ سفارش شما ثبت شد!\n💰 موجودی شما کسر شد\n⏳ منتظر تایید ادمین بمانید\n📧 ارز به آدرس کیف پول شما ارسال خواهد شد');
       
@@ -200,8 +203,10 @@ const Trade = ({ user, onLogout }) => {
       fetchData();
       
     } catch (error) {
-      console.error('خطا در ثبت سفارش:', error);
-      alert(error.response?.data?.detail || 'خطا در ثبت سفارش');
+      console.error('❌ Error creating order:', error);
+      console.error('❌ Error details:', error.response?.data);
+      const errorMsg = error.response?.data?.detail || error.message || 'خطای نامشخص';
+      alert('خطا در ثبت سفارش:\n' + errorMsg);
     } finally {
       setOrderLoading(false);
     }
