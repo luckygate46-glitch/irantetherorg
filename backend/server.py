@@ -1709,6 +1709,7 @@ class TradingOrderCreate(BaseModel):
     amount_tmn: Optional[float] = None
     target_coin_symbol: Optional[str] = None  # For trade
     target_coin_id: Optional[str] = None  # For trade
+    user_wallet_address: Optional[str] = None  # User's wallet address for receiving crypto
 
 class TradingOrderResponse(BaseModel):
     id: str
