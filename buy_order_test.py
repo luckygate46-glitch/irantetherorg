@@ -171,7 +171,7 @@ class BuyOrderWorkflowTester:
             self.test_results.append({"step": "add_wallet_address", "status": "❌ ERROR", "details": str(e)})
             return False
 
-    async def test_buy_order_with_valid_token(self):
+    async def step4_test_buy_order_flow(self):
         """Test buy order with valid token and sufficient balance"""
         print("\n💰 Testing Buy Order with Valid Token...")
         
