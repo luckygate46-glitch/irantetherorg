@@ -20,6 +20,7 @@ import AdminTradingManager from "./pages/admin/AdminTradingManager";
 import AdminFraudDetection from "./pages/admin/AdminFraudDetection";
 import AdminAdvancedAnalytics from "./pages/admin/AdminAdvancedAnalytics";
 import AdminAIAssistant from "./pages/admin/AdminAIAssistant";
+import AdminAISettings from "./pages/admin/AdminAISettings";
 import UserAIDashboard from "./pages/UserAIDashboard";
 import UserAIAssistant from "./pages/UserAIAssistant";
 import UserAIRecommendations from "./pages/UserAIRecommendations";
