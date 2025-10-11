@@ -116,6 +116,8 @@ const Trade = ({ user, onLogout }) => {
   };
 
   const handleOrder = async (orderType) => {
+    console.log('🔴 BUTTON CLICKED! Order type:', orderType);
+    
     if (!selectedCoin) {
       alert('لطفا یک ارز انتخاب کنید');
       return;
