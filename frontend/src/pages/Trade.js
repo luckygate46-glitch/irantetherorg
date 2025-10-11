@@ -190,12 +190,13 @@ const Trade = ({ user, onLogout }) => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await axios.post(`${API}/trading/order`, orderData, config);
       
-      alert('سفارش شما ثبت شد و در انتظار تایید ادمین است');
+      alert('✅ سفارش شما ثبت شد!\n💰 موجودی شما کسر شد\n⏳ منتظر تایید ادمین بمانید\n📧 ارز به آدرس کیف پول شما ارسال خواهد شد');
       
       // Clear form and refresh data
       setBuyAmount('');
       setSellAmount('');
       setTradeAmount('');
+      setWalletAddress('');
       setTargetCoin(null);
       fetchData();
       
