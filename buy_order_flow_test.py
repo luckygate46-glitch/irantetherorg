@@ -319,28 +319,20 @@ class BuyOrderFlowTester:
                 order_result = response.json()
                 print("✅ Buy order creation successful")
                 
-                # Check response structure
-                order_id = order_result.get('order_id')
-                success_message = order_result.get('message', '')
+                # Check response structure - the API returns the full order object
+                order_id = order_result.get('id')  # Changed from 'order_id' to 'id'
                 
                 if order_id:
                     print(f"📊 Order ID: {order_id}")
-                    print(f"📊 Success Message: {success_message}")
                     
-                    # Check if message is in Persian
-                    if any(char in success_message for char in 'ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی'):
-                        print("✅ Persian language success message confirmed")
-                    else:
-                        print("⚠️  Success message not in Persian")
-                    
-                    # Display order details if available
-                    if 'order' in order_result:
-                        order_details = order_result['order']
-                        print(f"📊 Order Type: {order_details.get('order_type', 'N/A')}")
-                        print(f"📊 Coin: {order_details.get('coin_symbol', 'N/A')}")
-                        print(f"📊 Amount TMN: {order_details.get('amount_tmn', 0):,.0f}")
-                        print(f"📊 Status: {order_details.get('status', 'N/A')}")
-                        print(f"📊 Price at Order: {order_details.get('price_at_order', 0):,.0f} TMN")
+                    # Display order details
+                    print(f"📊 Order Type: {order_result.get('order_type', 'N/A')}")
+                    print(f"📊 Coin: {order_result.get('coin_symbol', 'N/A')}")
+                    print(f"📊 Amount TMN: {order_result.get('amount_tmn', 0):,.0f}")
+                    print(f"📊 Amount Crypto: {order_result.get('amount_crypto', 0):.6f}")
+                    print(f"📊 Status: {order_result.get('status', 'N/A')}")
+                    print(f"📊 Price at Order: {order_result.get('price_at_order', 0):,.0f} TMN")
+                    print(f"📊 Total Value: {order_result.get('total_value_tmn', 0):,.0f} TMN")
                     
                     self.test_results.append({
                         "test": "buy_order_creation", 
@@ -352,11 +344,11 @@ class BuyOrderFlowTester:
                     self.created_order_id = order_id
                     
                 else:
-                    print("⚠️  Buy order created but no order_id returned")
+                    print("⚠️  Buy order created but no order ID returned")
                     self.test_results.append({
                         "test": "buy_order_creation", 
                         "status": "⚠️  PARTIAL", 
-                        "details": "Order created but missing order_id"
+                        "details": "Order created but missing order ID"
                     })
                     
             elif response.status_code == 400:
