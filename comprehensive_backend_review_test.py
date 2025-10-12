@@ -91,10 +91,10 @@ class ComprehensiveBackendTester:
         """Test user registration with phone: 09123456789, email: test_comprehensive@example.com, password: test123"""
         print("\n👤 Testing User Registration and Login...")
         
-        # Generate unique email to avoid conflicts
+        # Generate unique email and phone to avoid conflicts
         random_suffix = ''.join(random.choices(string.digits, k=4))
         self.test_user_email = f"test_comprehensive_{random_suffix}@example.com"
-        test_phone = "09123456789"
+        test_phone = f"0912345{random_suffix}"  # Unique phone number
         test_password = "test123"
         
         try:
