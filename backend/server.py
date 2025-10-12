@@ -4167,7 +4167,7 @@ async def get_smart_assistant():
         if not api_key:
             raise HTTPException(
                 status_code=503,
-                detail="سرویس هوش مصنوعی پیکربندی نشده است. لطفاً ادمین را مطلع کنید"
+                detail="⚠️ سرویس هوش مصنوعی پیکربندی نشده است.\n\nادمین باید کلید OpenAI API را در بخش 'تنظیمات هوش مصنوعی' وارد کند.\n\nمسیر: پنل مدیریت → تنظیمات هوش مصنوعی"
             )
         
         return SmartTradingAssistant(api_key=api_key)
@@ -4175,7 +4175,7 @@ async def get_smart_assistant():
         raise
     except Exception as e:
         logger.error(f"Error initializing Smart Assistant: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"خطا در راه‌اندازی سرویس هوشمند: {str(e)}")
 
 @api_router.get("/ai/smart-recommendation/{coin_symbol}")
 async def get_smart_trading_recommendation(
