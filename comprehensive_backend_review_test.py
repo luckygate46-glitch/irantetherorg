@@ -281,7 +281,7 @@ class ComprehensiveBackendTester:
             
             if order_response.status_code == 200:
                 order_data = order_response.json()
-                order_id = order_data.get('order_id')
+                order_id = order_data.get('order_id') or order_data.get('id')
                 print(f"✅ Buy order created successfully: {order_id}")
                 print(f"📊 Order amount: {order_data.get('amount_tmn', 0):,.0f} TMN")
                 print(f"📊 Crypto amount: {order_data.get('amount_crypto', 0):.6f} USDT")
