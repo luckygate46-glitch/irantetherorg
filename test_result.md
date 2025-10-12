@@ -243,11 +243,11 @@ frontend:
 
   - task: "Registration & Authentication Flow"
     implemented: true
-    working: true
+    working: "NA"
     file: "backend/server.py, frontend/src/pages/AuthPageEnhanced.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: false
         - agent: "testing"
@@ -255,6 +255,9 @@ frontend:
         - working: true
         - agent: "testing"
         - comment: "BACKWARD COMPATIBILITY TESTING COMPLETE ✅ - All review requirements successfully verified! (1) Registration API accepts new fields (first_name, last_name, email, phone, password) with proper validation ✅ (2) Existing users can still login successfully - tested with testuser@example.com ✅ (3) Login API no longer returns 500 errors - all login attempts return proper 401/422 status codes ✅ (4) User profile retrieval (/auth/me) works perfectly for both new and existing users ✅ (5) Full name computation working correctly: existing user shows 'علی احمدی' ✅ (6) Backward compatibility confirmed: users without first_name/last_name can login and get proper fallback full_name ✅. CRITICAL FIX CONFIRMED: Previous 500 errors on login have been resolved. Authentication system is now fully functional with backward compatibility maintained. OTP integration has **mocked** fallback for API.IR service issues."
+        - working: "NA"
+        - agent: "testing"
+        - comment: "USER AUTHENTICATION SYSTEM NEEDS INVESTIGATION ⚠️ - Comprehensive E2E testing revealed authentication issues: (1) ADMIN LOGIN WORKING PERFECTLY ✅: Admin credentials (admin/istari118) work flawlessly with proper JWT token generation and admin dashboard access (2) USER LOGIN FAILING ❌: Test user credentials (testuser@example.com) not working, login attempts remain on /auth page without error messages (3) USER REGISTRATION ISSUES ❌: Registration form present but registration attempts failed, unable to create new test users for comprehensive testing (4) FRONTEND IMPLEMENTATION EXCELLENT ✅: Auth page has proper Persian RTL layout, form fields present and functional, professional UI design maintained. CRITICAL FINDING: Backend authentication APIs appear functional (admin login works), but user credential management or registration flow has issues preventing comprehensive user testing. Needs investigation of existing user credentials or registration process debugging."
 
 metadata:
   created_by: "main_agent"
