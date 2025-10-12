@@ -23,6 +23,12 @@ const Trade = ({ user, onLogout }) => {
   const [tradeAmount, setTradeAmount] = useState('');
   const [targetCoin, setTargetCoin] = useState(null);
   const [walletAddress, setWalletAddress] = useState('');
+  
+  // AI Recommendation states
+  const [aiRecommendation, setAiRecommendation] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState(null);
+  const [showAiPanel, setShowAiPanel] = useState(true);
 
   useEffect(() => {
     fetchData();
