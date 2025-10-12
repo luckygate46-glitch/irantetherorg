@@ -101,6 +101,33 @@ const Trade = ({ user, onLogout }) => {
     return imageMap[coinId] || 1;
   };
 
+  const fetchAiRecommendation = async (coinSymbol) => {
+    if (!coinSymbol) return;
+    
+    try {
+      setAiLoading(true);
+      setAiError(null);
+      
+      const token = localStorage.getItem('token');
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      
+      const response = await axios.get(`${API}/ai/smart-recommendation/${coinSymbol}`, config);
+      setAiRecommendation(response.data);
+      console.log('✅ AI Recommendation:', response.data);
+    } catch (error) {
+      console.error('❌ Error fetching AI recommendation:', error);
+      
+      // Check if it's a configuration error
+      if (error.response?.status === 503) {
+        setAiError('⚠️ سرویس هوش مصنوعی هنوز پیکربندی نشده است');
+      } else {
+        setAiError('خطا در دریافت توصیه هوشمند');
+      }
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const checkWalletAddress = async (coinSymbol) => {
     try {
       const token = localStorage.getItem('token');
