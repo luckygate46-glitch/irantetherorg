@@ -118,19 +118,8 @@ class SmartTradingAssistant:
                 
         except Exception as e:
             print(f"Error in get_trading_recommendation: {str(e)}")
-            # Return fallback recommendation
-            return {
-                "coin_symbol": coin_symbol,
-                "recommendation": "نگهداری",
-                "confidence": "پایین",
-                "reasoning": f"خطا در تحلیل: {str(e)}. لطفاً دقایقی دیگر امتحان کنید.",
-                "suggested_amount": 0,
-                "risk_level": "نامشخص",
-                "key_points": ["خطا در ارتباط با سرویس تحلیل هوشمند"],
-                "timestamp": datetime.now().isoformat(),
-                "current_price": current_price,
-                "error": str(e)
-            }
+            # No fallback - raise the error so admin knows API key is needed
+            raise Exception(f"خطا در دریافت توصیه هوشمند: {str(e)}")
     
     async def get_market_analysis(
         self,
