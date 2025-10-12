@@ -340,7 +340,6 @@ class ComprehensiveBackendTester:
             # Update user balance to 10M TMN and set KYC level 2
             update_data = {
                 "wallet_balance_tmn": 10000000,  # 10M TMN
-                "kyc_level": 2  # Required for trading
             }
             
             response = await self.client.put(f"{BACKEND_URL}/admin/users/{self.test_user_id}", 
