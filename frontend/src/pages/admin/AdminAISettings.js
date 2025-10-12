@@ -210,8 +210,13 @@ export default function AdminAISettings({ user, onLogout }) {
                 </button>
               </div>
               <p className="mt-2 text-sm text-slate-400">
-                💡 برای دریافت کلید API به <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">platform.openai.com</a> مراجعه کنید
+                💡 برای دریافت کلید API خود به <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">platform.openai.com</a> مراجعه کنید
               </p>
+              <div className="mt-3 p-3 bg-yellow-900/30 border border-yellow-700 rounded-lg">
+                <p className="text-sm text-yellow-200">
+                  ⚠️ <strong>نکته امنیتی:</strong> از کلید API شخصی خود استفاده کنید. این کلید به صورت امن در دیتابیس ذخیره می‌شود و هرگز در کد قرار نمی‌گیرد.
+                </p>
+              </div>
             </div>
 
             <div className="flex gap-3">
