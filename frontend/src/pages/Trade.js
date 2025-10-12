@@ -538,6 +538,19 @@ const Trade = ({ user, onLogout }) => {
               </div>
             )}
 
+            {/* Show AI Panel Button */}
+            {activeTab === 'buy' && !showAiPanel && (
+              <button
+                onClick={() => {
+                  setShowAiPanel(true);
+                  if (selectedCoin) fetchAiRecommendation(selectedCoin.symbol);
+                }}
+                className="mb-4 w-full py-2 bg-purple-900/30 hover:bg-purple-900/50 border border-purple-700 rounded-lg text-purple-300 font-medium transition-colors"
+              >
+                🤖 نمایش توصیه هوشمند
+              </button>
+            )}
+
             {/* Buy Form */}
             {activeTab === 'buy' && (
               <div className="space-y-4">
