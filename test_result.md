@@ -201,7 +201,7 @@ frontend:
 
   - task: "Admin Orders Management"
     implemented: true
-    working: false
+    working: true
     file: "frontend/src/pages/admin/AdminOrders.js"
     stuck_count: 0
     priority: "high"
@@ -213,6 +213,9 @@ frontend:
         - working: false
         - agent: "testing"
         - comment: "BLOCKED BY LOGIN ISSUE: Admin orders management page cannot be tested due to login API failure. Frontend implementation appears well-structured with proper admin interface design, order management table, approve/reject functionality, and Persian language support. However, cannot verify full functionality without successful authentication."
+        - working: true
+        - agent: "testing"
+        - comment: "ADMIN ORDERS MANAGEMENT VERIFIED WORKING ✅ - Successfully tested admin orders page with admin credentials (admin/istari118). Page loads correctly at /admin/orders with proper Persian content and order management interface. Admin authentication working perfectly with JWT tokens and proper API responses. All admin navigation functional including orders management functionality."
 
   - task: "Persian Language & RTL Support"
     implemented: true
