@@ -346,7 +346,23 @@ class ComprehensiveBackendTester:
                                            headers=admin_headers, json=update_data)
             
             if response.status_code == 200:
-                print("✅ User setup for trading completed (10M TMN, KYC Level 2)")
+                print("✅ User balance updated to 10M TMN")
+                
+                # Now approve KYC Level 2 via admin KYC approval endpoint
+                kyc_approval_data = {
+                    "user_id": self.test_user_id,
+                    "kyc_level": 2,
+                    "action": "approve",
+                    "admin_note": "Test setup for trading"
+                }
+                
+                kyc_response = await self.client.post(f"{BACKEND_URL}/admin/kyc/approve", 
+                                                    headers=admin_headers, json=kyc_approval_data)
+                
+                if kyc_response.status_code == 200:
+                    print("✅ User KYC Level 2 approved for trading")
+                else:
+                    print(f"⚠️  KYC approval failed: {kyc_response.status_code}")
             else:
                 print(f"⚠️  User setup failed: {response.status_code}")
                 
