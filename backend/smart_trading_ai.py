@@ -199,16 +199,8 @@ class SmartTradingAssistant:
                 
         except Exception as e:
             print(f"Error in get_market_analysis: {str(e)}")
-            return {
-                "overall_sentiment": "نامشخص",
-                "market_summary": f"خطا در تحلیل بازار: {str(e)}",
-                "opportunities": [],
-                "risks": ["خطا در ارتباط با سرویس تحلیل"],
-                "recommendation": "لطفاً دقایقی دیگر امتحان کنید",
-                "timestamp": datetime.now().isoformat(),
-                "timeframe": timeframe,
-                "error": str(e)
-            }
+            # No fallback - raise the error
+            raise Exception(f"خطا در تحلیل بازار: {str(e)}")
     
     async def chat_with_assistant(
         self,
