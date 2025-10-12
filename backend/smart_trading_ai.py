@@ -194,15 +194,8 @@ class SmartTradingAssistant:
                 return analysis_data
                 
             except json.JSONDecodeError:
-                return {
-                    "overall_sentiment": "خنثی",
-                    "market_summary": response[:300],
-                    "opportunities": [],
-                    "risks": [],
-                    "recommendation": "بررسی دقیق‌تر بازار توصیه می‌شود",
-                    "timestamp": datetime.now().isoformat(),
-                    "timeframe": timeframe
-                }
+                # If JSON parsing fails, raise error - no fallback
+                raise Exception(f"خطا در تجزیه پاسخ تحلیل بازار: {response[:200]}")
                 
         except Exception as e:
             print(f"Error in get_market_analysis: {str(e)}")
