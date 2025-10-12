@@ -444,6 +444,100 @@ const Trade = ({ user, onLogout }) => {
               </div>
             )}
 
+            {/* AI Smart Recommendation Panel */}
+            {activeTab === 'buy' && selectedCoin && showAiPanel && (
+              <div className="mb-6 bg-gradient-to-br from-purple-900/30 to-blue-900/30 border border-purple-700/50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-bold text-purple-300 flex items-center gap-2">
+                    🤖 توصیه هوشمند معاملاتی
+                  </h3>
+                  <button
+                    onClick={() => setShowAiPanel(false)}
+                    className="text-slate-400 hover:text-white text-sm"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {aiLoading && (
+                  <div className="flex items-center gap-3 text-slate-300">
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-purple-400"></div>
+                    <span>در حال تحلیل...</span>
+                  </div>
+                )}
+
+                {aiError && (
+                  <div className="bg-red-900/30 border border-red-700 rounded-lg p-3 text-red-200 text-sm">
+                    {aiError}
+                  </div>
+                )}
+
+                {!aiLoading && !aiError && aiRecommendation && (
+                  <div className="space-y-3">
+                    {/* Recommendation Badge */}
+                    <div className="flex items-center gap-3">
+                      <span className={`px-4 py-2 rounded-lg font-bold text-lg ${
+                        aiRecommendation.recommendation === 'خرید' ? 'bg-green-600' :
+                        aiRecommendation.recommendation === 'فروش' ? 'bg-red-600' :
+                        'bg-yellow-600'
+                      }`}>
+                        {aiRecommendation.recommendation === 'خرید' && '🟢'}
+                        {aiRecommendation.recommendation === 'فروش' && '🔴'}
+                        {aiRecommendation.recommendation === 'نگهداری' && '🟡'}
+                        {' '}
+                        {aiRecommendation.recommendation}
+                      </span>
+                      <span className="text-sm text-slate-300">
+                        اطمینان: <span className="font-semibold">{aiRecommendation.confidence}</span>
+                      </span>
+                      <span className={`text-sm px-2 py-1 rounded ${
+                        aiRecommendation.risk_level === 'کم' ? 'bg-green-900/50 text-green-300' :
+                        aiRecommendation.risk_level === 'زیاد' ? 'bg-red-900/50 text-red-300' :
+                        'bg-yellow-900/50 text-yellow-300'
+                      }`}>
+                        ریسک: {aiRecommendation.risk_level}
+                      </span>
+                    </div>
+
+                    {/* Reasoning */}
+                    <div className="bg-slate-800/50 rounded-lg p-3">
+                      <p className="text-sm text-slate-200 leading-relaxed">
+                        {aiRecommendation.reasoning}
+                      </p>
+                    </div>
+
+                    {/* Suggested Amount */}
+                    {aiRecommendation.suggested_amount > 0 && (
+                      <div className="bg-purple-900/30 rounded-lg p-3">
+                        <span className="text-sm text-purple-200">
+                          💡 مبلغ پیشنهادی: {' '}
+                          <span className="font-bold text-lg">
+                            {new Intl.NumberFormat('fa-IR').format(aiRecommendation.suggested_amount)} تومان
+                          </span>
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Key Points */}
+                    {aiRecommendation.key_points && aiRecommendation.key_points.length > 0 && (
+                      <div className="space-y-1">
+                        {aiRecommendation.key_points.map((point, index) => (
+                          <div key={index} className="flex items-start gap-2 text-sm text-slate-300">
+                            <span className="text-purple-400">•</span>
+                            <span>{point}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="text-xs text-slate-400 pt-2 border-t border-slate-700">
+                      ⚠️ این توصیه توسط هوش مصنوعی تولید شده و نباید به تنهایی مبنای تصمیم‌گیری قرار گیرد
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Buy Form */}
             {activeTab === 'buy' && (
               <div className="space-y-4">
