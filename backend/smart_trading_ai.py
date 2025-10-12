@@ -113,18 +113,8 @@ class SmartTradingAssistant:
                 return recommendation_data
                 
             except json.JSONDecodeError:
-                # If JSON parsing fails, return raw response
-                return {
-                    "coin_symbol": coin_symbol,
-                    "recommendation": "نگهداری",
-                    "confidence": "متوسط",
-                    "reasoning": response[:500],  # First 500 chars
-                    "suggested_amount": 0,
-                    "risk_level": "متوسط",
-                    "key_points": [response[:200]],
-                    "timestamp": datetime.now().isoformat(),
-                    "current_price": current_price
-                }
+                # If JSON parsing fails, raise error - no fallback
+                raise Exception(f"خطا در تجزیه پاسخ AI: {response[:200]}")
                 
         except Exception as e:
             print(f"Error in get_trading_recommendation: {str(e)}")
