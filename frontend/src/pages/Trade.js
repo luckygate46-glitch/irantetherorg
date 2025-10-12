@@ -47,6 +47,13 @@ const Trade = ({ user, onLogout }) => {
     }
   }, [asset, coins]);
 
+  useEffect(() => {
+    // Fetch AI recommendation when coin is selected
+    if (selectedCoin && showAiPanel) {
+      fetchAiRecommendation(selectedCoin.symbol);
+    }
+  }, [selectedCoin]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
