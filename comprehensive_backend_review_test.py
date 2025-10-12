@@ -586,6 +586,11 @@ class ComprehensiveBackendTester:
             if recommendation_response.status_code == 503:
                 print("✅ AI smart recommendation correctly returns 503 (service unavailable)")
                 print("✅ No mock data returned as expected")
+                recommendation_ok = True
+            elif recommendation_response.status_code == 403:
+                print("✅ AI smart recommendation correctly returns 403 (forbidden - no API key)")
+                print("✅ No mock data returned as expected")
+                recommendation_ok = True
             elif recommendation_response.status_code == 200:
                 # Check if it's mock data
                 rec_data = recommendation_response.json()
@@ -595,14 +600,16 @@ class ComprehensiveBackendTester:
                 # Look for indicators of mock data
                 if 'mock' in str(rec_data).lower() or 'test' in str(rec_data).lower():
                     print("⚠️  Response contains mock data indicators")
+                    recommendation_ok = False
                 else:
                     print("✅ Response appears to be real data (not mock)")
+                    recommendation_ok = True
             else:
                 print(f"📊 AI smart recommendation status: {recommendation_response.status_code}")
+                recommendation_ok = False
             
             # Determine overall AI features test result
             ai_settings_ok = ai_settings_response.status_code == 200
-            recommendation_ok = recommendation_response.status_code in [503, 200]  # Both acceptable
             
             if ai_settings_ok and recommendation_ok:
                 self.test_results.append({"test": "ai_features_no_api_key", "status": "✅ PASS", "details": "AI endpoints responding correctly without API key"})
