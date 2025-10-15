@@ -4299,6 +4299,138 @@ async def chat_with_smart_assistant(
         logger.error(f"Error in smart chat: {str(e)}")
         raise HTTPException(status_code=500, detail=f"خطا در گفتگو: {str(e)}")
 
+# ==================== ADMIN AI ANALYTICS ROUTES (18 FEATURES) ====================
+
+from admin_ai_analytics import AdminAIAnalytics
+
+# Initialize AI Analytics
+ai_analytics = AdminAIAnalytics(db)
+
+@api_router.get("/admin/ai-analytics/fraud-detection")
+async def get_fraud_detection(admin: User = Depends(get_current_admin)):
+    """AI Fraud Detection System"""
+    result = await ai_analytics.detect_fraud()
+    return result
+
+@api_router.get("/admin/ai-analytics/anomaly-detection")
+async def get_anomaly_detection(admin: User = Depends(get_current_admin)):
+    """Anomaly Detection Dashboard"""
+    result = await ai_analytics.detect_anomalies()
+    return result
+
+@api_router.get("/admin/ai-analytics/user-predictions")
+async def get_user_predictions(admin: User = Depends(get_current_admin)):
+    """Predictive User Analytics"""
+    result = await ai_analytics.predict_user_analytics()
+    return result
+
+@api_router.get("/admin/ai-analytics/market-manipulation")
+async def get_market_manipulation(admin: User = Depends(get_current_admin)):
+    """Market Manipulation Detection"""
+    result = await ai_analytics.detect_market_manipulation()
+    return result
+
+@api_router.get("/admin/ai-analytics/revenue-optimization")
+async def get_revenue_optimization(admin: User = Depends(get_current_admin)):
+    """Revenue Optimization AI"""
+    result = await ai_analytics.optimize_revenue()
+    return result
+
+@api_router.get("/admin/ai-analytics/risk-scores")
+async def get_risk_scores(admin: User = Depends(get_current_admin)):
+    """AI Risk Scoring"""
+    result = await ai_analytics.calculate_risk_scores()
+    return result
+
+@api_router.get("/admin/ai-analytics/support-triage")
+async def get_support_triage(admin: User = Depends(get_current_admin)):
+    """Automated Support Ticket Triage"""
+    result = await ai_analytics.triage_support_tickets()
+    return result
+
+@api_router.get("/admin/ai-analytics/user-intent")
+async def get_user_intent(admin: User = Depends(get_current_admin)):
+    """User Intent Analysis"""
+    result = await ai_analytics.analyze_user_intent()
+    return result
+
+@api_router.get("/admin/ai-analytics/transaction-monitoring")
+async def get_transaction_monitoring(admin: User = Depends(get_current_admin)):
+    """Transaction Monitoring AI"""
+    result = await ai_analytics.monitor_transactions()
+    return result
+
+@api_router.get("/admin/ai-analytics/price-anomalies")
+async def get_price_anomalies(admin: User = Depends(get_current_admin)):
+    """Price Anomaly Detection"""
+    result = await ai_analytics.detect_price_anomalies()
+    return result
+
+@api_router.get("/admin/ai-analytics/market-sentiment")
+async def get_market_sentiment(admin: User = Depends(get_current_admin)):
+    """Market Sentiment Analysis"""
+    result = await ai_analytics.analyze_market_sentiment()
+    return result
+
+@api_router.get("/admin/ai-analytics/auto-kyc")
+async def get_auto_kyc(admin: User = Depends(get_current_admin)):
+    """Auto-KYC Approval"""
+    result = await ai_analytics.auto_kyc_approval()
+    return result
+
+@api_router.get("/admin/ai-analytics/notifications")
+async def get_automated_notifications(admin: User = Depends(get_current_admin)):
+    """Automated Notifications"""
+    result = await ai_analytics.generate_automated_notifications()
+    return result
+
+@api_router.get("/admin/ai-analytics/conversion-optimization")
+async def get_conversion_optimization(admin: User = Depends(get_current_admin)):
+    """Conversion Optimization"""
+    result = await ai_analytics.optimize_conversion()
+    return result
+
+@api_router.get("/admin/ai-analytics/search")
+async def ai_powered_search(query: str, admin: User = Depends(get_current_admin)):
+    """AI-Powered Search"""
+    result = await ai_analytics.ai_powered_search(query)
+    return result
+
+@api_router.get("/admin/ai-analytics/recommendations")
+async def get_smart_recommendations(admin: User = Depends(get_current_admin)):
+    """Smart Recommendations"""
+    result = await ai_analytics.smart_recommendations()
+    return result
+
+@api_router.get("/admin/ai-analytics/crisis-prediction")
+async def get_crisis_prediction(admin: User = Depends(get_current_admin)):
+    """Predictive Crisis Management"""
+    result = await ai_analytics.predict_crisis()
+    return result
+
+@api_router.get("/admin/ai-analytics/overview")
+async def get_ai_analytics_overview(admin: User = Depends(get_current_admin)):
+    """Get overview of all AI analytics features"""
+    try:
+        # Get quick stats from multiple features
+        fraud = await ai_analytics.detect_fraud()
+        risk = await ai_analytics.calculate_risk_scores()
+        notifications = await ai_analytics.generate_automated_notifications()
+        recommendations = await ai_analytics.smart_recommendations()
+        crisis = await ai_analytics.predict_crisis()
+        
+        return {
+            "fraud_alerts": fraud.get("total_alerts", 0),
+            "high_risk_users": risk.get("high_risk_count", 0),
+            "pending_notifications": notifications.get("total_notifications", 0),
+            "smart_recommendations": recommendations.get("total_recommendations", 0),
+            "crisis_warnings": crisis.get("total_warnings", 0),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error in AI analytics overview: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app
 app.include_router(api_router)
 
