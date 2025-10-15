@@ -96,6 +96,13 @@ function App() {
     setUser(null);
   };
 
+  // Check if user needs KYC approval
+  const needsKYC = (user) => {
+    if (!user || user.is_admin) return false;
+    // User needs KYC if they don't have approved KYC status
+    return user.kyc_status !== 'approved';
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-950">
