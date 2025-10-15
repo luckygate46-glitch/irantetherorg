@@ -273,29 +273,53 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
             </Button>
           </div>
           
-          {/* KYC Status */}
-          <div className="mt-4 p-3 bg-slate-700 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-300">وضعیت KYC:</span>
-              <Badge 
-                variant={user?.kyc_level === 2 ? "default" : user?.kyc_level === 1 ? "secondary" : "destructive"}
-                className="text-xs"
-              >
-                سطح {user?.kyc_level || 0}
-              </Badge>
-            </div>
-            {user?.kyc_level < 2 && (
+          {/* KYC Status Warning */}
+          {user?.kyc_status !== 'approved' && (
+            <div className="mt-4 p-4 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border-2 border-amber-500 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-5 h-5 text-amber-400" />
+                <span className="text-amber-300 font-bold text-sm">احراز هویت لازم است!</span>
+              </div>
+              <p className="text-amber-200 text-xs mb-3 leading-relaxed">
+                برای دسترسی به امکانات صرافی، لطفاً احراز هویت خود را تکمیل کنید و منتظر تایید ادمین باشید.
+              </p>
               <Button
-                variant="outline"
+                variant="default"
                 size="sm"
-                className="w-full text-xs h-8"
-                onClick={() => navigate('/kyc-game')}
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs h-9"
+                onClick={() => navigate('/kyc')}
               >
-                <Gamepad2 className="w-3 h-3 ml-1" />
-                <span>بازی کنید</span>
+                <Shield className="w-4 h-4 ml-1" />
+                تکمیل احراز هویت
               </Button>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* KYC Status (for approved users) */}
+          {user?.kyc_status === 'approved' && (
+            <div className="mt-4 p-3 bg-slate-700 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-gray-300">وضعیت KYC:</span>
+                <Badge 
+                  variant={user?.kyc_level === 2 ? "default" : user?.kyc_level === 1 ? "secondary" : "destructive"}
+                  className="text-xs"
+                >
+                  سطح {user?.kyc_level || 0}
+                </Badge>
+              </div>
+              {user?.kyc_level < 2 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-xs h-8"
+                  onClick={() => navigate('/kyc-game')}
+                >
+                  <Gamepad2 className="w-3 h-3 ml-1" />
+                  <span>بازی کنید</span>
+                </Button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Navigation */}
