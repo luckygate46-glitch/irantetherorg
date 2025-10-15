@@ -147,19 +147,27 @@ function App() {
           />
           <Route 
             path="/market" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
-                <Market user={user} onLogout={handleLogout} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
+            element={
+              user && !user.is_admin ? (
+                needsKYC(user) ? <Navigate to="/kyc" /> : (
+                  <UserSidebarLayout user={user} onLogout={handleLogout}>
+                    <Market user={user} onLogout={handleLogout} />
+                  </UserSidebarLayout>
+                )
+              ) : <Navigate to="/auth" />
+            } 
           />
           <Route 
             path="/wallet" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
-                <Wallet user={user} onLogout={handleLogout} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
+            element={
+              user && !user.is_admin ? (
+                needsKYC(user) ? <Navigate to="/kyc" /> : (
+                  <UserSidebarLayout user={user} onLogout={handleLogout}>
+                    <Wallet user={user} onLogout={handleLogout} />
+                  </UserSidebarLayout>
+                )
+              ) : <Navigate to="/auth" />
+            } 
           />
           <Route 
             path="/trade" 
