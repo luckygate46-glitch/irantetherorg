@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
+import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/SimpleAuth";
 import Dashboard from "./pages/Dashboard";
 import KYCPage from "./pages/KYCPage";
