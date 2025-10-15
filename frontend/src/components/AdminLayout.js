@@ -14,7 +14,8 @@ export default function AdminLayout({ user, onLogout, children, currentPage }) {
   ];
 
   const aiMenuItems = [
-    { id: 'ai-settings', label: '⚙️ تنظیمات هوش مصنوعی', path: '/admin/settings/ai' },
+    { id: 'ai-center', label: '🤖 مرکز هوش مصنوعی', path: '/admin/ai-center' },
+    { id: 'ai-settings', label: '⚙️ تنظیمات AI', path: '/admin/settings/ai' },
   ];
 
   return (
