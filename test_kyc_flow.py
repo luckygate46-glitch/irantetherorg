@@ -9,7 +9,7 @@ import httpx
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-farsi.preview.emergentagent.com/api"
 
 class KYCFlowTester:
     def __init__(self):

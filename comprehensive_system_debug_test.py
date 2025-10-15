@@ -20,7 +20,7 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional
 
 # Configuration
-BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-farsi.preview.emergentagent.com/api"
 TEST_TIMEOUT = 30.0
 
 class SystemDebugTester:

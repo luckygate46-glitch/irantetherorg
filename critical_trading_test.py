@@ -12,7 +12,7 @@ from datetime import datetime
 import sys
 
 # Configuration
-BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-farsi.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 

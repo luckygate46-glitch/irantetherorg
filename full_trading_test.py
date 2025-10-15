@@ -8,7 +8,7 @@ import httpx
 import json
 from datetime import datetime
 
-BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-farsi.preview.emergentagent.com/api"
 
 class FullTradingTester:
     def __init__(self):

@@ -8,7 +8,7 @@ import httpx
 import json
 import uuid
 
-BACKEND_URL = "https://cryptotoman.preview.emergentagent.com/api"
+BACKEND_URL = "https://crypto-farsi.preview.emergentagent.com/api"
 ADMIN_CREDENTIALS = {"email": "admin", "password": "istari118"}
 
 async def debug_advanced_trading():
