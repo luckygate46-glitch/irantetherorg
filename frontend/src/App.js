@@ -208,6 +208,10 @@ function App() {
             path="/admin/settings/ai" 
             element={user?.is_admin ? <AdminAISettings user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
+          <Route 
+            path="/admin/ai-center" 
+            element={user?.is_admin ? <AdminAICenter user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
           
           {/* NEW AI ADMIN ROUTES */}
           <Route 
