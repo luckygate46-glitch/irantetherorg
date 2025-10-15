@@ -327,7 +327,7 @@ function App() {
           />
           <Route 
             path="/" 
-            element={<Navigate to={user ? (user.is_admin ? "/admin" : "/dashboard") : "/auth"} />} 
+            element={<LandingPage />} 
           />
         </Routes>
       </BrowserRouter>
