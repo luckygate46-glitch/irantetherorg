@@ -135,25 +135,25 @@ const AdminOrders = ({ user, onLogout }) => {
             <div className="text-2xl font-bold text-yellow-400">
               {orders.filter(o => o.status === 'pending').length}
             </div>
-            <div className="text-slate-400">در انتظار</div>
+            <div className="text-slate-200">در انتظار</div>
           </div>
           <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
             <div className="text-2xl font-bold text-blue-400">
               {orders.filter(o => o.status === 'approved').length}
             </div>
-            <div className="text-slate-400">تایید شده</div>
+            <div className="text-slate-200">تایید شده</div>
           </div>
           <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
             <div className="text-2xl font-bold text-green-400">
               {orders.filter(o => o.status === 'completed').length}
             </div>
-            <div className="text-slate-400">تکمیل شده</div>
+            <div className="text-slate-200">تکمیل شده</div>
           </div>
           <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
             <div className="text-2xl font-bold text-red-400">
               {orders.filter(o => o.status === 'rejected').length}
             </div>
-            <div className="text-slate-400">رد شده</div>
+            <div className="text-slate-200">رد شده</div>
           </div>
         </div>
 
@@ -176,7 +176,7 @@ const AdminOrders = ({ user, onLogout }) => {
               <tbody>
                 {orders.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="px-4 py-8 text-center text-slate-400">
+                    <td colSpan="8" className="px-4 py-8 text-center text-slate-200">
                       هیچ سفارشی یافت نشد
                     </td>
                   </tr>
@@ -186,7 +186,7 @@ const AdminOrders = ({ user, onLogout }) => {
                       <td className="px-4 py-3">
                         <div>
                           <div className="font-semibold">{order.user_name || 'بدون نام'}</div>
-                          <div className="text-sm text-slate-400">{order.user_email}</div>
+                          <div className="text-sm text-slate-200">{order.user_email}</div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
@@ -201,7 +201,7 @@ const AdminOrders = ({ user, onLogout }) => {
                         <div>
                           <div className="font-semibold">{order.coin_symbol}</div>
                           {order.target_coin_symbol && (
-                            <div className="text-sm text-slate-400">→ {order.target_coin_symbol}</div>
+                            <div className="text-sm text-slate-200">→ {order.target_coin_symbol}</div>
                           )}
                         </div>
                       </td>
@@ -213,7 +213,7 @@ const AdminOrders = ({ user, onLogout }) => {
                             <div>{order.amount_crypto} {order.coin_symbol}</div>
                           )}
                           {order.order_type === 'trade' && order.target_coin_symbol && (
-                            <div className="text-sm text-slate-400">
+                            <div className="text-sm text-slate-200">
                               → {((order.amount_crypto * order.price_at_order) / order.price_at_order).toFixed(8)} {order.target_coin_symbol}
                             </div>
                           )}
@@ -231,7 +231,7 @@ const AdminOrders = ({ user, onLogout }) => {
                         <div className="text-sm">
                           {new Date(order.created_at).toLocaleDateString('fa-IR')}
                         </div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-xs text-slate-200">
                           {new Date(order.created_at).toLocaleTimeString('fa-IR')}
                         </div>
                       </td>
@@ -260,13 +260,13 @@ const AdminOrders = ({ user, onLogout }) => {
                           </div>
                         )}
                         {order.status !== 'pending' && (
-                          <span className="text-sm text-slate-400">
+                          <span className="text-sm text-slate-200">
                             {order.status === 'approved' ? 'تایید شده' :
                              order.status === 'completed' ? 'تکمیل' : 'پردازش شده'}
                           </span>
                         )}
                         {order.admin_note && (
-                          <div className="text-xs text-slate-400 mt-1">
+                          <div className="text-xs text-slate-200 mt-1">
                             یادداشت: {order.admin_note}
                           </div>
                         )}

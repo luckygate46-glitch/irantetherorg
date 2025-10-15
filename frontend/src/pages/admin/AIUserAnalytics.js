@@ -74,7 +74,7 @@ const AIUserAnalytics = ({ user, onLogout }) => {
       case 'high': return 'text-red-400 bg-red-900/20';
       case 'medium': return 'text-yellow-400 bg-yellow-900/20';
       case 'low': return 'text-green-400 bg-green-900/20';
-      default: return 'text-gray-400 bg-gray-900/20';
+      default: return 'text-gray-200 bg-gray-900/20';
     }
   };
 
@@ -107,7 +107,7 @@ const AIUserAnalytics = ({ user, onLogout }) => {
               <Users className="w-8 h-8 text-blue-500" />
               تحلیل هوشمند کاربران
             </h1>
-            <p className="text-slate-400 mt-2">درک عمیق رفتار و الگوهای کاربران</p>
+            <p className="text-slate-200 mt-2">درک عمیق رفتار و الگوهای کاربران</p>
           </div>
           <Button onClick={fetchUserAnalytics} variant="outline" className="gap-2">
             <RefreshCw className="w-4 h-4" />
@@ -199,11 +199,11 @@ const AIUserAnalytics = ({ user, onLogout }) => {
                   
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <div>
-                      <p className="text-gray-400 text-xs">تعداد کاربران</p>
+                      <p className="text-gray-200 text-xs">تعداد کاربران</p>
                       <p className="text-white font-medium">{segment.users.toLocaleString('fa-IR')}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400 text-xs">حجم متوسط</p>
+                      <p className="text-gray-200 text-xs">حجم متوسط</p>
                       <p className="text-white font-medium">{segment.avgVolume.toLocaleString('fa-IR')} تومان</p>
                     </div>
                   </div>
@@ -247,8 +247,8 @@ const AIUserAnalytics = ({ user, onLogout }) => {
                         {score.riskScore}/10
                       </Badge>
                     </div>
-                    <p className="text-gray-400 text-sm mb-2">{score.reason}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <p className="text-gray-200 text-sm mb-2">{score.reason}</p>
+                    <div className="flex items-center justify-between text-xs text-gray-300">
                       <span>اعتماد AI: {score.confidence}%</span>
                       <span>آخرین فعالیت: {new Date(score.lastActivity).toLocaleTimeString('fa-IR')}</span>
                     </div>
@@ -277,7 +277,7 @@ const AIUserAnalytics = ({ user, onLogout }) => {
                       </Badge>
                     </div>
                     <p className="text-blue-400 text-xs mb-2">دسته: {insight.category}</p>
-                    <p className="text-gray-400 text-sm">{insight.recommendation}</p>
+                    <p className="text-gray-200 text-sm">{insight.recommendation}</p>
                   </div>
                 ))}
               </div>
@@ -300,11 +300,11 @@ const AIUserAnalytics = ({ user, onLogout }) => {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <h3 className="text-white font-medium">{prediction.name}</h3>
-                      <p className="text-gray-400 text-sm">{prediction.reason}</p>
+                      <p className="text-gray-200 text-sm">{prediction.reason}</p>
                     </div>
                     <div className="text-left">
                       <p className="text-red-400 font-bold text-lg">{prediction.churnProbability}%</p>
-                      <p className="text-gray-400 text-xs">{prediction.daysToChurn} روز</p>
+                      <p className="text-gray-200 text-xs">{prediction.daysToChurn} روز</p>
                     </div>
                   </div>
                   

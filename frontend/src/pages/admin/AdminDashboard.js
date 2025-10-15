@@ -128,7 +128,7 @@ export default function AdminDashboard({ user, onLogout }) {
         <Card className="bg-slate-900/50 border-slate-800">
           <CardHeader>
             <CardTitle className="text-white">دسترسی سریع</CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-200">
               مدیریت بخش‌های مختلف سیستم
             </CardDescription>
           </CardHeader>
@@ -141,7 +141,7 @@ export default function AdminDashboard({ user, onLogout }) {
               >
                 <Users className="w-8 h-8 text-emerald-400 mb-3" />
                 <h3 className="text-white font-semibold mb-2">مدیریت کاربران</h3>
-                <p className="text-sm text-slate-400">مشاهده و مدیریت کاربران سیستم</p>
+                <p className="text-sm text-slate-200">مشاهده و مدیریت کاربران سیستم</p>
               </button>
 
               <button
@@ -151,7 +151,7 @@ export default function AdminDashboard({ user, onLogout }) {
               >
                 <CreditCard className="w-8 h-8 text-violet-400 mb-3" />
                 <h3 className="text-white font-semibold mb-2">مدیریت کارت‌ها</h3>
-                <p className="text-sm text-slate-400">افزودن و مدیریت شماره کارت‌ها</p>
+                <p className="text-sm text-slate-200">افزودن و مدیریت شماره کارت‌ها</p>
               </button>
 
               <button
@@ -161,7 +161,7 @@ export default function AdminDashboard({ user, onLogout }) {
               >
                 <TrendingUp className="w-8 h-8 text-blue-400 mb-3" />
                 <h3 className="text-white font-semibold mb-2">تایید واریزی‌ها</h3>
-                <p className="text-sm text-slate-400">بررسی و تایید درخواست‌های واریز</p>
+                <p className="text-sm text-slate-200">بررسی و تایید درخواست‌های واریز</p>
               </button>
 
               <button
@@ -171,7 +171,7 @@ export default function AdminDashboard({ user, onLogout }) {
               >
                 <TrendingUp className="w-8 h-8 text-purple-400 mb-3" />
                 <h3 className="text-white font-semibold mb-2">مدیریت سفارشات</h3>
-                <p className="text-sm text-slate-400">بررسی و تایید سفارشات معاملاتی</p>
+                <p className="text-sm text-slate-200">بررسی و تایید سفارشات معاملاتی</p>
               </button>
 
               <button
@@ -181,7 +181,7 @@ export default function AdminDashboard({ user, onLogout }) {
               >
                 <Shield className="w-8 h-8 text-orange-400 mb-3" />
                 <h3 className="text-white font-semibold mb-2">احراز هویت</h3>
-                <p className="text-sm text-slate-400">بررسی و تایید مدارک کاربران</p>
+                <p className="text-sm text-slate-200">بررسی و تایید مدارک کاربران</p>
               </button>
             </div>
           </CardContent>

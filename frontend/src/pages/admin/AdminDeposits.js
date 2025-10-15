@@ -111,7 +111,7 @@ export default function AdminDeposits({ user, onLogout }) {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white">مدیریت درخواست‌های واریز</h1>
-            <p className="text-slate-400 mt-2">بررسی و تایید واریزی‌های کاربران</p>
+            <p className="text-slate-200 mt-2">بررسی و تایید واریزی‌های کاربران</p>
           </div>
           <Badge className="bg-amber-600 text-white px-4 py-2">
             {pendingDeposits.length} در انتظار
@@ -139,33 +139,33 @@ export default function AdminDeposits({ user, onLogout }) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-slate-300">
-                        <User className="w-4 h-4 text-slate-500" />
+                        <User className="w-4 h-4 text-slate-300" />
                         <span className="text-sm">نام: {deposit.user_name}</span>
                       </div>
                       <div className="flex items-center gap-2 text-slate-300">
-                        <Mail className="w-4 h-4 text-slate-500" />
+                        <Mail className="w-4 h-4 text-slate-300" />
                         <span className="text-sm">{deposit.user_email}</span>
                       </div>
                       <div className="flex items-center gap-2 text-slate-300">
-                        <CreditCard className="w-4 h-4 text-slate-500" />
+                        <CreditCard className="w-4 h-4 text-slate-300" />
                         <span className="text-sm font-mono">{deposit.card_number}</span>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-slate-300">
-                        <DollarSign className="w-4 h-4 text-slate-500" />
+                        <DollarSign className="w-4 h-4 text-slate-300" />
                         <span className="text-lg font-bold text-white">
                           {deposit.amount.toLocaleString('fa-IR')} تومان
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-slate-300">
-                        <Calendar className="w-4 h-4 text-slate-500" />
+                        <Calendar className="w-4 h-4 text-slate-300" />
                         <span className="text-sm">
                           {new Date(deposit.created_at).toLocaleString('fa-IR')}
                         </span>
                       </div>
                       {deposit.transaction_id && (
-                        <div className="text-sm text-slate-400">
+                        <div className="text-sm text-slate-200">
                           شناسه تراکنش: {deposit.transaction_id}
                         </div>
                       )}
@@ -213,17 +213,17 @@ export default function AdminDeposits({ user, onLogout }) {
                 <CardContent>
                   <div className="flex items-center justify-between text-sm">
                     <div className="space-y-1">
-                      <p className="text-slate-400">{deposit.user_email}</p>
+                      <p className="text-slate-200">{deposit.user_email}</p>
                       <p className="text-white font-semibold">
                         {deposit.amount.toLocaleString('fa-IR')} تومان
                       </p>
                     </div>
                     <div className="text-left">
-                      <p className="text-slate-400 text-xs">
+                      <p className="text-slate-200 text-xs">
                         {new Date(deposit.updated_at).toLocaleString('fa-IR')}
                       </p>
                       {deposit.admin_note && (
-                        <p className="text-slate-500 text-xs mt-1">یادداشت: {deposit.admin_note}</p>
+                        <p className="text-slate-300 text-xs mt-1">یادداشت: {deposit.admin_note}</p>
                       )}
                     </div>
                   </div>
@@ -237,7 +237,7 @@ export default function AdminDeposits({ user, onLogout }) {
           <Card className="bg-slate-900/50 border-slate-800">
             <CardContent className="py-12 text-center">
               <DollarSign className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-              <p className="text-slate-400">هیچ درخواستی ثبت نشده است</p>
+              <p className="text-slate-200">هیچ درخواستی ثبت نشده است</p>
             </CardContent>
           </Card>
         )}
@@ -250,7 +250,7 @@ export default function AdminDeposits({ user, onLogout }) {
             <DialogTitle className="text-white">
               {actionType === 'approve' ? 'تایید درخواست واریز' : 'رد درخواست واریز'}
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-slate-200">
               {actionType === 'approve' 
                 ? 'با تایید این درخواست، موجودی حساب کاربر افزایش می‌یابد'
                 : 'لطفا دلیل رد درخواست را بنویسید'}
@@ -262,7 +262,7 @@ export default function AdminDeposits({ user, onLogout }) {
                 <p className="text-white font-semibold">
                   مبلغ: {selectedDeposit.amount.toLocaleString('fa-IR')} تومان
                 </p>
-                <p className="text-slate-400 text-sm">کاربر: {selectedDeposit.user_name}</p>
+                <p className="text-slate-200 text-sm">کاربر: {selectedDeposit.user_name}</p>
               </div>
               
               <div className="space-y-2">

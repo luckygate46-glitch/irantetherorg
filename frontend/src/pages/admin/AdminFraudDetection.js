@@ -110,7 +110,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">بارگذاری سیستم تشخیص کلاهبرداری...</p>
+          <p className="text-slate-200">بارگذاری سیستم تشخیص کلاهبرداری...</p>
         </div>
       </div>
     );
@@ -163,7 +163,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                 <div className="text-2xl font-bold text-red-400">
                   {fraudData.risk_summary?.high_risk_count || 0}
                 </div>
-                <p className="text-xs text-slate-400">نیاز به بررسی فوری</p>
+                <p className="text-xs text-slate-200">نیاز به بررسی فوری</p>
               </CardContent>
             </Card>
 
@@ -178,7 +178,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                 <div className="text-2xl font-bold text-yellow-400">
                   {fraudData.risk_summary?.medium_risk_count || 0}
                 </div>
-                <p className="text-xs text-slate-400">نظارت دقیق‌تر</p>
+                <p className="text-xs text-slate-200">نظارت دقیق‌تر</p>
               </CardContent>
             </Card>
 
@@ -193,7 +193,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                 <div className="text-2xl font-bold text-green-400">
                   {fraudData.risk_summary?.low_risk_count || 0}
                 </div>
-                <p className="text-xs text-slate-400">وضعیت عادی</p>
+                <p className="text-xs text-slate-200">وضعیت عادی</p>
               </CardContent>
             </Card>
 
@@ -208,7 +208,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                 <div className="text-2xl font-bold text-purple-400">
                   {fraudData.fraud_patterns?.total_incidents || 0}
                 </div>
-                <p className="text-xs text-slate-400">در 24 ساعت گذشته</p>
+                <p className="text-xs text-slate-200">در 24 ساعت گذشته</p>
               </CardContent>
             </Card>
           </div>
@@ -231,7 +231,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <div className="font-medium">{user.full_name || user.email}</div>
-                          <div className="text-sm text-slate-400">{user.email}</div>
+                          <div className="text-sm text-slate-200">{user.email}</div>
                         </div>
                         <Badge className={getRiskColor(user.risk_analysis.risk_level)}>
                           {getRiskIcon(user.risk_analysis.risk_level)}
@@ -248,7 +248,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                       
                       {user.risk_analysis.risk_factors?.length > 0 && (
                         <div className="mb-3">
-                          <div className="text-xs text-slate-400 mb-1">عوامل ریسک:</div>
+                          <div className="text-xs text-slate-200 mb-1">عوامل ریسک:</div>
                           <ul className="text-xs space-y-1">
                             {user.risk_analysis.risk_factors.map((factor, i) => (
                               <li key={i} className="text-yellow-400 flex items-center gap-1">
@@ -278,7 +278,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                 ) : (
                   <div className="text-center py-8">
                     <Shield className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                    <p className="text-slate-400">کاربر پرخطری شناسایی نشده</p>
+                    <p className="text-slate-200">کاربر پرخطری شناسایی نشده</p>
                   </div>
                 )}
               </div>
@@ -300,7 +300,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                     <div className="text-3xl font-bold text-purple-400 mb-1">
                       {fraudData.fraud_patterns.overall_risk_score}%
                     </div>
-                    <div className="text-sm text-slate-400">امتیاز ریسک کلی سیستم</div>
+                    <div className="text-sm text-slate-200">امتیاز ریسک کلی سیستم</div>
                   </div>
 
                   {Object.entries(fraudData.fraud_patterns.patterns || {}).map(([key, pattern]) => (
@@ -311,9 +311,9 @@ const AdminFraudDetection = ({ user, onLogout }) => {
                           {pattern.detected_count} مورد
                         </Badge>
                       </div>
-                      <p className="text-xs text-slate-400 mb-2">{pattern.description}</p>
+                      <p className="text-xs text-slate-200 mb-2">{pattern.description}</p>
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-slate-500">{pattern.affected_users} کاربر</span>
+                        <span className="text-slate-300">{pattern.affected_users} کاربر</span>
                         <span className={`font-medium ${
                           pattern.risk_score > 0.7 ? 'text-red-400' : 
                           pattern.risk_score > 0.5 ? 'text-yellow-400' : 'text-green-400'
@@ -341,7 +341,7 @@ const AdminFraudDetection = ({ user, onLogout }) => {
               ) : (
                 <div className="text-center py-8">
                   <Activity className="w-12 h-12 text-slate-600 mx-auto mb-2" />
-                  <p className="text-slate-400">در حال تحلیل الگوهای کلاهبرداری...</p>
+                  <p className="text-slate-200">در حال تحلیل الگوهای کلاهبرداری...</p>
                 </div>
               )}
             </CardContent>

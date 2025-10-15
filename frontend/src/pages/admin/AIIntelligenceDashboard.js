@@ -121,7 +121,7 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
               <Brain className="w-8 h-8 text-blue-500" />
               داشبورد هوش مصنوعی
             </h1>
-            <p className="text-slate-400 mt-2">مرکز کنترل هوشمند و تحلیل پیشرفته</p>
+            <p className="text-slate-200 mt-2">مرکز کنترل هوشمند و تحلیل پیشرفته</p>
           </div>
           <Button onClick={fetchAIData} variant="outline" className="gap-2">
             <RefreshCw className="w-4 h-4" />
@@ -211,7 +211,7 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
                         <Icon className="w-5 h-5 text-white" />
                         <div>
                           <h3 className="text-white font-medium">{alert.title}</h3>
-                          <p className="text-gray-400 text-sm">{alert.description}</p>
+                          <p className="text-gray-200 text-sm">{alert.description}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
                         </Badge>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center justify-between text-xs text-gray-300">
                       <span>{new Date(alert.timestamp).toLocaleString('fa-IR')}</span>
                       <div className="flex gap-2">
                         <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
@@ -255,19 +255,19 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-800 rounded p-3">
-                  <p className="text-gray-400 text-sm">روند بیت کوین</p>
+                  <p className="text-gray-200 text-sm">روند بیت کوین</p>
                   <p className="text-white font-medium">{marketIntelligence.bitcoinTrend}</p>
                 </div>
                 <div className="bg-slate-800 rounded p-3">
-                  <p className="text-gray-400 text-sm">حال و هوای بازار</p>
+                  <p className="text-gray-200 text-sm">حال و هوای بازار</p>
                   <p className="text-white font-medium">{marketIntelligence.marketSentiment}</p>
                 </div>
                 <div className="bg-slate-800 rounded p-3">
-                  <p className="text-gray-400 text-sm">پیش‌بینی حجم</p>
+                  <p className="text-gray-200 text-sm">پیش‌بینی حجم</p>
                   <p className="text-green-400 font-medium">{marketIntelligence.volumePrediction}</p>
                 </div>
                 <div className="bg-slate-800 rounded p-3">
-                  <p className="text-gray-400 text-sm">سلامت بازار ایران</p>
+                  <p className="text-gray-200 text-sm">سلامت بازار ایران</p>
                   <p className="text-white font-medium">{marketIntelligence.iranianMarketHealth}%</p>
                 </div>
               </div>
@@ -285,7 +285,7 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">سلامت کلی</span>
+                  <span className="text-gray-200">سلامت کلی</span>
                   <div className="flex items-center gap-2">
                     <div className="w-32 bg-slate-700 rounded-full h-2">
                       <div 
@@ -298,22 +298,22 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">زمان پاسخ API</span>
+                  <span className="text-gray-200">زمان پاسخ API</span>
                   <span className="text-white">{systemHealth.apiResponseTime}ms</span>
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">عملکرد پایگاه داده</span>
+                  <span className="text-gray-200">عملکرد پایگاه داده</span>
                   <span className="text-white">{systemHealth.databasePerformance}%</span>
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">بار سرور</span>
+                  <span className="text-gray-200">بار سرور</span>
                   <span className="text-white">{systemHealth.serverLoad}%</span>
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">نرخ خطا</span>
+                  <span className="text-gray-200">نرخ خطا</span>
                   <span className="text-green-400">{systemHealth.errorRate}%</span>
                 </div>
               </div>
@@ -337,7 +337,7 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
                   <span className="text-2xl font-bold text-blue-400">97.8%</span>
                   <Badge className="bg-green-600">فعال</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">آخرین بروزرسانی: 2 ساعت پیش</p>
+                <p className="text-gray-200 text-sm mt-2">آخرین بروزرسانی: 2 ساعت پیش</p>
               </div>
               
               <div className="bg-gradient-to-r from-green-900/50 to-green-800/50 rounded-lg p-4">
@@ -346,7 +346,7 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
                   <span className="text-2xl font-bold text-green-400">91.5%</span>
                   <Badge className="bg-green-600">فعال</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">آخرین بروزرسانی: 1 ساعت پیش</p>
+                <p className="text-gray-200 text-sm mt-2">آخرین بروزرسانی: 1 ساعت پیش</p>
               </div>
               
               <div className="bg-gradient-to-r from-purple-900/50 to-purple-800/50 rounded-lg p-4">
@@ -355,7 +355,7 @@ const AIIntelligenceDashboard = ({ user, onLogout }) => {
                   <span className="text-2xl font-bold text-purple-400">94.2%</span>
                   <Badge className="bg-green-600">فعال</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">آخرین بروزرسانی: 30 دقیقه پیش</p>
+                <p className="text-gray-200 text-sm mt-2">آخرین بروزرسانی: 30 دقیقه پیش</p>
               </div>
             </div>
           </CardContent>

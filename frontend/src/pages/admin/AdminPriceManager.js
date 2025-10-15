@@ -207,7 +207,7 @@ const AdminPriceManager = ({ user, onLogout }) => {
   const getChangeColor = (change) => {
     if (change > 0) return 'text-green-400';
     if (change < 0) return 'text-red-400';
-    return 'text-slate-400';
+    return 'text-slate-200';
   };
 
   const getStatusColor = (status) => {
@@ -224,7 +224,7 @@ const AdminPriceManager = ({ user, onLogout }) => {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">بارگذاری مدیریت قیمت‌ها...</p>
+          <p className="text-slate-200">بارگذاری مدیریت قیمت‌ها...</p>
         </div>
       </div>
     );
@@ -275,7 +275,7 @@ const AdminPriceManager = ({ user, onLogout }) => {
                      marketStatus.status === 'maintenance' ? 'تعمیرات' : 'آفلاین'}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-slate-400">
+                <div className="flex items-center gap-4 text-sm text-slate-200">
                   <span>آخرین به‌روزرسانی: {marketStatus.last_update}</span>
                   <span>منبع: {marketStatus.source}</span>
                 </div>
@@ -335,17 +335,17 @@ const AdminPriceManager = ({ user, onLogout }) => {
             <CardContent>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-slate-400">تعداد ارزها</span>
+                  <span className="text-sm text-slate-200">تعداد ارزها</span>
                   <span className="text-sm font-semibold">{cryptos.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-slate-400">ارزهای فعال</span>
+                  <span className="text-sm text-slate-200">ارزهای فعال</span>
                   <span className="text-sm font-semibold text-green-400">
                     {cryptos.filter(c => c.active).length}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-slate-400">میانگین تغییر</span>
+                  <span className="text-sm text-slate-200">میانگین تغییر</span>
                   <span className={`text-sm font-semibold ${getChangeColor(
                     cryptos.reduce((acc, c) => acc + (c.change_24h || 0), 0) / cryptos.length
                   )}`}>
@@ -442,7 +442,7 @@ const AdminPriceManager = ({ user, onLogout }) => {
                           </div>
                           <div>
                             <div className="font-semibold">{crypto.symbol}</div>
-                            <div className="text-xs text-slate-400">{crypto.name}</div>
+                            <div className="text-xs text-slate-200">{crypto.name}</div>
                           </div>
                         </div>
                       </td>
@@ -513,7 +513,7 @@ const AdminPriceManager = ({ user, onLogout }) => {
                       </td>
                       
                       <td className="p-3">
-                        <div className="text-sm text-slate-400">
+                        <div className="text-sm text-slate-200">
                           {crypto.last_updated ? new Date(crypto.last_updated).toLocaleDateString('fa-IR') : 'نامشخص'}
                         </div>
                       </td>

@@ -97,7 +97,7 @@ const AISecurityCenter = ({ user, onLogout }) => {
       case 'high': return 'text-red-400';
       case 'medium': return 'text-yellow-400';
       case 'low': return 'text-green-400';
-      default: return 'text-gray-400';
+      default: return 'text-gray-200';
     }
   };
 
@@ -126,7 +126,7 @@ const AISecurityCenter = ({ user, onLogout }) => {
               <Shield className="w-8 h-8 text-red-500" />
               مرکز امنیت هوش مصنوعی
             </h1>
-            <p className="text-slate-400 mt-2">تشخیص تقلب و مراقبت پیشرفته</p>
+            <p className="text-slate-200 mt-2">تشخیص تقلب و مراقبت پیشرفته</p>
           </div>
           <Button onClick={fetchSecurityData} variant="outline" className="gap-2">
             <RefreshCw className="w-4 h-4" />
@@ -241,7 +241,7 @@ const AISecurityCenter = ({ user, onLogout }) => {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <h3 className="text-white font-medium">{alert.title}</h3>
-                      <p className="text-gray-400 text-sm">{alert.description}</p>
+                      <p className="text-gray-200 text-sm">{alert.description}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge className={getSeverityColor(alert.severity)}>
@@ -258,21 +258,21 @@ const AISecurityCenter = ({ user, onLogout }) => {
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                     <div>
-                      <p className="text-gray-400 text-xs">شناسه کاربر</p>
+                      <p className="text-gray-200 text-xs">شناسه کاربر</p>
                       <p className="text-white text-sm">{alert.userId}</p>
                     </div>
                     {alert.amount && (
                       <div>
-                        <p className="text-gray-400 text-xs">مبلغ</p>
+                        <p className="text-gray-200 text-xs">مبلغ</p>
                         <p className="text-white text-sm">{alert.amount.toLocaleString('fa-IR')} تومان</p>
                       </div>
                     )}
                     <div>
-                      <p className="text-gray-400 text-xs">سطح اعتماد</p>
+                      <p className="text-gray-200 text-xs">سطح اعتماد</p>
                       <p className="text-white text-sm">{alert.confidence}%</p>
                     </div>
                     <div>
-                      <p className="text-gray-400 text-xs">زمان تشخیص</p>
+                      <p className="text-gray-200 text-xs">زمان تشخیص</p>
                       <p className="text-white text-sm">
                         {new Date(alert.timestamp).toLocaleTimeString('fa-IR')}
                       </p>
@@ -315,19 +315,19 @@ const AISecurityCenter = ({ user, onLogout }) => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-800 rounded p-3">
-                  <p className="text-gray-400 text-sm">تهدیدات جهانی</p>
+                  <p className="text-gray-200 text-sm">تهدیدات جهانی</p>
                   <p className="text-white font-bold text-lg">{threatIntelligence.globalThreats}</p>
                 </div>
                 <div className="bg-slate-800 rounded p-3">
-                  <p className="text-gray-400 text-sm">تهدیدات ایرانی</p>
+                  <p className="text-gray-200 text-sm">تهدیدات ایرانی</p>
                   <p className="text-white font-bold text-lg">{threatIntelligence.iranianThreats}</p>
                 </div>
                 <div className="bg-slate-800 rounded p-3">
-                  <p className="text-gray-400 text-sm">IP های مسدود</p>
+                  <p className="text-gray-200 text-sm">IP های مسدود</p>
                   <p className="text-red-400 font-bold text-lg">{threatIntelligence.blockedIPs}</p>
                 </div>
                 <div className="bg-slate-800 rounded p-3">
-                  <p className="text-gray-400 text-sm">حملات فیشینگ</p>
+                  <p className="text-gray-200 text-sm">حملات فیشینگ</p>
                   <p className="text-orange-400 font-bold text-lg">{threatIntelligence.phishingAttempts}</p>
                 </div>
               </div>
@@ -353,8 +353,8 @@ const AISecurityCenter = ({ user, onLogout }) => {
                          activity.riskLevel === 'medium' ? 'متوسط' : 'کم خطر'}
                       </Badge>
                     </div>
-                    <p className="text-gray-400 text-sm mb-2">{activity.activity}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <p className="text-gray-200 text-sm mb-2">{activity.activity}</p>
+                    <div className="flex items-center justify-between text-xs text-gray-300">
                       <span>IP: {activity.ip} | {activity.location}</span>
                       <span>{new Date(activity.timestamp).toLocaleTimeString('fa-IR')}</span>
                     </div>
@@ -381,7 +381,7 @@ const AISecurityCenter = ({ user, onLogout }) => {
                   <span className="text-2xl font-bold text-red-400">97.8%</span>
                   <Badge className="bg-green-600">فعال</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">آخرین آموزش: دیروز</p>
+                <p className="text-gray-200 text-sm mt-2">آخرین آموزش: دیروز</p>
               </div>
               
               <div className="bg-gradient-to-r from-orange-900/50 to-red-800/50 rounded-lg p-4">
@@ -390,7 +390,7 @@ const AISecurityCenter = ({ user, onLogout }) => {
                   <span className="text-2xl font-bold text-orange-400">94.2%</span>
                   <Badge className="bg-green-600">فعال</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">آخرین آموزش: 3 روز پیش</p>
+                <p className="text-gray-200 text-sm mt-2">آخرین آموزش: 3 روز پیش</p>
               </div>
               
               <div className="bg-gradient-to-r from-blue-900/50 to-purple-800/50 rounded-lg p-4">
@@ -399,7 +399,7 @@ const AISecurityCenter = ({ user, onLogout }) => {
                   <span className="text-2xl font-bold text-blue-400">96.1%</span>
                   <Badge className="bg-green-600">فعال</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">آخرین آموزش: 1 هفته پیش</p>
+                <p className="text-gray-200 text-sm mt-2">آخرین آموزش: 1 هفته پیش</p>
               </div>
             </div>
           </CardContent>

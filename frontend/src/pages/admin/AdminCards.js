@@ -119,7 +119,7 @@ export default function AdminCards({ user, onLogout }) {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white">مدیریت کارت‌های بانکی</h1>
-            <p className="text-slate-400 mt-2">کارت‌های مقصد برای واریز کاربران</p>
+            <p className="text-slate-200 mt-2">کارت‌های مقصد برای واریز کاربران</p>
           </div>
           
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -132,7 +132,7 @@ export default function AdminCards({ user, onLogout }) {
             <DialogContent className="bg-slate-900 border-slate-800">
               <DialogHeader>
                 <DialogTitle className="text-white">افزودن کارت بانکی</DialogTitle>
-                <DialogDescription className="text-slate-400">
+                <DialogDescription className="text-slate-200">
                   شماره کارت جدید برای دریافت واریزی‌ها
                 </DialogDescription>
               </DialogHeader>
@@ -174,7 +174,7 @@ export default function AdminCards({ user, onLogout }) {
           <Card className="bg-slate-900/50 border-slate-800">
             <CardContent className="py-12 text-center">
               <CreditCard className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-              <p className="text-slate-400">هیچ کارتی ثبت نشده است</p>
+              <p className="text-slate-200">هیچ کارتی ثبت نشده است</p>
             </CardContent>
           </Card>
         ) : (
@@ -206,17 +206,17 @@ export default function AdminCards({ user, onLogout }) {
                   </div>
                   
                   <div className="flex items-center gap-2 text-slate-300">
-                    <User className="w-4 h-4 text-slate-500" />
+                    <User className="w-4 h-4 text-slate-300" />
                     <span>{card.cardholder_name}</span>
                   </div>
                   
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-slate-300">
                     تاریخ ثبت: {new Date(card.created_at).toLocaleDateString('fa-IR')}
                   </div>
 
                   <div className="flex items-center gap-2 pt-4 border-t border-slate-700">
                     <div className="flex-1 flex items-center gap-2">
-                      <span className="text-sm text-slate-400">وضعیت:</span>
+                      <span className="text-sm text-slate-200">وضعیت:</span>
                       <Switch
                         checked={card.is_active}
                         onCheckedChange={() => toggleCard(card.id, card.is_active)}

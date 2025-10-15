@@ -79,7 +79,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
   };
 
   const getChangeColor = (change) => {
-    return change > 0 ? 'text-green-400' : change < 0 ? 'text-red-400' : 'text-gray-400';
+    return change > 0 ? 'text-green-400' : change < 0 ? 'text-red-400' : 'text-gray-200';
   };
 
   const getSignalColor = (signal) => {
@@ -117,7 +117,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
               <BarChart3 className="w-8 h-8 text-green-500" />
               هوش بازار کریپتو
             </h1>
-            <p className="text-slate-400 mt-2">تحلیل هوشمند و پیش‌بینی بازار ایران و جهان</p>
+            <p className="text-slate-200 mt-2">تحلیل هوشمند و پیش‌بینی بازار ایران و جهان</p>
           </div>
           <Button onClick={fetchMarketIntelligence} variant="outline" className="gap-2">
             <RefreshCw className="w-4 h-4" />
@@ -207,7 +207,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                       </div>
                       <div>
                         <h3 className="text-white font-medium">{crypto.name}</h3>
-                        <p className="text-gray-400 text-sm">{crypto.symbol}</p>
+                        <p className="text-gray-200 text-sm">{crypto.symbol}</p>
                       </div>
                     </div>
                     
@@ -221,19 +221,19 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                     </div>
                     
                     <div>
-                      <p className="text-gray-400 text-xs">پیش‌بینی</p>
+                      <p className="text-gray-200 text-xs">پیش‌بینی</p>
                       <p className="text-white text-sm">{crypto.prediction}</p>
                       <p className="text-blue-400 text-xs">اعتماد: {crypto.confidence}%</p>
                     </div>
                     
                     <div>
-                      <p className="text-gray-400 text-xs">مقاومت/حمایت</p>
+                      <p className="text-gray-200 text-xs">مقاومت/حمایت</p>
                       <p className="text-red-400 text-sm">{crypto.resistance.toLocaleString('fa-IR')}</p>
                       <p className="text-green-400 text-sm">{crypto.support.toLocaleString('fa-IR')}</p>
                     </div>
                     
                     <div>
-                      <p className="text-gray-400 text-xs">حجم ۲۴ساعته</p>
+                      <p className="text-gray-200 text-xs">حجم ۲۴ساعته</p>
                       <p className="text-white text-sm">{crypto.volume.toLocaleString('fa-IR')}</p>
                     </div>
                     
@@ -272,19 +272,19 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                     
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div>
-                        <p className="text-gray-400">بازه زمانی</p>
+                        <p className="text-gray-200">بازه زمانی</p>
                         <p className="text-white">{pattern.timeframe}</p>
                       </div>
                       <div>
-                        <p className="text-gray-400">اقدام پیشنهادی</p>
+                        <p className="text-gray-200">اقدام پیشنهادی</p>
                         <p className={getActionColor(pattern.action)}>{pattern.action}</p>
                       </div>
                       <div>
-                        <p className="text-gray-400">هدف قیمتی</p>
+                        <p className="text-gray-200">هدف قیمتی</p>
                         <p className="text-green-400">{pattern.target.toLocaleString('fa-IR')}</p>
                       </div>
                       <div>
-                        <p className="text-gray-400">حد ضرر</p>
+                        <p className="text-gray-200">حد ضرر</p>
                         <p className="text-red-400">{pattern.stopLoss.toLocaleString('fa-IR')}</p>
                       </div>
                     </div>
@@ -312,7 +312,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                         <p className={`font-bold ${prediction.prediction.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
                           {prediction.prediction}
                         </p>
-                        <p className="text-gray-400 text-xs">{prediction.timeframe}</p>
+                        <p className="text-gray-200 text-xs">{prediction.timeframe}</p>
                       </div>
                     </div>
                     
@@ -321,7 +321,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                     </div>
                     
                     <div>
-                      <p className="text-gray-400 text-xs mb-1">عوامل تأثیرگذار:</p>
+                      <p className="text-gray-200 text-xs mb-1">عوامل تأثیرگذار:</p>
                       <div className="flex flex-wrap gap-1">
                         {prediction.factors.map(factor => (
                           <Badge key={factor} variant="outline" className="text-xs">
@@ -355,7 +355,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                   </span>
                   <Badge className="bg-green-600">تومان</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">میلیارد تومان</p>
+                <p className="text-gray-200 text-sm mt-2">میلیارد تومان</p>
               </div>
               
               <div className="bg-gradient-to-r from-blue-900/50 to-blue-800/50 rounded-lg p-4">
@@ -366,7 +366,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                   </span>
                   <Badge className="bg-blue-600">کاربر</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">امروز</p>
+                <p className="text-gray-200 text-sm mt-2">امروز</p>
               </div>
               
               <div className="bg-gradient-to-r from-purple-900/50 to-purple-800/50 rounded-lg p-4">
@@ -377,7 +377,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                   </span>
                   <Badge className="bg-green-600">خوب</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">تحلیل AI</p>
+                <p className="text-gray-200 text-sm mt-2">تحلیل AI</p>
               </div>
               
               <div className="bg-gradient-to-r from-orange-900/50 to-red-800/50 rounded-lg p-4">
@@ -388,7 +388,7 @@ const AIMarketIntelligence = ({ user, onLogout }) => {
                   </span>
                   <Badge className="bg-yellow-600">رشد</Badge>
                 </div>
-                <p className="text-gray-400 text-sm mt-2">ماهانه</p>
+                <p className="text-gray-200 text-sm mt-2">ماهانه</p>
               </div>
             </div>
           </CardContent>

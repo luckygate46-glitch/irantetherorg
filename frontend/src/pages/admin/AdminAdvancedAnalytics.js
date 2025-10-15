@@ -116,7 +116,7 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
             />
           ))}
         </div>
-        <div className="text-xs text-slate-400 mt-2">24 ساعت گذشته</div>
+        <div className="text-xs text-slate-200 mt-2">24 ساعت گذشته</div>
       </CardContent>
     </Card>
   );
@@ -126,7 +126,7 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">بارگذاری تحلیل‌های پیشرفته...</p>
+          <p className="text-slate-200">بارگذاری تحلیل‌های پیشرفته...</p>
         </div>
       </div>
     );
@@ -253,10 +253,10 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
                         <div className="flex justify-between items-center">
                           <code className="text-sm text-emerald-400">{endpoint}</code>
                           <div className="flex gap-4 text-sm">
-                            <span className="text-slate-400">
+                            <span className="text-slate-200">
                               زمان پاسخ: <span className="text-white">{Math.round(metrics.avg_time)}ms</span>
                             </span>
-                            <span className="text-slate-400">
+                            <span className="text-slate-200">
                               موفقیت: <span className={getPerformanceColor(metrics.success_rate)}>{metrics.success_rate.toFixed(1)}%</span>
                             </span>
                           </div>
@@ -281,25 +281,25 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400">استفاده از Connection Pool</span>
+                        <span className="text-slate-200">استفاده از Connection Pool</span>
                         <span className={getPerformanceColor(100 - analyticsData.system_analytics.database_metrics.connection_pool_usage)}>
                           {Math.round(analyticsData.system_analytics.database_metrics.connection_pool_usage)}%
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400">عملکرد Query</span>
+                        <span className="text-slate-200">عملکرد Query</span>
                         <span className={getPerformanceColor(analyticsData.system_analytics.database_metrics.query_performance)}>
                           {Math.round(analyticsData.system_analytics.database_metrics.query_performance)}ms
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400">کارایی ذخیره‌سازی</span>
+                        <span className="text-slate-200">کارایی ذخیره‌سازی</span>
                         <span className={getPerformanceColor(analyticsData.system_analytics.database_metrics.storage_efficiency)}>
                           {Math.round(analyticsData.system_analytics.database_metrics.storage_efficiency)}%
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400">وضعیت بکاپ</span>
+                        <span className="text-slate-200">وضعیت بکاپ</span>
                         <Badge className="bg-green-600 text-white">
                           {analyticsData.system_analytics.database_metrics.backup_status}
                         </Badge>
@@ -320,25 +320,25 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400">تلاش‌های ورود ناموفق</span>
+                        <span className="text-slate-200">تلاش‌های ورود ناموفق</span>
                         <span className="text-red-400">
                           {formatNumber(analyticsData.system_analytics.security_metrics.failed_login_attempts)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400">IP های مسدود</span>
+                        <span className="text-slate-200">IP های مسدود</span>
                         <span className="text-yellow-400">
                           {formatNumber(analyticsData.system_analytics.security_metrics.blocked_ips)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400">هشدارهای امنیتی</span>
+                        <span className="text-slate-200">هشدارهای امنیتی</span>
                         <span className="text-orange-400">
                           {formatNumber(analyticsData.system_analytics.security_metrics.security_alerts)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-slate-400">وضعیت SSL</span>
+                        <span className="text-slate-200">وضعیت SSL</span>
                         <Badge className="bg-green-600 text-white">
                           {analyticsData.system_analytics.security_metrics.ssl_status}
                         </Badge>
@@ -403,7 +403,7 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
                                 style={{ width: `${percentage}%` }}
                               />
                             </div>
-                            <span className="text-sm text-slate-400 w-12">{Math.round(percentage)}%</span>
+                            <span className="text-sm text-slate-200 w-12">{Math.round(percentage)}%</span>
                           </div>
                         </div>
                       ))}
@@ -442,7 +442,7 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
                                   style={{ width: `${percentage}%` }}
                                 />
                               </div>
-                              <span className="text-sm text-slate-400 w-12">{Math.round(percentage)}%</span>
+                              <span className="text-sm text-slate-200 w-12">{Math.round(percentage)}%</span>
                             </div>
                           </div>
                         );
@@ -528,19 +528,19 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <span className="text-slate-400">میانگین زمان اجرا</span>
+                        <span className="text-slate-200">میانگین زمان اجرا</span>
                         <span className="text-white">
                           {analyticsData.trading_performance.performance_metrics.execution_speed.avg_order_execution?.toFixed(1)}s
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">سریع‌ترین اجرا</span>
+                        <span className="text-slate-200">سریع‌ترین اجرا</span>
                         <span className="text-green-400">
                           {analyticsData.trading_performance.performance_metrics.execution_speed.fastest_execution?.toFixed(1)}s
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">کندترین اجرا</span>
+                        <span className="text-slate-200">کندترین اجرا</span>
                         <span className="text-red-400">
                           {analyticsData.trading_performance.performance_metrics.execution_speed.slowest_execution?.toFixed(1)}s
                         </span>
@@ -559,13 +559,13 @@ const AdminAdvancedAnalytics = ({ user, onLogout }) => {
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <span className="text-slate-400">اسپرد Bid-Ask</span>
+                        <span className="text-slate-200">اسپرد Bid-Ask</span>
                         <span className="text-white">
                           {analyticsData.trading_performance.performance_metrics.liquidity_analysis.bid_ask_spread?.toFixed(2)}%
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-400">ثبات حجم</span>
+                        <span className="text-slate-200">ثبات حجم</span>
                         <span className={getPerformanceColor(analyticsData.trading_performance.performance_metrics.liquidity_analysis.volume_consistency)}>
                           {analyticsData.trading_performance.performance_metrics.liquidity_analysis.volume_consistency?.toFixed(1)}%
                         </span>

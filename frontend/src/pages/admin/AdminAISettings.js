@@ -123,7 +123,7 @@ export default function AdminAISettings({ user, onLogout }) {
       <div className="p-6 max-w-4xl mx-auto" dir="rtl">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white mb-2">⚙️ تنظیمات هوش مصنوعی</h1>
-          <p className="text-slate-400">مدیریت کلید API و پیکربندی سرویس‌های هوشمند</p>
+          <p className="text-slate-200">مدیریت کلید API و پیکربندی سرویس‌های هوشمند</p>
         </div>
 
         {message.text && (
@@ -142,7 +142,7 @@ export default function AdminAISettings({ user, onLogout }) {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-slate-700 rounded-lg p-4">
-              <div className="text-slate-400 text-sm mb-1">وضعیت سرویس</div>
+              <div className="text-slate-200 text-sm mb-1">وضعیت سرویس</div>
               <div className="flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full ${
                   settings?.status === 'configured' ? 'bg-green-500' : 'bg-red-500'
@@ -154,17 +154,17 @@ export default function AdminAISettings({ user, onLogout }) {
             </div>
 
             <div className="bg-slate-700 rounded-lg p-4">
-              <div className="text-slate-400 text-sm mb-1">مدل هوش مصنوعی</div>
+              <div className="text-slate-200 text-sm mb-1">مدل هوش مصنوعی</div>
               <div className="text-white font-semibold">{settings?.model || 'gpt-4o'}</div>
             </div>
 
             <div className="bg-slate-700 rounded-lg p-4">
-              <div className="text-slate-400 text-sm mb-1">ارائه‌دهنده</div>
+              <div className="text-slate-200 text-sm mb-1">ارائه‌دهنده</div>
               <div className="text-white font-semibold">OpenAI</div>
             </div>
 
             <div className="bg-slate-700 rounded-lg p-4">
-              <div className="text-slate-400 text-sm mb-1">کلید API</div>
+              <div className="text-slate-200 text-sm mb-1">کلید API</div>
               <div className="text-white font-semibold">
                 {settings?.openai_api_key_set ? (
                   <span className="text-green-400">
@@ -178,7 +178,7 @@ export default function AdminAISettings({ user, onLogout }) {
           </div>
 
           {settings?.last_updated && (
-            <div className="mt-4 text-sm text-slate-400">
+            <div className="mt-4 text-sm text-slate-200">
               آخرین به‌روزرسانی: {new Date(settings.last_updated).toLocaleString('fa-IR')}
             </div>
           )}
@@ -204,12 +204,12 @@ export default function AdminAISettings({ user, onLogout }) {
                 />
                 <button
                   onClick={() => setShowApiKey(!showApiKey)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-200 hover:text-white"
                 >
                   {showApiKey ? '👁️' : '👁️‍🗨️'}
                 </button>
               </div>
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mt-2 text-sm text-slate-200">
                 💡 برای دریافت کلید API خود به <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">platform.openai.com</a> مراجعه کنید
               </p>
               <div className="mt-3 p-3 bg-yellow-900/30 border border-yellow-700 rounded-lg">

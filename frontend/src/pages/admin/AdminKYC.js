@@ -196,10 +196,10 @@ const AdminKYC = ({ user, onLogout }) => {
           <Card className="bg-slate-900 border-slate-800">
             <CardContent className="text-center py-12">
               <Shield className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-slate-400 mb-2">
+              <h3 className="text-xl font-semibold text-slate-200 mb-2">
                 درخواست احراز هویت جدیدی وجود ندارد
               </h3>
-              <p className="text-slate-500">
+              <p className="text-slate-300">
                 تمام درخواست‌های احراز هویت پردازش شده‌اند
               </p>
             </CardContent>
@@ -217,26 +217,26 @@ const AdminKYC = ({ user, onLogout }) => {
                         <h3 className="text-lg font-semibold">{kyc.full_name || 'نام نامشخص'}</h3>
                       </div>
                       
-                      <div className="flex items-center gap-2 text-sm text-slate-400">
+                      <div className="flex items-center gap-2 text-sm text-slate-200">
                         <Mail className="w-4 h-4" />
                         <span>{kyc.email}</span>
                       </div>
                       
                       {kyc.phone && (
-                        <div className="flex items-center gap-2 text-sm text-slate-400">
+                        <div className="flex items-center gap-2 text-sm text-slate-200">
                           <Phone className="w-4 h-4" />
                           <span>{kyc.phone}</span>
                         </div>
                       )}
                       
                       {kyc.national_code && (
-                        <div className="flex items-center gap-2 text-sm text-slate-400">
+                        <div className="flex items-center gap-2 text-sm text-slate-200">
                           <CreditCard className="w-4 h-4" />
                           <span>کد ملی: {kyc.national_code}</span>
                         </div>
                       )}
                       
-                      <div className="flex items-center gap-2 text-sm text-slate-400">
+                      <div className="flex items-center gap-2 text-sm text-slate-200">
                         <Calendar className="w-4 h-4" />
                         <span>{formatDate(kyc.submitted_at)}</span>
                       </div>
@@ -256,7 +256,7 @@ const AdminKYC = ({ user, onLogout }) => {
                       </div>
                       
                       {kyc.kyc_documents && (
-                        <div className="text-sm text-slate-400">
+                        <div className="text-sm text-slate-200">
                           <p>✅ عکس کارت ملی ارسال شده</p>
                           <p>✅ تصویر سلفی ارسال شده</p>
                         </div>
@@ -322,27 +322,27 @@ const AdminKYC = ({ user, onLogout }) => {
                   
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">نام و نام خانوادگی:</span>
+                      <span className="text-slate-200">نام و نام خانوادگی:</span>
                       <span>{selectedKYC.full_name}</span>
                     </div>
                     
                     <div className="flex justify-between">
-                      <span className="text-slate-400">ایمیل:</span>
+                      <span className="text-slate-200">ایمیل:</span>
                       <span>{selectedKYC.email}</span>
                     </div>
                     
                     <div className="flex justify-between">
-                      <span className="text-slate-400">تلفن:</span>
+                      <span className="text-slate-200">تلفن:</span>
                       <span>{selectedKYC.phone}</span>
                     </div>
                     
                     <div className="flex justify-between">
-                      <span className="text-slate-400">کد ملی:</span>
+                      <span className="text-slate-200">کد ملی:</span>
                       <span>{selectedKYC.national_code}</span>
                     </div>
                     
                     <div className="flex justify-between">
-                      <span className="text-slate-400">تاریخ ارسال:</span>
+                      <span className="text-slate-200">تاریخ ارسال:</span>
                       <span>{formatDate(selectedKYC.submitted_at)}</span>
                     </div>
                   </div>
@@ -356,7 +356,7 @@ const AdminKYC = ({ user, onLogout }) => {
                     <div className="space-y-4">
                       {selectedKYC.kyc_documents.id_card_photo && (
                         <div>
-                          <p className="text-sm text-slate-400 mb-2">عکس کارت ملی:</p>
+                          <p className="text-sm text-slate-200 mb-2">عکس کارت ملی:</p>
                           <img 
                             src={selectedKYC.kyc_documents.id_card_photo} 
                             alt="کارت ملی"
@@ -367,7 +367,7 @@ const AdminKYC = ({ user, onLogout }) => {
                       
                       {selectedKYC.kyc_documents.selfie_data && (
                         <div>
-                          <p className="text-sm text-slate-400 mb-2">تصویر سلفی:</p>
+                          <p className="text-sm text-slate-200 mb-2">تصویر سلفی:</p>
                           <img 
                             src={selectedKYC.kyc_documents.selfie_data} 
                             alt="تصویر سلفی"

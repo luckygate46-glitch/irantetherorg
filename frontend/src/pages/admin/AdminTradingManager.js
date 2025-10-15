@@ -165,7 +165,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">بارگذاری مدیریت معاملات...</p>
+          <p className="text-slate-200">بارگذاری مدیریت معاملات...</p>
         </div>
       </div>
     );
@@ -214,7 +214,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
               <div className="text-2xl font-bold text-emerald-400">
                 {formatCurrency(tradingStats?.total_volume || 0)} ت
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-200">
                 {tradingStats?.total_trades || 0} معامله انجام شده
               </p>
               <div className="flex items-center gap-1 mt-2">
@@ -237,10 +237,10 @@ const AdminTradingManager = ({ user, onLogout }) => {
               <div className="text-2xl font-bold text-blue-400">
                 {tradingStats?.active_traders || 0}
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-200">
                 از {tradingStats?.total_users || 0} کل کاربران
               </p>
-              <div className="text-xs text-slate-400 mt-2">
+              <div className="text-xs text-slate-200 mt-2">
                 میانگین معامله: {formatCurrency(tradingStats?.avg_trade_size || 0)} ت
               </div>
             </CardContent>
@@ -257,10 +257,10 @@ const AdminTradingManager = ({ user, onLogout }) => {
               <div className="text-2xl font-bold text-yellow-400">
                 {formatCurrency(tradingStats?.fee_revenue || 0)} ت
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-200">
                 نرخ میانگین: %{tradingStats?.avg_fee_rate || 0}
               </p>
-              <div className="text-xs text-slate-400 mt-2">
+              <div className="text-xs text-slate-200 mt-2">
                 بیشترین کارمزد: {formatCurrency(tradingStats?.highest_fee || 0)} ت
               </div>
             </CardContent>
@@ -277,10 +277,10 @@ const AdminTradingManager = ({ user, onLogout }) => {
               <div className="text-2xl font-bold text-purple-400">
                 {liveOrders.filter(o => o.status === 'pending').length}
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-200">
                 نیاز به بررسی ادمین
               </p>
-              <div className="text-xs text-slate-400 mt-2">
+              <div className="text-xs text-slate-200 mt-2">
                 میانگین انتظار: {tradingStats?.avg_processing_time || 0} دقیقه
               </div>
             </CardContent>
@@ -290,7 +290,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
         {/* Timeframe and Controls */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-400">بازه زمانی:</span>
+            <span className="text-sm text-slate-200">بازه زمانی:</span>
             {['1h', '24h', '7d', '30d'].map(tf => (
               <Button
                 key={tf}
@@ -305,7 +305,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
           
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Search className="w-4 h-4 text-slate-400" />
+              <Search className="w-4 h-4 text-slate-200" />
               <Input
                 placeholder="جستجوی کاربر یا ارز..."
                 value={searchTerm}
@@ -315,7 +315,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
             </div>
             
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-slate-400" />
+              <Filter className="w-4 h-4 text-slate-200" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -355,7 +355,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
                   {filteredOrders.length === 0 ? (
                     <div className="text-center py-8">
                       <Activity className="w-12 h-12 text-slate-600 mx-auto mb-2" />
-                      <p className="text-slate-400">سفارش جدیدی وجود ندارد</p>
+                      <p className="text-slate-200">سفارش جدیدی وجود ندارد</p>
                     </div>
                   ) : (
                     filteredOrders.map((order) => (
@@ -368,7 +368,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
                                 {order.order_type === 'buy' ? 'خرید' : 
                                  order.order_type === 'sell' ? 'فروش' : 'تبدیل'} {order.coin_symbol}
                               </div>
-                              <div className="text-xs text-slate-400">{order.user_email}</div>
+                              <div className="text-xs text-slate-200">{order.user_email}</div>
                             </div>
                           </div>
                           
@@ -387,7 +387,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
                           </div>
                         </div>
                         
-                        <div className="flex items-center justify-between text-xs text-slate-400">
+                        <div className="flex items-center justify-between text-xs text-slate-200">
                           <span>{new Date(order.created_at).toLocaleString('fa-IR')}</span>
                           <div className="flex items-center gap-2">
                             {order.status === 'pending' && (
@@ -416,7 +416,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
                         </div>
                         
                         {order.target_coin_symbol && (
-                          <div className="mt-2 text-xs text-slate-400 bg-slate-800 p-2 rounded">
+                          <div className="mt-2 text-xs text-slate-200 bg-slate-800 p-2 rounded">
                             تبدیل به: {order.target_coin_symbol}
                           </div>
                         )}
@@ -450,7 +450,7 @@ const AdminTradingManager = ({ user, onLogout }) => {
                       </Badge>
                     </div>
                     
-                    <div className="text-xs text-slate-400 space-y-1">
+                    <div className="text-xs text-slate-200 space-y-1">
                       <div className="flex justify-between">
                         <span>حجم 24س:</span>
                         <span>{formatCurrency(pair.volume_24h || 0)} ت</span>
@@ -502,28 +502,28 @@ const AdminTradingManager = ({ user, onLogout }) => {
                   <div className="text-2xl font-bold text-emerald-400">
                     {marketData.market_cap ? formatCurrency(marketData.market_cap) : 'N/A'}
                   </div>
-                  <div className="text-sm text-slate-400">ارزش کل بازار</div>
+                  <div className="text-sm text-slate-200">ارزش کل بازار</div>
                 </div>
                 
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-400">
                     {marketData.total_volume_24h ? formatCurrency(marketData.total_volume_24h) : 'N/A'}
                   </div>
-                  <div className="text-sm text-slate-400">حجم معاملات 24س</div>
+                  <div className="text-sm text-slate-200">حجم معاملات 24س</div>
                 </div>
                 
                 <div className="text-center">
                   <div className="text-2xl font-bold text-yellow-400">
                     {marketData.active_cryptocurrencies || 0}
                   </div>
-                  <div className="text-sm text-slate-400">ارزهای فعال</div>
+                  <div className="text-sm text-slate-200">ارزهای فعال</div>
                 </div>
                 
                 <div className="text-center">
                   <div className={`text-2xl font-bold ${marketData.market_change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                     {marketData.market_change >= 0 ? '+' : ''}{marketData.market_change?.toFixed(2) || 0}%
                   </div>
-                  <div className="text-sm text-slate-400">تغییر کل بازار</div>
+                  <div className="text-sm text-slate-200">تغییر کل بازار</div>
                 </div>
               </div>
             </CardContent>

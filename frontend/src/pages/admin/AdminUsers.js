@@ -388,7 +388,7 @@ export default function AdminUsers({ user, onLogout }) {
         {/* Header with Stats */}
         <div>
           <h1 className="text-3xl font-bold text-white">مدیریت کاربران</h1>
-          <p className="text-slate-400 mt-2">مشاهده و مدیریت پیشرفته کاربران</p>
+          <p className="text-slate-200 mt-2">مشاهده و مدیریت پیشرفته کاربران</p>
         </div>
 
         {/* Stats Cards */}
@@ -450,7 +450,7 @@ export default function AdminUsers({ user, onLogout }) {
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute right-3 top-3 w-5 h-5 text-slate-400" />
+                  <Search className="absolute right-3 top-3 w-5 h-5 text-slate-200" />
                   <Input
                     type="text"
                     placeholder="جستجو بر اساس نام، ایمیل یا تلفن..."
@@ -563,7 +563,7 @@ export default function AdminUsers({ user, onLogout }) {
         )}
 
         {/* Results Info */}
-        <div className="flex items-center justify-between text-slate-400 text-sm">
+        <div className="flex items-center justify-between text-slate-200 text-sm">
           <span>نمایش {filteredUsers.length} از {users.length} کاربر</span>
           <div className="flex items-center gap-2">
             <input
@@ -613,12 +613,12 @@ export default function AdminUsers({ user, onLogout }) {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                           <div className="flex items-center gap-2 text-slate-300">
-                            <Mail className="w-4 h-4 text-slate-500" />
+                            <Mail className="w-4 h-4 text-slate-300" />
                             {u.email}
                           </div>
                           {u.phone && (
                             <div className="flex items-center gap-2 text-slate-300">
-                              <Phone className="w-4 h-4 text-slate-500" />
+                              <Phone className="w-4 h-4 text-slate-300" />
                               {u.phone}
                             </div>
                           )}
@@ -717,7 +717,7 @@ export default function AdminUsers({ user, onLogout }) {
           <Card className="bg-slate-900/50 border-slate-800">
             <CardContent className="p-8 text-center">
               <Users className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-              <p className="text-slate-400">هیچ کاربری یافت نشد</p>
+              <p className="text-slate-200">هیچ کاربری یافت نشد</p>
             </CardContent>
           </Card>
         )}
@@ -872,21 +872,21 @@ export default function AdminUsers({ user, onLogout }) {
                 {/* User Basic Info */}
                 <div className="grid grid-cols-2 gap-4 pb-4 border-b border-slate-700">
                   <div>
-                    <p className="text-slate-400 text-sm">ایمیل</p>
+                    <p className="text-slate-200 text-sm">ایمیل</p>
                     <p className="text-white">{selectedUser.email}</p>
                   </div>
                   <div>
-                    <p className="text-slate-400 text-sm">تلفن</p>
+                    <p className="text-slate-200 text-sm">تلفن</p>
                     <p className="text-white">{selectedUser.phone || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-slate-400 text-sm">سطح KYC</p>
+                    <p className="text-slate-200 text-sm">سطح KYC</p>
                     <Badge className={getKycBadgeColor(selectedUser.kyc_level)}>
                       سطح {selectedUser.kyc_level}
                     </Badge>
                   </div>
                   <div>
-                    <p className="text-slate-400 text-sm">وضعیت</p>
+                    <p className="text-slate-200 text-sm">وضعیت</p>
                     <Badge className={selectedUser.is_suspended ? 'bg-red-600' : 'bg-green-600'}>
                       {selectedUser.is_suspended ? 'تعلیق شده' : 'فعال'}
                     </Badge>
@@ -903,14 +903,14 @@ export default function AdminUsers({ user, onLogout }) {
                     {userNotes.map((note) => (
                       <div key={note.id} className="bg-slate-800 rounded p-3">
                         <p className="text-white text-sm">{note.note}</p>
-                        <div className="flex items-center justify-between mt-2 text-xs text-slate-400">
+                        <div className="flex items-center justify-between mt-2 text-xs text-slate-200">
                           <span>توسط: {note.created_by_name}</span>
                           <span>{new Date(note.created_at).toLocaleString('fa-IR')}</span>
                         </div>
                       </div>
                     ))}
                     {userNotes.length === 0 && (
-                      <p className="text-slate-400 text-sm text-center py-4">
+                      <p className="text-slate-200 text-sm text-center py-4">
                         یادداشتی ثبت نشده است
                       </p>
                     )}
@@ -933,18 +933,18 @@ export default function AdminUsers({ user, onLogout }) {
                              activity.action}
                           </p>
                           {activity.details && (
-                            <p className="text-slate-400 text-xs mt-1">
+                            <p className="text-slate-200 text-xs mt-1">
                               {activity.details.reason}
                             </p>
                           )}
                         </div>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-200">
                           {new Date(activity.timestamp).toLocaleString('fa-IR')}
                         </span>
                       </div>
                     ))}
                     {userActivity.length === 0 && (
-                      <p className="text-slate-400 text-sm text-center py-4">
+                      <p className="text-slate-200 text-sm text-center py-4">
                         فعالیتی ثبت نشده است
                       </p>
                     )}

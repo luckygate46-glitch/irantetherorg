@@ -280,7 +280,7 @@ const StatCard = ({ title, value, icon, color }) => (
   <div className={`bg-slate-900 border border-${color}-700 rounded-lg p-4`}>
     <div className="text-2xl mb-2">{icon}</div>
     <div className="text-2xl font-bold text-white mb-1">{value}</div>
-    <div className="text-sm text-slate-400">{title}</div>
+    <div className="text-sm text-slate-200">{title}</div>
   </div>
 );
 
@@ -300,11 +300,11 @@ const FraudDetection = ({ data }) => (
             alert.severity === 'high' ? 'bg-red-900/20 border-red-700' : 'bg-yellow-900/20 border-yellow-700'
           }`}>
             <div className="font-semibold text-white mb-1">{alert.description}</div>
-            <div className="text-sm text-slate-400">{alert.details}</div>
+            <div className="text-sm text-slate-200">{alert.details}</div>
           </div>
         ))}
         {(!data.alerts || data.alerts.length === 0) && (
-          <div className="text-center text-slate-400 py-8">✅ هیچ مورد مشکوکی یافت نشد</div>
+          <div className="text-center text-slate-200 py-8">✅ هیچ مورد مشکوکی یافت نشد</div>
         )}
       </div>
     </div>
@@ -325,11 +325,11 @@ const AnomalyDetection = ({ data }) => (
         {data.anomalies && data.anomalies.map((anomaly, idx) => (
           <div key={idx} className="p-4 bg-orange-900/20 border border-orange-700 rounded-lg">
             <div className="font-semibold text-white mb-1">{anomaly.description}</div>
-            <div className="text-sm text-slate-400">تاریخ: {anomaly.date}</div>
+            <div className="text-sm text-slate-200">تاریخ: {anomaly.date}</div>
           </div>
         ))}
         {(!data.anomalies || data.anomalies.length === 0) && (
-          <div className="text-center text-slate-400 py-8">✅ هیچ ناهنجاری یافت نشد</div>
+          <div className="text-center text-slate-200 py-8">✅ هیچ ناهنجاری یافت نشد</div>
         )}
       </div>
     </div>
@@ -351,7 +351,7 @@ const UserPredictions = ({ data }) => (
           {data.high_value_users && data.high_value_users.slice(0, 5).map((user, idx) => (
             <div key={idx} className="p-3 bg-green-900/20 border border-green-700 rounded-lg">
               <div className="text-sm text-white">{user.email}</div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-slate-200">
                 {user.orders} سفارش • {(user.volume / 1000000).toFixed(1)}M تومان
               </div>
             </div>
@@ -365,7 +365,7 @@ const UserPredictions = ({ data }) => (
           {data.churn_risk_users && data.churn_risk_users.slice(0, 5).map((user, idx) => (
             <div key={idx} className="p-3 bg-orange-900/20 border border-orange-700 rounded-lg">
               <div className="text-sm text-white">{user.email}</div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-slate-200">
                 {user.days_inactive} روز غیرفعال • {user.previous_orders} سفارش قبلی
               </div>
             </div>
@@ -392,12 +392,12 @@ const MarketManipulation = ({ data }) => (
               <div className="font-semibold text-white">{alert.description}</div>
               <span className="px-2 py-1 bg-red-600 text-xs rounded">{alert.type}</span>
             </div>
-            {alert.coin && <div className="text-sm text-slate-400">ارز: {alert.coin}</div>}
-            {alert.order_count && <div className="text-sm text-slate-400">تعداد سفارش: {alert.order_count}</div>}
+            {alert.coin && <div className="text-sm text-slate-200">ارز: {alert.coin}</div>}
+            {alert.order_count && <div className="text-sm text-slate-200">تعداد سفارش: {alert.order_count}</div>}
           </div>
         ))}
         {(!data.alerts || data.alerts.length === 0) && (
-          <div className="text-center text-slate-400 py-8">✅ فعالیت مشکوکی یافت نشد</div>
+          <div className="text-center text-slate-200 py-8">✅ فعالیت مشکوکی یافت نشد</div>
         )}
       </div>
     </div>
@@ -417,15 +417,15 @@ const RevenueOptimization = ({ data }) => (
       <div className="grid grid-cols-3 gap-4">
         <div className="p-4 bg-emerald-900/20 border border-emerald-700 rounded-lg">
           <div className="text-2xl font-bold text-emerald-400">{data.user_tiers?.high_volume || 0}</div>
-          <div className="text-sm text-slate-400">حجم بالا (&gt;100M)</div>
+          <div className="text-sm text-slate-200">حجم بالا (&gt;100M)</div>
         </div>
         <div className="p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
           <div className="text-2xl font-bold text-blue-400">{data.user_tiers?.medium_volume || 0}</div>
-          <div className="text-sm text-slate-400">حجم متوسط (10-100M)</div>
+          <div className="text-sm text-slate-200">حجم متوسط (10-100M)</div>
         </div>
         <div className="p-4 bg-slate-800 border border-slate-600 rounded-lg">
-          <div className="text-2xl font-bold text-slate-400">{data.user_tiers?.low_volume || 0}</div>
-          <div className="text-sm text-slate-400">حجم پایین (&lt;10M)</div>
+          <div className="text-2xl font-bold text-slate-200">{data.user_tiers?.low_volume || 0}</div>
+          <div className="text-sm text-slate-200">حجم پایین (&lt;10M)</div>
         </div>
       </div>
     </div>
@@ -473,7 +473,7 @@ const RiskScoring = ({ data }) => (
               <span className="text-white">{user.email}</span>
               <span className="text-red-400 font-bold">امتیاز: {user.risk_score}</span>
             </div>
-            <div className="text-xs text-slate-400 mt-1">{user.risk_factors?.join(' • ')}</div>
+            <div className="text-xs text-slate-200 mt-1">{user.risk_factors?.join(' • ')}</div>
           </div>
         ))}
       </div>
@@ -495,7 +495,7 @@ const SupportTriage = ({ data }) => (
             ticket.priority === 'high' ? 'bg-red-900/20 border-red-700' : 'bg-yellow-900/20 border-yellow-700'
           }`}>
             <div className="text-white font-semibold">{ticket.description}</div>
-            <div className="text-sm text-slate-400 mt-1">{ticket.suggested_action}</div>
+            <div className="text-sm text-slate-200 mt-1">{ticket.suggested_action}</div>
           </div>
         ))}
       </div>
@@ -516,11 +516,11 @@ const UserIntent = ({ data }) => (
       <div className="grid grid-cols-2 gap-4">
         <div className="p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
           <div className="text-3xl font-bold text-blue-400">{data.conversion_rates?.kyc_conversion || 0}%</div>
-          <div className="text-sm text-slate-400">تبدیل به KYC</div>
+          <div className="text-sm text-slate-200">تبدیل به KYC</div>
         </div>
         <div className="p-4 bg-green-900/20 border border-green-700 rounded-lg">
           <div className="text-3xl font-bold text-green-400">{data.conversion_rates?.trading_conversion || 0}%</div>
-          <div className="text-sm text-slate-400">تبدیل به معامله</div>
+          <div className="text-sm text-slate-200">تبدیل به معامله</div>
         </div>
       </div>
     </div>
@@ -552,11 +552,11 @@ const TransactionMonitoring = ({ data }) => (
             alert.severity === 'high' ? 'bg-red-900/20 border-red-700' : 'bg-yellow-900/20 border-yellow-700'
           }`}>
             <div className="text-white">{alert.description}</div>
-            {alert.amount && <div className="text-sm text-slate-400">مبلغ: {alert.amount.toLocaleString('fa-IR')} تومان</div>}
+            {alert.amount && <div className="text-sm text-slate-200">مبلغ: {alert.amount.toLocaleString('fa-IR')} تومان</div>}
           </div>
         ))}
         {(!data.alerts || data.alerts.length === 0) && (
-          <div className="text-center text-slate-400 py-8">✅ همه تراکنش‌ها عادی هستند</div>
+          <div className="text-center text-slate-200 py-8">✅ همه تراکنش‌ها عادی هستند</div>
         )}
       </div>
     </div>
@@ -573,7 +573,7 @@ const PriceAnomalies = ({ data }) => (
         </div>
       ))}
       {data.status === 'ready' && (
-        <div className="text-center text-slate-400 py-8">
+        <div className="text-center text-slate-200 py-8">
           ℹ️ سیستم آماده است. نیاز به تاریخچه قیمت برای تشخیص ناهنجاری
         </div>
       )}
@@ -591,18 +591,18 @@ const MarketSentiment = ({ data }) => (
         {data.sentiment === 'صعودی' ? '📈' : data.sentiment === 'نزولی' ? '📉' : '➡️'}
       </div>
       <div className="text-3xl font-bold text-white mb-2">احساسات بازار: {data.sentiment}</div>
-      <div className="text-xl text-slate-400">حالت کلی: {data.mood}</div>
+      <div className="text-xl text-slate-200">حالت کلی: {data.mood}</div>
     </div>
     <div className="grid grid-cols-2 gap-4">
       <div className="bg-slate-900 rounded-lg p-6">
         <div className="text-green-400 text-4xl font-bold mb-2">{data.buy_percentage?.toFixed(1)}%</div>
-        <div className="text-slate-400">خریدها</div>
-        <div className="text-sm text-slate-500">{(data.buy_volume / 1000000).toFixed(1)}M تومان</div>
+        <div className="text-slate-200">خریدها</div>
+        <div className="text-sm text-slate-300">{(data.buy_volume / 1000000).toFixed(1)}M تومان</div>
       </div>
       <div className="bg-slate-900 rounded-lg p-6">
         <div className="text-red-400 text-4xl font-bold mb-2">{data.sell_percentage?.toFixed(1)}%</div>
-        <div className="text-slate-400">فروش‌ها</div>
-        <div className="text-sm text-slate-500">{(data.sell_volume / 1000000).toFixed(1)}M تومان</div>
+        <div className="text-slate-200">فروش‌ها</div>
+        <div className="text-sm text-slate-300">{(data.sell_volume / 1000000).toFixed(1)}M تومان</div>
       </div>
     </div>
   </div>
@@ -621,7 +621,7 @@ const AutoKYC = ({ data }) => (
           {data.auto_approve_candidates && data.auto_approve_candidates.slice(0, 5).map((user, idx) => (
             <div key={idx} className="p-3 bg-green-900/20 border border-green-700 rounded-lg">
               <div className="text-white text-sm">{user.email}</div>
-              <div className="text-xs text-slate-400">امتیاز ریسک: {user.risk_score}</div>
+              <div className="text-xs text-slate-200">امتیاز ریسک: {user.risk_score}</div>
             </div>
           ))}
         </div>
@@ -632,7 +632,7 @@ const AutoKYC = ({ data }) => (
           {data.manual_review_needed && data.manual_review_needed.slice(0, 5).map((user, idx) => (
             <div key={idx} className="p-3 bg-yellow-900/20 border border-yellow-700 rounded-lg">
               <div className="text-white text-sm">{user.email}</div>
-              <div className="text-xs text-slate-400">امتیاز ریسک: {user.risk_score}</div>
+              <div className="text-xs text-slate-200">امتیاز ریسک: {user.risk_score}</div>
             </div>
           ))}
         </div>
@@ -683,11 +683,11 @@ const ConversionOptimization = ({ data }) => (
       <div className="grid grid-cols-2 gap-4">
         <div className="p-4 bg-green-900/20 border border-green-700 rounded-lg">
           <div className="text-4xl font-bold text-green-400">{data.conversion_rates?.kyc_conversion || 0}%</div>
-          <div className="text-slate-400">تبدیل KYC</div>
+          <div className="text-slate-200">تبدیل KYC</div>
         </div>
         <div className="p-4 bg-emerald-900/20 border border-emerald-700 rounded-lg">
           <div className="text-4xl font-bold text-emerald-400">{data.conversion_rates?.trading_conversion || 0}%</div>
-          <div className="text-slate-400">تبدیل به معامله</div>
+          <div className="text-slate-200">تبدیل به معامله</div>
         </div>
       </div>
     </div>
@@ -769,7 +769,7 @@ const CrisisManagement = ({ data }) => (
           </div>
         ))}
         {(!data.warnings || data.warnings.length === 0) && (
-          <div className="text-center text-slate-400 py-8">✅ هیچ هشداری وجود ندارد - سیستم سالم است</div>
+          <div className="text-center text-slate-200 py-8">✅ هیچ هشداری وجود ندارد - سیستم سالم است</div>
         )}
       </div>
     </div>

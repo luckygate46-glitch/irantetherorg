@@ -141,7 +141,7 @@ const AdminAIAssistant = ({ user, onLogout }) => {
       case 'low': return 'text-yellow-400';
       case 'medium': return 'text-orange-400';
       case 'high': return 'text-red-400';
-      default: return 'text-slate-400';
+      default: return 'text-slate-200';
     }
   };
 
@@ -150,7 +150,7 @@ const AdminAIAssistant = ({ user, onLogout }) => {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">بارگذاری دستیار هوشمند...</p>
+          <p className="text-slate-200">بارگذاری دستیار هوشمند...</p>
         </div>
       </div>
     );
@@ -229,11 +229,11 @@ const AdminAIAssistant = ({ user, onLogout }) => {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 text-sm">
                           <div>
-                            <span className="text-slate-400">اقدام پیشنهادی:</span>
+                            <span className="text-slate-200">اقدام پیشنهادی:</span>
                             <p className="text-blue-400">{rec.action}</p>
                           </div>
                           <div>
-                            <span className="text-slate-400">تأثیر مورد انتظار:</span>
+                            <span className="text-slate-200">تأثیر مورد انتظار:</span>
                             <p className="text-green-400">{rec.estimated_impact}</p>
                           </div>
                         </div>
@@ -252,7 +252,7 @@ const AdminAIAssistant = ({ user, onLogout }) => {
                 ) : (
                   <div className="text-center py-8">
                     <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                    <p className="text-slate-400">همه چیز عالی است! توصیه‌ای وجود ندارد.</p>
+                    <p className="text-slate-200">همه چیز عالی است! توصیه‌ای وجود ندارد.</p>
                   </div>
                 )}
               </CardContent>
@@ -276,10 +276,10 @@ const AdminAIAssistant = ({ user, onLogout }) => {
                           <h4 className="font-medium text-sm">{action.title}</h4>
                         </div>
                         
-                        <p className="text-xs text-slate-400 mb-3">{action.description}</p>
+                        <p className="text-xs text-slate-200 mb-3">{action.description}</p>
                         
                         <div className="flex justify-between items-center mb-3 text-xs">
-                          <span className="text-slate-500">زمان: {action.estimated_time}</span>
+                          <span className="text-slate-300">زمان: {action.estimated_time}</span>
                           <span className={`font-medium ${getRiskColor(action.risk_level)}`}>
                             ریسک: {action.risk_level === 'very_low' ? 'بسیار کم' : 
                                    action.risk_level === 'low' ? 'کم' : 
@@ -311,7 +311,7 @@ const AdminAIAssistant = ({ user, onLogout }) => {
                 ) : (
                   <div className="text-center py-8">
                     <Activity className="w-12 h-12 text-slate-600 mx-auto mb-2" />
-                    <p className="text-slate-400">اقدام سریعی در دسترس نیست</p>
+                    <p className="text-slate-200">اقدام سریعی در دسترس نیست</p>
                   </div>
                 )}
               </CardContent>
@@ -340,15 +340,15 @@ const AdminAIAssistant = ({ user, onLogout }) => {
                              alert.risk_level === 'medium' ? 'متوسط' : 'پایین'}
                           </Badge>
                         </div>
-                        <p className="text-xs text-slate-400">{alert.description}</p>
-                        <div className="text-xs text-slate-500 mt-2">{alert.timestamp}</div>
+                        <p className="text-xs text-slate-200">{alert.description}</p>
+                        <div className="text-xs text-slate-300 mt-2">{alert.timestamp}</div>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <div className="text-center py-4">
                     <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">هیچ هشدار اخیری نیست</p>
+                    <p className="text-xs text-slate-200">هیچ هشدار اخیری نیست</p>
                   </div>
                 )}
               </CardContent>
@@ -377,15 +377,15 @@ const AdminAIAssistant = ({ user, onLogout }) => {
                           </span>
                           <CheckCircle className="w-4 h-4 text-green-400" />
                         </div>
-                        <p className="text-xs text-slate-400">{action.result.message}</p>
-                        <div className="text-xs text-slate-500 mt-1">{action.timestamp}</div>
+                        <p className="text-xs text-slate-200">{action.result.message}</p>
+                        <div className="text-xs text-slate-300 mt-1">{action.timestamp}</div>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <div className="text-center py-4">
                     <Activity className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">هیچ اقدامی انجام نشده</p>
+                    <p className="text-xs text-slate-200">هیچ اقدامی انجام نشده</p>
                   </div>
                 )}
               </CardContent>
@@ -402,19 +402,19 @@ const AdminAIAssistant = ({ user, onLogout }) => {
               <CardContent>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">توصیه‌های فعال</span>
+                    <span className="text-slate-200">توصیه‌های فعال</span>
                     <span className="text-purple-400">{assistantData?.recommendations?.length || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">اقدامات سریع</span>
+                    <span className="text-slate-200">اقدامات سریع</span>
                     <span className="text-blue-400">{assistantData?.quick_actions?.length || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">هشدارهای اخیر</span>
+                    <span className="text-slate-200">هشدارهای اخیر</span>
                     <span className="text-orange-400">{assistantData?.recent_alerts?.length || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">اقدامات انجام شده</span>
+                    <span className="text-slate-200">اقدامات انجام شده</span>
                     <span className="text-green-400">{actionHistory.length}</span>
                   </div>
                 </div>

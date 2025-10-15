@@ -109,7 +109,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">بارگذاری داشبورد هوشمند...</p>
+          <p className="text-slate-200">بارگذاری داشبورد هوشمند...</p>
         </div>
       </div>
     );
@@ -177,7 +177,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats?.active_users || 0}</div>
-              <p className="text-xs text-slate-400">از {stats?.total_users || 0} کل کاربران</p>
+              <p className="text-xs text-slate-200">از {stats?.total_users || 0} کل کاربران</p>
               {aiInsights?.user_growth && (
                 <div className="flex items-center gap-1 mt-2">
                   <TrendingUp className="w-3 h-3 text-green-400" />
@@ -197,7 +197,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(stats?.trading_volume_24h || 0)} ت</div>
-              <p className="text-xs text-slate-400">{stats?.orders_count_24h || 0} سفارش</p>
+              <p className="text-xs text-slate-200">{stats?.orders_count_24h || 0} سفارش</p>
               {marketInsights?.volume_trend && (
                 <div className="flex items-center gap-1 mt-2">
                   <TrendingUp className={`w-3 h-3 ${marketInsights.volume_trend > 0 ? 'text-green-400' : 'text-red-400'}`} />
@@ -219,9 +219,9 @@ const AdminDashboardAI = ({ user, onLogout }) => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats?.pending_orders || 0}</div>
-              <p className="text-xs text-slate-400">نیاز به بررسی</p>
+              <p className="text-xs text-slate-200">نیاز به بررسی</p>
               {aiInsights?.avg_processing_time && (
-                <div className="text-xs text-slate-400 mt-2">
+                <div className="text-xs text-slate-200 mt-2">
                   میانگین زمان پردازش: {aiInsights.avg_processing_time} دقیقه
                 </div>
               )}
@@ -240,7 +240,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
               <div className={`text-2xl font-bold ${getHealthColor(systemHealth?.score || 0)}`}>
                 {systemHealth?.score || 0}%
               </div>
-              <p className="text-xs text-slate-400">عملکرد کلی</p>
+              <p className="text-xs text-slate-200">عملکرد کلی</p>
               <div className="w-full bg-slate-800 rounded-full h-2 mt-2">
                 <div 
                   className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
@@ -265,7 +265,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
               {fraudAlerts.length === 0 ? (
                 <div className="text-center py-8">
                   <Shield className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                  <p className="text-slate-400">هیچ تهدید امنیتی شناسایی نشده</p>
+                  <p className="text-slate-200">هیچ تهدید امنیتی شناسایی نشده</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -279,12 +279,12 @@ const AdminDashboardAI = ({ user, onLogout }) => {
                             {alert.risk_level === 'high' ? 'بالا' : alert.risk_level === 'medium' ? 'متوسط' : 'پایین'}
                           </Badge>
                         </div>
-                        <p className="text-xs text-slate-400">{alert.description}</p>
+                        <p className="text-xs text-slate-200">{alert.description}</p>
                         <div className="flex items-center gap-2 mt-2">
                           <Button size="sm" variant="outline" className="text-xs">
                             بررسی
                           </Button>
-                          <span className="text-xs text-slate-500">{alert.timestamp}</span>
+                          <span className="text-xs text-slate-300">{alert.timestamp}</span>
                         </div>
                       </div>
                     </div>
@@ -318,7 +318,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
                             <span className={`text-sm ${pred.trend === 'up' ? 'text-green-400' : 'text-red-400'}`}>
                               {pred.trend === 'up' ? '↗' : '↘'} {pred.prediction}%
                             </span>
-                            <span className="text-xs text-slate-400">{pred.confidence}% اطمینان</span>
+                            <span className="text-xs text-slate-200">{pred.confidence}% اطمینان</span>
                           </div>
                         </div>
                       ))}
@@ -343,7 +343,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
               ) : (
                 <div className="text-center py-8">
                   <Brain className="w-12 h-12 text-slate-600 mx-auto mb-2" />
-                  <p className="text-slate-400">در حال تحلیل داده‌های بازار...</p>
+                  <p className="text-slate-200">در حال تحلیل داده‌های بازار...</p>
                 </div>
               )}
             </CardContent>
@@ -412,15 +412,15 @@ const AdminDashboardAI = ({ user, onLogout }) => {
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-xs text-slate-400">میانگین پاسخ</span>
+                  <span className="text-xs text-slate-200">میانگین پاسخ</span>
                   <span className="text-xs">{systemHealth?.api_response_time || 0}ms</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-xs text-slate-400">درخواست‌های موفق</span>
+                  <span className="text-xs text-slate-200">درخواست‌های موفق</span>
                   <span className="text-xs text-green-400">{systemHealth?.success_rate || 0}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-xs text-slate-400">RPS</span>
+                  <span className="text-xs text-slate-200">RPS</span>
                   <span className="text-xs">{systemHealth?.requests_per_second || 0}</span>
                 </div>
               </div>
@@ -435,7 +435,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
               <div className="text-3xl font-bold text-emerald-400 mb-2">
                 {stats?.online_users || 0}
               </div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-slate-200">
                 {stats?.trading_users || 0} نفر در حال معامله
               </div>
             </CardContent>
@@ -449,7 +449,7 @@ const AdminDashboardAI = ({ user, onLogout }) => {
               <div className="text-3xl font-bold text-green-400 mb-2">
                 {formatCurrency(stats?.revenue_today || 0)} ت
               </div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-slate-200">
                 کارمزد معاملات: {formatCurrency(stats?.trading_fees_today || 0)} ت
               </div>
             </CardContent>
