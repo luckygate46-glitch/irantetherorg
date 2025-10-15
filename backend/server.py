@@ -4432,6 +4432,304 @@ async def get_ai_analytics_overview(admin: User = Depends(get_current_admin)):
         logger.error(f"Error in AI analytics overview: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== API.IR KYC VERIFICATION ROUTES ====================
+
+from api_ir_services import api_ir_service
+import secrets
+
+# In-memory OTP storage (in production, use Redis or database)
+otp_storage = {}
+
+class OTPRequest(BaseModel):
+    mobile: str
+
+class OTPVerify(BaseModel):
+    mobile: str
+    code: str
+
+class ShahkarVerify(BaseModel):
+    national_id: str
+    mobile: str
+    birthdate: str
+
+class CardVerify(BaseModel):
+    card_number: str
+    national_id: str
+    birthdate: str
+    full_name: Optional[str] = None
+
+@api_router.get("/kyc/check-apir-status")
+async def check_apir_status(current_user: User = Depends(get_current_user)):
+    """Check if API.IR is configured and working"""
+    result = await api_ir_service.test_connection()
+    return result
+
+@api_router.post("/kyc/send-sms-otp")
+async def send_sms_otp(otp_request: OTPRequest, current_user: User = Depends(get_current_user)):
+    """Send OTP via SMS for phone verification"""
+    try:
+        # Generate 6-digit OTP
+        otp_code = str(secrets.randbelow(900000) + 100000)
+        
+        # Store OTP (expires in 5 minutes)
+        otp_storage[otp_request.mobile] = {
+            "code": otp_code,
+            "created_at": datetime.now(timezone.utc),
+            "user_id": current_user.id
+        }
+        
+        # Send via API.IR
+        result = await api_ir_service.send_sms_otp(otp_request.mobile, otp_code)
+        
+        if result.get("success"):
+            logger.info(f"OTP sent to {otp_request.mobile}: {otp_code}")
+            return {
+                "success": True,
+                "message": "کد تایید به شماره موبایل شما ارسال شد",
+                "sent_at": result.get("sent_at")
+            }
+        else:
+            return {
+                "success": False,
+                "message": result.get("message", "خطا در ارسال پیامک")
+            }
+            
+    except Exception as e:
+        logger.error(f"Error sending SMS OTP: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/kyc/send-call-otp")
+async def send_call_otp(otp_request: OTPRequest, current_user: User = Depends(get_current_user)):
+    """Send OTP via voice call for phone verification"""
+    try:
+        # Generate 6-digit OTP
+        otp_code = str(secrets.randbelow(900000) + 100000)
+        
+        # Store OTP
+        otp_storage[otp_request.mobile] = {
+            "code": otp_code,
+            "created_at": datetime.now(timezone.utc),
+            "user_id": current_user.id
+        }
+        
+        # Send via API.IR
+        result = await api_ir_service.send_call_otp(otp_request.mobile, otp_code)
+        
+        if result.get("success"):
+            logger.info(f"Call OTP sent to {otp_request.mobile}: {otp_code}")
+            return {
+                "success": True,
+                "message": "کد تایید از طریق تماس صوتی ارسال شد",
+                "sent_at": result.get("sent_at")
+            }
+        else:
+            return {
+                "success": False,
+                "message": result.get("message", "خطا در برقراری تماس")
+            }
+            
+    except Exception as e:
+        logger.error(f"Error sending Call OTP: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/kyc/verify-otp")
+async def verify_otp(verify_data: OTPVerify, current_user: User = Depends(get_current_user)):
+    """Verify OTP code and update user phone verification"""
+    try:
+        stored_otp = otp_storage.get(verify_data.mobile)
+        
+        if not stored_otp:
+            return {
+                "success": False,
+                "message": "کد تایید منقضی شده یا یافت نشد. لطفاً مجدد درخواست دهید"
+            }
+        
+        # Check if OTP is expired (5 minutes)
+        otp_age = (datetime.now(timezone.utc) - stored_otp["created_at"]).total_seconds()
+        if otp_age > 300:
+            del otp_storage[verify_data.mobile]
+            return {
+                "success": False,
+                "message": "کد تایید منقضی شده است. لطفاً مجدد درخواست دهید"
+            }
+        
+        # Verify OTP code
+        if stored_otp["code"] != verify_data.code:
+            return {
+                "success": False,
+                "message": "کد تایید اشتباه است"
+            }
+        
+        # OTP is correct - update user
+        await db.users.update_one(
+            {"id": current_user.id},
+            {
+                "$set": {
+                    "phone": verify_data.mobile,
+                    "is_phone_verified": True,
+                    "phone_verified_at": datetime.now(timezone.utc).isoformat(),
+                    "kyc_level": max(current_user.kyc_level, 1)  # At least Level 1
+                }
+            }
+        )
+        
+        # Clean up OTP
+        del otp_storage[verify_data.mobile]
+        
+        logger.info(f"Phone verified for user {current_user.id}: {verify_data.mobile}")
+        
+        return {
+            "success": True,
+            "message": "شماره موبایل شما با موفقیت تایید شد",
+            "kyc_level": max(current_user.kyc_level, 1)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error verifying OTP: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/kyc/verify-shahkar")
+async def verify_shahkar(shahkar_data: ShahkarVerify, current_user: User = Depends(get_current_user)):
+    """Verify National ID + Mobile with Shahkar service"""
+    try:
+        # Verify with API.IR Shahkar
+        result = await api_ir_service.verify_shahkar(
+            shahkar_data.national_id,
+            shahkar_data.mobile,
+            shahkar_data.birthdate
+        )
+        
+        if result.get("verified"):
+            # Update user KYC data
+            await db.users.update_one(
+                {"id": current_user.id},
+                {
+                    "$set": {
+                        "national_id": shahkar_data.national_id,
+                        "birthdate": shahkar_data.birthdate,
+                        "shahkar_verified": True,
+                        "shahkar_verified_at": datetime.now(timezone.utc).isoformat(),
+                        "kyc_level": max(current_user.kyc_level, 2),  # Level 2
+                        "kyc_status": "verified"
+                    }
+                }
+            )
+            
+            logger.info(f"Shahkar verified for user {current_user.id}")
+            
+            return {
+                "success": True,
+                "verified": True,
+                "message": "کد ملی و شماره موبایل شما با موفقیت تایید شد",
+                "match_score": result.get("match_score", 100),
+                "kyc_level": max(current_user.kyc_level, 2)
+            }
+        else:
+            return {
+                "success": False,
+                "verified": False,
+                "message": result.get("message", "شماره موبایل با کد ملی مطابقت ندارد")
+            }
+            
+    except Exception as e:
+        logger.error(f"Error verifying Shahkar: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/kyc/verify-card")
+async def verify_card(card_data: CardVerify, current_user: User = Depends(get_current_user)):
+    """Verify bank card matches user identity"""
+    try:
+        # Get user's full name
+        full_name = f"{current_user.first_name} {current_user.last_name}" if not card_data.full_name else card_data.full_name
+        
+        # Verify with API.IR CardMatch
+        result = await api_ir_service.verify_card_match(
+            card_data.card_number,
+            card_data.national_id,
+            card_data.birthdate,
+            full_name
+        )
+        
+        if result.get("verified"):
+            # Update user banking info
+            await db.users.update_one(
+                {"id": current_user.id},
+                {
+                    "$set": {
+                        "bank_card_number": card_data.card_number[-4:],  # Store only last 4 digits
+                        "bank_name": result.get("bank_name", ""),
+                        "card_verified": True,
+                        "card_verified_at": datetime.now(timezone.utc).isoformat(),
+                        "kyc_level": 3,  # Full KYC Level 3
+                        "kyc_status": "verified"
+                    }
+                }
+            )
+            
+            logger.info(f"Bank card verified for user {current_user.id}")
+            
+            return {
+                "success": True,
+                "verified": True,
+                "message": "کارت بانکی شما با موفقیت تایید شد",
+                "bank_name": result.get("bank_name", ""),
+                "kyc_level": 3
+            }
+        else:
+            return {
+                "success": False,
+                "verified": False,
+                "message": result.get("message", "کارت بانکی با اطلاعات شما مطابقت ندارد")
+            }
+            
+    except Exception as e:
+        logger.error(f"Error verifying card: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/kyc/status")
+async def get_kyc_status(current_user: User = Depends(get_current_user)):
+    """Get user's current KYC status and next steps"""
+    try:
+        status = {
+            "kyc_level": current_user.kyc_level,
+            "kyc_status": current_user.kyc_status,
+            "phone_verified": current_user.is_phone_verified,
+            "shahkar_verified": getattr(current_user, 'shahkar_verified', False),
+            "card_verified": getattr(current_user, 'card_verified', False),
+            "next_steps": []
+        }
+        
+        # Determine next steps
+        if current_user.kyc_level == 0:
+            status["next_steps"].append({
+                "step": 1,
+                "title": "تایید شماره موبایل",
+                "description": "برای شروع معاملات، شماره موبایل خود را تایید کنید",
+                "action": "verify_phone"
+            })
+        
+        if current_user.kyc_level <= 1:
+            status["next_steps"].append({
+                "step": 2,
+                "title": "تایید هویت با شاهکار",
+                "description": "کد ملی و تاریخ تولد خود را وارد کنید",
+                "action": "verify_shahkar"
+            })
+        
+        if current_user.kyc_level <= 2:
+            status["next_steps"].append({
+                "step": 3,
+                "title": "تایید کارت بانکی",
+                "description": "کارت بانکی خود را برای برداشت وجه تایید کنید",
+                "action": "verify_card"
+            })
+        
+        return status
+        
+    except Exception as e:
+        logger.error(f"Error getting KYC status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app
 app.include_router(api_router)
 
