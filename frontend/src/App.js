@@ -171,19 +171,29 @@ function App() {
           />
           <Route 
             path="/trade" 
-            element={user && !user.is_admin && user.kyc_level >= 2 ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
-                <Trade user={user} onLogout={handleLogout} />
-              </UserSidebarLayout>
-            ) : user && !user.is_admin && user.kyc_level < 2 ? <Navigate to="/kyc" /> : <Navigate to="/auth" />} 
+            element={
+              user && !user.is_admin ? (
+                needsKYC(user) ? <Navigate to="/kyc" /> : 
+                user.kyc_level >= 2 ? (
+                  <UserSidebarLayout user={user} onLogout={handleLogout}>
+                    <Trade user={user} onLogout={handleLogout} />
+                  </UserSidebarLayout>
+                ) : <Navigate to="/kyc" />
+              ) : <Navigate to="/auth" />
+            } 
           />
           <Route 
             path="/trade/:asset" 
-            element={user && !user.is_admin && user.kyc_level >= 2 ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
-                <Trade user={user} onLogout={handleLogout} />
-              </UserSidebarLayout>
-            ) : user && !user.is_admin && user.kyc_level < 2 ? <Navigate to="/kyc" /> : <Navigate to="/auth" />} 
+            element={
+              user && !user.is_admin ? (
+                needsKYC(user) ? <Navigate to="/kyc" /> : 
+                user.kyc_level >= 2 ? (
+                  <UserSidebarLayout user={user} onLogout={handleLogout}>
+                    <Trade user={user} onLogout={handleLogout} />
+                  </UserSidebarLayout>
+                ) : <Navigate to="/kyc" />
+              ) : <Navigate to="/auth" />
+            } 
           />
           <Route 
             path="/admin" 
