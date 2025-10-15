@@ -132,9 +132,20 @@ export default function KYCPage({ user, onLogout }) {
       <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold text-white">احراز هویت</h1>
-          <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-slate-700 text-slate-300">
-            بازگشت به داشبورد
-          </Button>
+          <div className="flex items-center gap-3">
+            {user?.kyc_status === 'approved' && (
+              <Button onClick={() => navigate('/dashboard')} variant="outline" className="border-slate-700 text-slate-300">
+                بازگشت به داشبورد
+              </Button>
+            )}
+            <Button 
+              onClick={onLogout} 
+              variant="outline" 
+              className="border-red-700 text-red-400 hover:bg-red-900/20"
+            >
+              خروج
+            </Button>
+          </div>
         </div>
       </header>
 
