@@ -67,12 +67,30 @@ export default function LandingPage() {
           </div>
           
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/auth')}
-              className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg font-semibold transition-colors"
-            >
-              ورود
-            </button>
+            {user ? (
+              <>
+                <span className="text-sm text-slate-300">خوش آمدید، {user.full_name || user.email}</span>
+                <button
+                  onClick={() => navigate(user.is_admin ? '/admin' : '/dashboard')}
+                  className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg font-semibold transition-colors"
+                >
+                  پنل کاربری
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+                >
+                  خروج
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate('/auth')}
+                  className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg font-semibold transition-colors"
+                >
+                  ورود
+                </button>
             <button
               onClick={() => navigate('/auth')}
               className="px-6 py-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg font-semibold transition-colors"
