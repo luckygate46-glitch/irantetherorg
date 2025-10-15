@@ -206,7 +206,7 @@ class FinalBackendTester:
             
             response = await self.client.post(f"{BACKEND_URL}/trading/order", headers=headers, json=order_data)
             
-            if response.status_code == 201:
+            if response.status_code == 200:
                 data = response.json()
                 print(f"✅ Buy order created successfully")
                 print(f"📊 Order ID: {data.get('id', 'N/A')[:8]}...")
