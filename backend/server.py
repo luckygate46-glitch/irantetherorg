@@ -819,7 +819,7 @@ async def submit_kyc_level1(kyc_data: KYCLevel1Request, current_user: User = Dep
         )
     
     # Verify with API.IR Shahkar
-    shahkar_result = await verify_shahkar(kyc_data.national_code, current_user.phone)
+    shahkar_result = await verify_shahkar_internal(kyc_data.national_code, current_user.phone)
     
     if not shahkar_result.get("success"):
         raise HTTPException(
@@ -828,7 +828,7 @@ async def submit_kyc_level1(kyc_data: KYCLevel1Request, current_user: User = Dep
         )
     
     # Verify card ownership with API.IR CardMatch
-    card_match_result = await verify_card_match(
+    card_match_result = await verify_card_match_internal(
         kyc_data.national_code,
         kyc_data.birth_date,
         kyc_data.bank_card_number
