@@ -117,7 +117,13 @@ function App() {
         <Routes>
           <Route 
             path="/auth" 
-            element={user ? <Navigate to={user.is_admin ? "/admin" : "/dashboard"} /> : <AuthPage onLogin={handleLogin} />} 
+            element={
+              user ? (
+                user.is_admin ? <Navigate to="/admin" /> : 
+                needsKYC(user) ? <Navigate to="/kyc" /> :
+                <Navigate to="/dashboard" />
+              ) : <AuthPage onLogin={handleLogin} />
+            } 
           />
           <Route 
             path="/dashboard" 
