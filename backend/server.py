@@ -492,7 +492,7 @@ async def send_sms_otp_apir(phone: str, code: str) -> bool:
         logger.info(f"FALLBACK: OTP {code} for {phone} (API.IR error)")
         return True
 
-async def verify_shahkar(national_code: str, mobile: str, is_company: bool = False) -> dict:
+async def verify_shahkar_internal(national_code: str, mobile: str, is_company: bool = False) -> dict:
     """Verify national code with mobile number using Shahkar with development fallback"""
     
     # Development mode fallback - simulate successful verification
@@ -531,7 +531,7 @@ async def verify_shahkar(national_code: str, mobile: str, is_company: bool = Fal
         logger.info(f"FALLBACK: Shahkar verification for {national_code} with {mobile} (API.IR error)")
         return {"success": True, "data": {"match": True}}
 
-async def verify_card_match(national_code: str, birth_date: str, card_number: str) -> dict:
+async def verify_card_match_internal(national_code: str, birth_date: str, card_number: str) -> dict:
     """Verify card belongs to user with development fallback"""
     
     # Development mode fallback - simulate successful verification
