@@ -89,7 +89,7 @@ class ComprehensiveBackendTester:
                 "password": "test123456"
             })
             
-            if response.status_code == 201:
+            if response.status_code == 200:
                 data = response.json()
                 self.test_user_token = data["access_token"]
                 user_info = data["user"]
