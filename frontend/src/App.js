@@ -135,6 +135,16 @@ function App() {
             } 
           />
           <Route 
+            path="/kyc" 
+            element={
+              user && !user.is_admin ? (
+                <UserSidebarLayout user={user} onLogout={handleLogout}>
+                  <KYCPage user={user} onUserUpdate={handleUserUpdate} onLogout={handleLogout} />
+                </UserSidebarLayout>
+              ) : <Navigate to="/auth" />
+            } 
+          />
+          <Route 
             path="/market" 
             element={
               <ProtectedRoute user={user} onLogout={handleLogout}>
