@@ -129,45 +129,25 @@ function App() {
           <Route 
             path="/dashboard" 
             element={
-              user && !user.is_admin ? (
-                needsKYC(user) ? <Navigate to="/kyc" /> : (
-                  <UserSidebarLayout user={user} onLogout={handleLogout}>
-                    <Dashboard user={user} onUserUpdate={handleUserUpdate} onLogout={handleLogout} />
-                  </UserSidebarLayout>
-                )
-              ) : <Navigate to={user?.is_admin ? "/admin" : "/auth"} />
+              <ProtectedRoute user={user} onLogout={handleLogout}>
+                <Dashboard user={user} onUserUpdate={handleUserUpdate} onLogout={handleLogout} />
+              </ProtectedRoute>
             } 
-          />
-          <Route 
-            path="/kyc" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
-                <KYCPage user={user} onUserUpdate={handleUserUpdate} onLogout={handleLogout} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
           />
           <Route 
             path="/market" 
             element={
-              user && !user.is_admin ? (
-                needsKYC(user) ? <Navigate to="/kyc" /> : (
-                  <UserSidebarLayout user={user} onLogout={handleLogout}>
-                    <Market user={user} onLogout={handleLogout} />
-                  </UserSidebarLayout>
-                )
-              ) : <Navigate to="/auth" />
+              <ProtectedRoute user={user} onLogout={handleLogout}>
+                <Market user={user} onLogout={handleLogout} />
+              </ProtectedRoute>
             } 
           />
           <Route 
             path="/wallet" 
             element={
-              user && !user.is_admin ? (
-                needsKYC(user) ? <Navigate to="/kyc" /> : (
-                  <UserSidebarLayout user={user} onLogout={handleLogout}>
-                    <Wallet user={user} onLogout={handleLogout} />
-                  </UserSidebarLayout>
-                )
-              ) : <Navigate to="/auth" />
+              <ProtectedRoute user={user} onLogout={handleLogout}>
+                <Wallet user={user} onLogout={handleLogout} />
+              </ProtectedRoute>
             } 
           />
           <Route 
