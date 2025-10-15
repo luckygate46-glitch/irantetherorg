@@ -123,13 +123,13 @@ export default function LandingPage() {
           
           <div className="flex justify-center gap-4 mb-16">
             <button
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate(user ? (user.is_admin ? '/admin' : '/dashboard') : '/auth')}
               className="px-8 py-4 bg-gradient-to-l from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg shadow-emerald-900/50"
             >
-              شروع کنید - رایگان
+              {user ? 'ورود به پنل' : 'شروع کنید - رایگان'}
             </button>
             <button
-              onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               className="px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg font-bold text-lg transition-all"
             >
               بیشتر بدانید
