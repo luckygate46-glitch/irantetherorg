@@ -310,51 +310,51 @@ function App() {
           />
           <Route 
             path="/currency-exchange" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
+            element={
+              <ProtectedRoute user={user} onLogout={handleLogout}>
                 <CurrencyExchange user={user} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/support-tickets" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
+            element={
+              <ProtectedRoute user={user} onLogout={handleLogout}>
                 <SupportTickets user={user} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/contact-us" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
+            element={
+              <ProtectedRoute user={user} onLogout={handleLogout}>
                 <ContactUs user={user} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/rewards" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
+            element={
+              <ProtectedRoute user={user} onLogout={handleLogout}>
                 <Rewards user={user} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/portfolio" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
+            element={
+              <ProtectedRoute user={user} onLogout={handleLogout}>
                 <Portfolio user={user} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/profile" 
-            element={user && !user.is_admin ? (
-              <UserSidebarLayout user={user} onLogout={handleLogout}>
+            element={
+              <ProtectedRoute user={user} onLogout={handleLogout}>
                 <UserProfile user={user} onUserUpdate={handleUserUpdate} />
-              </UserSidebarLayout>
-            ) : <Navigate to="/auth" />} 
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/" 
