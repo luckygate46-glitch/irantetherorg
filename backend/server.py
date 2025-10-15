@@ -741,6 +741,7 @@ async def register(user_data: UserCreate, request: Request):
         password_hash=hash_password(user_data.password),
         phone=user_data.phone,
         is_phone_verified=is_phone_verified,
+        is_admin=False,  # EXPLICITLY set to False - new users are NOT admins
         kyc_level=0,  # Can only view market
         kyc_status="pending"
     )
