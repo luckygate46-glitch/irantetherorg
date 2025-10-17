@@ -2360,6 +2360,25 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
             detail="برای معامله باید احراز هویت سطح ۲ را تکمیل کنید"
         )
     
+    # For buy orders, check and use saved wallet address if not provided
+    wallet_address_to_use = order_data.user_wallet_address
+    if order_data.order_type == "buy" and not wallet_address_to_use:
+        # Try to get saved wallet address for this coin
+        saved_wallet = await db.wallet_addresses.find_one({
+            "user_id": current_user.id,
+            "symbol": order_data.coin_symbol,
+            "verified": True
+        })
+        
+        if saved_wallet:
+            wallet_address_to_use = saved_wallet.get("address")
+            logger.info(f"✅ Using saved wallet address for {order_data.coin_symbol}: {wallet_address_to_use}")
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"برای خرید {order_data.coin_symbol} باید آدرس کیف پول خود را در پروفایل ثبت کنید"
+            )
+    
     # Get current price in Toman - use cached prices
     # Static price map (same as in get_crypto_prices)
     price_map = {
