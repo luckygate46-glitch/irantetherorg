@@ -2472,7 +2472,7 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
         amount_tmn=order_data.amount_tmn,
         target_coin_symbol=order_data.target_coin_symbol,
         target_coin_id=order_data.target_coin_id,
-        user_wallet_address=order_data.user_wallet_address,
+        user_wallet_address=wallet_address_to_use,
         price_at_order=current_price_tmn,
         total_value_tmn=total_value_tmn
     )
