@@ -663,11 +663,6 @@ const Trade = ({ user, onLogout }) => {
                   </div>
                 )}
                 
-                {/* DEBUG INFO - Remove after testing */}
-                <div className="text-xs text-yellow-300 bg-yellow-900/20 p-2 rounded border border-yellow-700/50">
-                  🔍 Debug: Amount={buyAmount || 'EMPTY'} | Coin={selectedCoin?.symbol || 'NULL'} | Loading={orderLoading ? 'TRUE' : 'FALSE'}
-                </div>
-                
                 <button
                   onClick={() => {
                     console.log('🔴 BUTTON CLICKED!');
