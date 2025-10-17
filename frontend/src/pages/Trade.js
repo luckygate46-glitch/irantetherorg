@@ -179,8 +179,9 @@ const Trade = ({ user, onLogout }) => {
       if (orderType === 'buy') {
         console.log('🔍 Checking wallet address...');
         try {
-          const { hasWallet } = await checkWalletAddress(selectedCoin.symbol);
+          const { hasWallet, walletAddresses } = await checkWalletAddress(selectedCoin.symbol);
           console.log('✅ Wallet check result:', hasWallet);
+          console.log('📋 Available wallets:', walletAddresses);
           
           if (!hasWallet) {
             setOrderLoading(false);
@@ -194,6 +195,13 @@ const Trade = ({ user, onLogout }) => {
               return;
             } else {
               return; // Cancel the order
+            }
+          } else {
+            // User has wallet saved - use it automatically
+            const savedWallet = walletAddresses.find(w => w.symbol === selectedCoin.symbol && w.verified);
+            if (savedWallet) {
+              console.log('✅ Using saved wallet address:', savedWallet.address);
+              // We'll use this in the orderData below
             }
           }
         } catch (walletError) {
