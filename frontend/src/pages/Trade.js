@@ -648,8 +648,20 @@ const Trade = ({ user, onLogout }) => {
                   </div>
                 )}
                 
+                {/* DEBUG INFO - Remove after testing */}
+                <div className="text-xs text-yellow-300 bg-yellow-900/20 p-2 rounded border border-yellow-700/50">
+                  🔍 Debug: Amount={buyAmount || 'EMPTY'} | Coin={selectedCoin?.symbol || 'NULL'} | Loading={orderLoading ? 'TRUE' : 'FALSE'}
+                </div>
+                
                 <button
-                  onClick={() => handleOrder('buy')}
+                  onClick={() => {
+                    console.log('🔴 BUTTON CLICKED!');
+                    console.log('buyAmount:', buyAmount);
+                    console.log('selectedCoin:', selectedCoin);
+                    console.log('orderLoading:', orderLoading);
+                    console.log('About to call handleOrder...');
+                    handleOrder('buy');
+                  }}
                   disabled={orderLoading || !buyAmount || !selectedCoin}
                   className={`w-full py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-2 ${
                     orderLoading || !buyAmount || !selectedCoin
