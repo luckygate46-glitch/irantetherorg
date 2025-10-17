@@ -44,6 +44,13 @@ const Trade = ({ user, onLogout }) => {
       if (assetCoin) {
         setSelectedCoin(assetCoin);
       }
+    } else if (!selectedCoin && coins.length > 0) {
+      // If no coin is selected and no asset parameter, default to first popular coin (usually BTC or USDT)
+      const defaultCoin = coins.find(coin => coin.symbol === 'USDT') || coins[0];
+      if (defaultCoin) {
+        console.log('🪙 Auto-selecting default coin:', defaultCoin.symbol);
+        setSelectedCoin(defaultCoin);
+      }
     }
   }, [asset, coins]);
 
