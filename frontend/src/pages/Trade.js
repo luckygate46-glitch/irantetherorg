@@ -663,6 +663,15 @@ const Trade = ({ user, onLogout }) => {
                   </div>
                 )}
                 
+                {/* STATE DEBUG - CRITICAL */}
+                <div className="text-xs bg-red-900/30 border-2 border-red-500 p-3 rounded-lg space-y-1">
+                  <div className="font-bold text-red-300">🔍 حالت دکمه (STATE DEBUG):</div>
+                  <div className="text-red-200">مبلغ (buyAmount): {buyAmount || 'خالی ❌'}</div>
+                  <div className="text-red-200">ارز (selectedCoin): {selectedCoin?.symbol || 'انتخاب نشده ❌'}</div>
+                  <div className="text-red-200">در حال بارگذاری: {orderLoading ? 'بله' : 'خیر'}</div>
+                  <div className="text-red-200 font-bold">دکمه فعال است؟ {(!buyAmount || !selectedCoin || orderLoading) ? 'خیر - غیرفعال ❌' : 'بله - فعال ✅'}</div>
+                </div>
+                
                 <button
                   onClick={() => {
                     console.log('🔴 BUTTON CLICKED!');
