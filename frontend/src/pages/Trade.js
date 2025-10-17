@@ -663,23 +663,16 @@ const Trade = ({ user, onLogout }) => {
                   </div>
                 )}
                 
-                {/* STATE DEBUG - CRITICAL */}
-                <div className="text-xs bg-red-900/30 border-2 border-red-500 p-3 rounded-lg space-y-1">
-                  <div className="font-bold text-red-300">🔍 حالت دکمه (STATE DEBUG):</div>
-                  <div className="text-red-200">مبلغ (buyAmount): {buyAmount || 'خالی ❌'}</div>
-                  <div className="text-red-200">ارز (selectedCoin): {selectedCoin?.symbol || 'انتخاب نشده ❌'}</div>
-                  <div className="text-red-200">در حال بارگذاری: {orderLoading ? 'بله' : 'خیر'}</div>
-                  <div className="text-red-200 font-bold">دکمه فعال است؟ {(!buyAmount || !selectedCoin || orderLoading) ? 'خیر - غیرفعال ❌' : 'بله - فعال ✅'}</div>
-                </div>
-                
                 <button
-                  onClick={() => {
-                    console.log('🔴 BUTTON CLICKED!');
-                    console.log('buyAmount:', buyAmount);
-                    console.log('selectedCoin:', selectedCoin);
-                    console.log('orderLoading:', orderLoading);
-                    console.log('About to call handleOrder...');
-                    handleOrder('buy');
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (buyAmount && selectedCoin && !orderLoading) {
+                      handleOrder('buy');
+                    } else {
+                      alert('لطفاً مبلغ را وارد کنید و ارز را انتخاب کنید');
+                    }
                   }}
                   disabled={orderLoading || !buyAmount || !selectedCoin}
                   className={`w-full py-4 rounded-lg font-bold text-lg transition-all flex items-center justify-center gap-2 ${
@@ -687,7 +680,6 @@ const Trade = ({ user, onLogout }) => {
                       ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
                       : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]'
                   }`}
-                  title={!buyAmount ? 'لطفاً مبلغ را وارد کنید' : !selectedCoin ? 'لطفاً ارز را انتخاب کنید' : 'ثبت سفارش خرید'}
                 >
                   {orderLoading ? (
                     <>
