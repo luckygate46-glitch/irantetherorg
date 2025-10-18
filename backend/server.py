@@ -4780,4 +4780,106 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     """Cleanup on shutdown"""
+
+
+# ============================================================================
+# CSV EXPORT ENDPOINTS FOR ADMIN REPORTING
+# ============================================================================
+
+@api_router.get("/admin/export/users")
+async def export_users_csv(admin: User = Depends(get_current_admin)):
+    """Export all users to CSV format"""
+    users = await db.users.find().to_list(length=None)
+    
+    # Create CSV in memory
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # Write headers
+    writer.writerow(['ID', 'Email', 'Full Name', 'Phone', 'KYC Level', 'KYC Status', 'Balance (TMN)', 'Is Admin', 'Created At'])
+    
+    # Write data
+    for user in users:
+        writer.writerow([
+            user.get('id', ''),
+            user.get('email', ''),
+            user.get('full_name', ''),
+            user.get('phone', ''),
+            user.get('kyc_level', 0),
+            user.get('kyc_status', 'pending'),
+            user.get('wallet_balance_tmn', 0),
+            'Yes' if user.get('is_admin', False) else 'No',
+            user.get('created_at', '').isoformat() if user.get('created_at') else ''
+        ])
+    
+    # Prepare response
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=users_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"}
+    )
+
+@api_router.get("/admin/export/orders")
+async def export_orders_csv(admin: User = Depends(get_current_admin)):
+    """Export all orders to CSV format"""
+    orders = await db.trading_orders.find().to_list(length=None)
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    writer.writerow(['Order ID', 'User ID', 'Type', 'Coin', 'Amount TMN', 'Amount Crypto', 'Status', 'Price', 'Wallet Address', 'Created At', 'Updated At'])
+    
+    for order in orders:
+        writer.writerow([
+            order.get('id', ''),
+            order.get('user_id', ''),
+            order.get('order_type', ''),
+            order.get('coin_symbol', ''),
+            order.get('amount_tmn', 0),
+            order.get('amount_crypto', 0),
+            order.get('status', 'pending'),
+            order.get('price_at_order', 0),
+            order.get('user_wallet_address', ''),
+            order.get('created_at', '').isoformat() if order.get('created_at') else '',
+            order.get('updated_at', '').isoformat() if order.get('updated_at') else ''
+        ])
+    
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=orders_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"}
+    )
+
+@api_router.get("/admin/export/deposits")
+async def export_deposits_csv(admin: User = Depends(get_current_admin)):
+    """Export all deposits to CSV format"""
+    deposits = await db.deposits.find().to_list(length=None)
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    writer.writerow(['Deposit ID', 'User ID', 'Amount TMN', 'From Card', 'To Card', 'Status', 'Receipt Number', 'Created At', 'Approved At'])
+    
+    for deposit in deposits:
+        writer.writerow([
+            deposit.get('id', ''),
+            deposit.get('user_id', ''),
+            deposit.get('amount_tmn', 0),
+            deposit.get('from_card_number', ''),
+            deposit.get('to_card_number', ''),
+            deposit.get('status', 'pending'),
+            deposit.get('receipt_number', ''),
+            deposit.get('created_at', '').isoformat() if deposit.get('created_at') else '',
+            deposit.get('approved_at', '').isoformat() if deposit.get('approved_at') else ''
+        ])
+    
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=deposits_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"}
+    )
+
     client.close()
