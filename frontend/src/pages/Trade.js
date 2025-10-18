@@ -186,20 +186,22 @@ const Trade = ({ user, onLogout }) => {
           console.log('📋 Available wallets:', walletAddresses);
           
           if (!hasWallet) {
+            // Show inline warning instead of blocking dialog
+            setShowWalletWarning(true);
             setOrderLoading(false);
-            const shouldAddWallet = window.confirm(
-              `برای خرید ${selectedCoin.symbol} نیاز به آدرس کیف پول دارید.\n\nآیا می‌خواهید الان آدرس کیف پول خود را اضافه کنید؟`
-            );
             
-            if (shouldAddWallet) {
-              // Redirect to profile page
-              navigate('/profile?tab=wallets');
-              return;
-            } else {
-              return; // Cancel the order
-            }
+            // Scroll to the warning
+            setTimeout(() => {
+              const warningEl = document.getElementById('wallet-warning');
+              if (warningEl) {
+                warningEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }, 100);
+            
+            return; // Don't place order without wallet
           } else {
             // User has wallet saved - use it automatically
+            setShowWalletWarning(false);
             const savedWallet = walletAddresses.find(w => w.symbol === selectedCoin.symbol && w.verified);
             if (savedWallet) {
               console.log('✅ Using saved wallet address:', savedWallet.address);
