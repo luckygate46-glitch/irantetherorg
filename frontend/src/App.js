@@ -124,9 +124,20 @@ function App() {
       await refreshUserData();
     }, 30000); // 30 seconds
     
+    // Listen for manual balance update events
+    const handleBalanceUpdate = (event) => {
+      if (event.detail) {
+        setUser(event.detail);
+        console.log('💰 Balance manually updated');
+      }
+    };
+    
+    window.addEventListener('user-balance-updated', handleBalanceUpdate);
+    
     return () => {
       console.log('🛑 Stopping auto-refresh');
       clearInterval(refreshInterval);
+      window.removeEventListener('user-balance-updated', handleBalanceUpdate);
     };
   }, [user]);
 
