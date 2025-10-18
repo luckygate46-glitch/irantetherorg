@@ -97,6 +97,39 @@ function App() {
     setUser(null);
   };
 
+  // Manual refresh user data
+  const refreshUserData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      const response = await axios.get(`${BACKEND_URL}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setUser(response.data);
+      console.log('✅ User data refreshed:', response.data.wallet_balance_tmn);
+    } catch (error) {
+      console.error('❌ Refresh failed:', error);
+    }
+  };
+
+  // Auto-refresh user data every 30 seconds
+  useEffect(() => {
+    if (!user) return;
+    
+    console.log('🔄 Starting auto-refresh for user:', user.email);
+    
+    const refreshInterval = setInterval(async () => {
+      await refreshUserData();
+    }, 30000); // 30 seconds
+    
+    return () => {
+      console.log('🛑 Stopping auto-refresh');
+      clearInterval(refreshInterval);
+    };
+  }, [user]);
+
   // Check if user needs KYC approval
   const needsKYC = (user) => {
     if (!user || user.is_admin) return false;
