@@ -32,6 +32,30 @@ const AdminOrders = ({ user, onLogout }) => {
     }
   };
 
+  const exportToCSV = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API}/admin/export/orders`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `orders_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      
+      alert('✅ فایل CSV با موفقیت دانلود شد!');
+    } catch (error) {
+      console.error('خطا در دانلود CSV:', error);
+      alert('خطا در دانلود فایل');
+    }
+  };
+
   const handleOrderAction = async (orderId, action, note = '') => {
     try {
       setProcessingId(orderId);
