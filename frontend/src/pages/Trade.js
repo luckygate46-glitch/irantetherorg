@@ -280,6 +280,16 @@ const Trade = ({ user, onLogout }) => {
       const response = await axios.post(`${API}/trading/order`, orderData, config);
       console.log('✅ Order response:', response.data);
       
+      // Refresh user data to get updated balance
+      try {
+        const userResponse = await axios.get(`${API}/auth/me`, config);
+        console.log('✅ Balance updated:', userResponse.data.wallet_balance_tmn);
+        // Trigger parent component to update user state
+        window.dispatchEvent(new CustomEvent('user-balance-updated', { detail: userResponse.data }));
+      } catch (refreshError) {
+        console.error('⚠️ Balance refresh failed:', refreshError);
+      }
+      
       // Generate invoice/faktor
       const orderId = response.data.order?.id || `ORD-${Date.now()}`;
       const orderDate = new Date().toLocaleDateString('fa-IR');
