@@ -143,26 +143,6 @@ const Trade = ({ user, onLogout }) => {
     }
   };
 
-  const checkWalletAddress = async (coinSymbol) => {
-    try {
-      const token = localStorage.getItem('token');
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      
-      const response = await axios.get(`${API}/user/wallet-addresses`, config);
-      const walletAddresses = response.data || [];
-      
-      // Check if user has a wallet for this specific coin
-      const hasWallet = walletAddresses.some(wallet => 
-        wallet.symbol === coinSymbol && wallet.verified
-      );
-      
-      return { hasWallet, walletAddresses };
-    } catch (error) {
-      console.error('Error checking wallet addresses:', error);
-      return { hasWallet: false, walletAddresses: [] };
-    }
-  };
-
   const handleOrder = async (orderType) => {
     console.log('🔴 BUTTON CLICKED! Order type:', orderType);
     console.log('🪙 Selected coin:', selectedCoin);
