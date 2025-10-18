@@ -23,6 +23,7 @@ const Trade = ({ user, onLogout }) => {
   const [tradeAmount, setTradeAmount] = useState('');
   const [targetCoin, setTargetCoin] = useState(null);
   const [walletAddress, setWalletAddress] = useState('');
+  const [showWalletWarning, setShowWalletWarning] = useState(false);
   
   // AI Recommendation states
   const [aiRecommendation, setAiRecommendation] = useState(null);
