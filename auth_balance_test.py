@@ -300,7 +300,8 @@ class AuthBalanceTester:
             if response.status_code == 200:
                 order_result = response.json()
                 print(f"✅ Buy order created successfully")
-                print(f"📋 Order ID: {order_result.get('order_id')}")
+                order_id = order_result.get('order_id') or order_result.get('id')
+                print(f"📋 Order ID: {order_id}")
                 print(f"💰 Order Amount: {order_result.get('amount_tmn', 0):,.0f} TMN")
                 print(f"🪙 Crypto Amount: {order_result.get('amount_crypto', 0):.6f} USDT")
                 print(f"📊 Status: {order_result.get('status')}")
