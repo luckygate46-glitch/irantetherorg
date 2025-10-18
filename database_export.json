@@ -1,0 +1,45 @@
+{
+  "export_date": "2025-10-18T02:58:49.412969",
+  "database": "exchange",
+  "collections": {
+    "users": {
+      "count": 1,
+      "documents": [
+        {
+          "_id": "68efcc16cf65beef33d53bbe",
+          "id": "admin-user-001",
+          "first_name": "ادمین",
+          "last_name": "سیستم",
+          "email": "admin",
+          "phone": "09000000000",
+          "password_hash": "$2b$12$1qXxZrxA516tMZ59Qfoln.PZxM9yUhvL8j36hgrXAm/9594rpogXS",
+          "full_name": "ادمین سیستم",
+          "is_active": true,
+          "is_phone_verified": true,
+          "is_admin": true,
+          "kyc_level": 2,
+          "kyc_status": "approved",
+          "wallet_balance_tmn": 41000000.0,
+          "created_at": "2025-10-15T16:30:14.118000",
+          "updated_at": "2025-10-15T16:30:14.118000"
+        }
+      ]
+    },
+    "wallet_addresses": {
+      "count": 1,
+      "documents": [
+        {
+          "_id": "68f2eb27fd897ce8e26a9c1b",
+          "id": "bd6be571-397e-44ba-9aee-3a241793d5da",
+          "user_id": "admin-user-001",
+          "symbol": "USDT",
+          "network": "TRC20",
+          "address": "TE1VGdRnvga3KduECqKuuNEkm2xwLrWS4F",
+          "verified": true,
+          "is_primary": true,
+          "created_at": "2025-10-18T01:19:35.573000"
+        }
+      ]
+    }
+  }
+}
