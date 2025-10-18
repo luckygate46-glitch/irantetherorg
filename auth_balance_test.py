@@ -331,8 +331,9 @@ class AuthBalanceTester:
                         orders = response.json()
                         order_found = False
                         
+                        order_id = order_result.get('order_id') or order_result.get('id')
                         for order in orders:
-                            if order.get('id') == order_result.get('order_id'):
+                            if order.get('id') == order_id:
                                 order_found = True
                                 print(f"✅ Order found in history")
                                 print(f"📊 Order status: {order.get('status')}")
