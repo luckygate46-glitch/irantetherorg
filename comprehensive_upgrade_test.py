@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Any
 
 # Configuration
-BACKEND_URL = "https://crypto-farsi.preview.emergentagent.com/api"
+BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
 ADMIN_CREDENTIALS = {"email": "admin", "password": "istari118"}
 TEST_USER_CREDENTIALS = {"email": "testuser@example.com", "password": "password123"}
 

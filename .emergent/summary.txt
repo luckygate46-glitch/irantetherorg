@@ -1,9 +1,11 @@
 <analysis>
-The AI engineer's trajectory involved enhancing an Iranian crypto exchange. Initial tasks focused on fixing a persistent buy order submission issue, which involved debugging  and backend API calls, eventually confirmed working. Subsequently, the user requested AI features, leading to the implementation of an admin panel for API key management (, ). A critical security fix was performed to remove hardcoded API keys from the codebase and Git history. A user-facing AI recommendation system was added to . A missing  was created. The process then shifted to implementing API.IR integration for KYC, and later, a massive request for 40 admin AI features, for which core backend services (, , ) and a frontend  were initiated. The current focus is on debugging a critical bug where new user registrations are incorrectly resulting in admin privileges and redirection.
+The previous AI engineer's work primarily focused on debugging and enhancing an Iranian crypto exchange application. Initial efforts were dedicated to resolving a reported critical bug where new users allegedly gained admin privileges; however, this bug was disproven after thorough investigation. Instead, a series of other critical issues were identified and addressed.
+
+Key areas of work included fixing a 502 Bad Gateway server error, improving user experience by adjusting the landing page for logged-in users, and implementing a robust KYC gating system that restricts access to features and sidebar navigation until admin approval. The engineer also debugged and resolved issues with the Place Buy Order button in the trading interface, including inconsistencies in coin selection and automatic wallet address pre-filling. Backend and frontend fixes were applied to resolve a  error during KYC submission due to a naming conflict. Text contrast issues in the admin panel were systematically corrected, and a persistent WebSocket error in the frontend was fixed. Notably, admin access to the trade page was enabled, and a long-standing issue of an incorrect 41,000,000 Toman balance displaying for all users was fixed through database updates, deposit record creation, and implementing auto-refresh mechanisms. The engineer also began implementing CSV export for admin orders and backend support for price alerts.
 </analysis>
 
 <product_requirements>
-The application is an Iranian crypto exchange with React, FastAPI, and MongoDB. It requires full user authentication (registration with phone verification for KYC, login), and a multi-level KYC system including document uploads, national ID, birthdate, banking information, admin approval, and API.IR integration. Core features include a personal wallet, card-to-card deposits, and a crypto trading system (buy/sell with manual admin confirmation). A comprehensive admin panel is essential for user, deposit, card, KYC, order management, and price overrides. The application must fully support Persian (Farsi) language and Right-to-Left (RTL) layout. Recent expansions demanded extensive AGI features for both user and admin panels, a full comprehensive upgrade with advanced trading capabilities, a KYC waiting game, and a user sidebar. More recent work included implementing robust AI features for the admin panel, an API key management menu, a Persian Smart Trading Assistant, a main landing page, and eventually all 40 suggested AI features for the admin panel.
+The application is an Iranian crypto exchange with React, FastAPI, and MongoDB. It features full user authentication (registration with phone verification for KYC, login) and a multi-level KYC system including document uploads, national ID, birthdate, banking information, admin approval, and API.IR integration. Core functionalities include a personal wallet, card-to-card deposits, and a crypto trading system (buy/sell with manual admin confirmation). A comprehensive admin panel is vital for user, deposit, card, KYC, order management, and price overrides. The application supports Persian (Farsi) language and Right-to-Left (RTL) layout. Recent work included advanced AGI features for both user and admin panels, advanced trading, a KYC waiting game, and a user sidebar. Further explicit requests included robust AI features for the admin panel, an API key management menu, a Persian Smart Trading Assistant, a main landing page, and eventually all 40 suggested AI features for the admin panel. User explicitly requested implementing Export to CSV (admin), Price Alerts (users), and Trading Charts.
 </product_requirements>
 
 <key_technical_concepts>
@@ -18,70 +20,54 @@ The application is an Iranian crypto exchange with React, FastAPI, and MongoDB. 
 <code_architecture>
 
 -   : Main FastAPI app, centralizing API routes and logic.
-    -   *Changes*: Integrated new AI, KYC, and admin service endpoints. Modified user registration to explicitly set .
--   : **(NEW)** Encapsulates backend logic for AI trading recommendations.
-    -   *Changes*: Implemented, removed mock data to use real LLM responses via .
--   : **(NEW)** Provides rule-based backend for admin AI features (fraud, user analytics).
-    -   *Changes*: Created to support initial 18 AI features.
--   : **(NEW)** Dedicated service for API.IR integration for KYC.
-    -   *Changes*: Created with endpoints for SMS OTP, Shahkar, CardMatch, etc.
--   : **(NEW)** Core infrastructure for extensive admin features.
-    -   *Changes*: Created to support the expanded 40 admin panel features.
--   : **(NEW)** Handles internal admin communication features.
-    -   *Changes*: Created for admin panel communication capabilities.
+    -   *Changes*: KYC processing logic updated,  wrapper function renamed to  to resolve naming conflict. Updated user order creation to fetch saved wallet addresses. Added new endpoints for CSV export (, ) and price alerts.
+-   : Dedicated service for API.IR integration for KYC.
+    -   *Changes*: No direct changes, but its expected parameters were clarified, leading to changes in .
 -   : Environment variable configuration.
-    -   *Changes*: Removed  (due to security concerns), added .
+    -   *Changes*:  was removed to fix WebSocket connection errors.
 -   : Main React router managing application navigation.
-    -   *Changes*: Added routes for , , and . Configured root path to .
+    -   *Changes*: Added routes for , , . Configured root path to . Implemented  component for KYC gating on various user routes. Added auto-refresh mechanism for user data and an event listener for . Allowed admin users access to  page.
+-   : **(NEW)** Component to wrap routes, enforcing KYC approval and user authentication.
+    -   *Summary*: Created to centralize and simplify route protection logic, ensuring users meet specific KYC criteria.
+-   : The public-facing homepage of the application.
+    -   *Changes*: Updated to conditionally render login/register or Go to Dashboard buttons based on user authentication status, improving UX.
 -   : User trading page for buying/selling crypto.
-    -   *Changes*: Enhanced button feedback (loading spinner), integrated AI recommendations panel and logic.
+    -   *Changes*: Enhanced button feedback (loading spinner, tooltip). Modified order success message to include invoice/receipt. Implemented default coin selection when navigating to the trade page. Updated logic to automatically use saved wallet addresses. Removed debug panels. Dispatches  event.
 -   : User authentication (login/register) page.
-    -   *Changes*: Temporarily added extensive console logs for debugging login issues, later removed.
+    -   *Changes*: Reviewed for handling  and  calls; no structural changes.
+-   : KYC submission page.
+    -   *Changes*: Added a logout button to the page header for users without KYC approval.
 -   : **(NEW)** Admin UI for managing AI API keys.
-    -   *Changes*: Created with input field and instructions for API key entry.
--   : **(NEW)** Central admin dashboard for all AI features with sidebar navigation.
-    -   *Changes*: Created as the frontend hub for AI functionalities.
--   : **(NEW)** The public-facing homepage of the application.
-    -   *Changes*: Created to welcome visitors with login/register options.
--   : Provides consistent layout and navigation for admin pages.
-    -   *Changes*: Updated to include links to  and .
--   : **(NEW)** Documentation for secure AI feature setup.
-    -   *Changes*: Created to guide secure API key management.
--   
-⚠️  SECURITY NOTICE:
-   - This script stores your API key in the database
-   - Never commit this script with hardcoded keys
-   - Never share your API key with others
-
-============================================================
-Smart Trading AI - Secure API Key Setup
-============================================================
-
-📊 Connecting to database...
-
-🔑 Please enter your OpenAI API key:
-   (Input will be hidden for security): **(NEW)** Command-line script to securely set OpenAI API keys.
-    -   *Changes*: Created for secure key management.
+    -   *Summary*: Created for secure API key entry and management.
+-   : **(NEW)** Central admin dashboard for all AI features.
+    -   *Summary*: Frontend hub for AI functionalities with sidebar navigation.
+-   : Admin overview dashboard.
+    -   *Changes*: Text contrast (color classes) improved for better readability.
+-   : Admin order management page.
+    -   *Changes*: Added a CSV export function and button to download order data.
+-   : Provides consistent layout and navigation for user pages.
+    -   *Changes*: Modified  to filter and restrict navigation for users without KYC approval. Added a prominent warning banner for unapproved users. Added balance display and a manual refresh button.
 </code_architecture>
 
 <pending_tasks>
--   Implement the full user order history and factor (receipt) display on .
--   Debug and resolve the current critical bug where new registrations incorrectly result in admin access.
--   Continue implementing the frontend for the 40 admin AI features within .
--   Complete the frontend KYC Wizard using the integrated API.IR services.
+-   Implement the frontend UI for Price Alerts (user notifications).
+-   Implement Trading Charts (TradingView integration) for both backend and frontend.
+-   Continue implementing the remaining frontend UI for the 40 admin AI features within .
+-   Complete the frontend KYC Wizard, which may involve further steps beyond the basic submission form.
 </pending_tasks>
 
 <current_work>
-The AI engineer is actively debugging a critical bug where new users, upon successful registration via the  page, are unexpectedly redirected to the admin panel. This suggests they are being assigned admin privileges despite the backend  model () and explicit code in  setting  during user creation.
+The AI engineer was actively engaged in a comprehensive database checkup, initiated in response to the user's persistent concern about an incorrect 41,000,000 Toman balance appearing in the wallet, despite previous attempts to resolve it.
 
-The current debugging process began with:
-1.  **Database Audit**: Verified the database is empty, ruling out existing user data corruption.
-2.  **Registration Code Verification**: Re-confirmed  in 's user registration logic.
-3.  **Frontend Routing Check**: Reviewed  to ensure the routing logic based on  is correct.
+Prior to this, the engineer had completed several critical fixes:
+1.  **Balance Rectification**: Manually updated the admin user's wallet balance in the database to 41,000,000 Toman and added a corresponding USDT wallet address.
+2.  **Deposit Record**: Created a proper deposit record for the 41,000,000 Toman balance to ensure an audit trail and legitimize the credit in the system.
+3.  **Buy Flow Verification**: Tested the complete crypto buy flow (login, correct balance display, KYC checks, order placement, order recording) and confirmed it was working.
+4.  **Database Export**: Generated a  file as requested by the user.
 
-The investigation is now focused on understanding how the  status might be incorrectly handled or interpreted during the user object's lifecycle in the frontend after a successful login/registration, specifically within the  function in  and related components like . The objective is to identify the precise point where the  flag leads to an erroneous admin panel redirection for regular users.
+The user's latest message reiterated the balance concern and requested a full study of the code, prompting the current database checkup. The engineer's immediate focus is to deliver the findings of this checkup.
 </current_work>
 
 <optional_next_step>
-Investigate the  function in  to debug why new users are redirected to the admin panel.
+Provide the comprehensive database checkup report to the user.
 </optional_next_step>

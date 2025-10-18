@@ -13,7 +13,7 @@ import sys
 import time
 
 # Configuration
-BACKEND_URL = "https://crypto-farsi.preview.emergentagent.com/api"
+BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 
