@@ -172,47 +172,16 @@ const Trade = ({ user, onLogout }) => {
       alert('لطفا یک ارز انتخاب کنید');
       return;
     }
+    
+    // For buy orders, require wallet address
+    if (orderType === 'buy' && !walletAddress.trim()) {
+      alert('لطفا آدرس کیف پول خود را وارد کنید');
+      return;
+    }
 
     setOrderLoading(true);
     
     try {
-      // Check for wallet address before placing buy order
-      if (orderType === 'buy') {
-        console.log('🔍 Checking wallet address...');
-        try {
-          const { hasWallet, walletAddresses } = await checkWalletAddress(selectedCoin.symbol);
-          console.log('✅ Wallet check result:', hasWallet);
-          console.log('📋 Available wallets:', walletAddresses);
-          
-          if (!hasWallet) {
-            // Show inline warning instead of blocking dialog
-            setShowWalletWarning(true);
-            setOrderLoading(false);
-            
-            // Scroll to the warning
-            setTimeout(() => {
-              const warningEl = document.getElementById('wallet-warning');
-              if (warningEl) {
-                warningEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }
-            }, 100);
-            
-            return; // Don't place order without wallet
-          } else {
-            // User has wallet saved - use it automatically
-            setShowWalletWarning(false);
-            const savedWallet = walletAddresses.find(w => w.symbol === selectedCoin.symbol && w.verified);
-            if (savedWallet) {
-              console.log('✅ Using saved wallet address:', savedWallet.address);
-              // We'll use this in the orderData below
-            }
-          }
-        } catch (walletError) {
-          console.error('⚠️ Wallet check error (continuing anyway):', walletError);
-          // Continue with order even if wallet check fails - backend will validate
-        }
-      }
-
       const orderData = {
         order_type: orderType,
         coin_symbol: selectedCoin.symbol,
