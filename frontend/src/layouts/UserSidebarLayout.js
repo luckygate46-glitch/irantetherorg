@@ -273,6 +273,38 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
             </Button>
           </div>
           
+          {/* Wallet Balance with Refresh */}
+          <div className="mt-3 p-3 bg-slate-700/50 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="text-xs text-gray-400 mb-1">موجودی کیف پول</div>
+                <div className="text-emerald-400 font-bold text-lg">
+                  {new Intl.NumberFormat('fa-IR').format(user?.wallet_balance_tmn || 0)} تومان
+                </div>
+              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/me`, {
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    window.location.reload(); // Simple refresh
+                  } catch (error) {
+                    console.error('Refresh error:', error);
+                  }
+                }}
+                className="p-2 hover:bg-slate-600 rounded-lg transition-colors"
+                title="بروزرسانی موجودی"
+              >
+                <svg className="w-5 h-5 text-gray-400 hover:text-emerald-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          
           {/* KYC Status Warning */}
           {user?.kyc_status !== 'approved' && (
             <div className="mt-4 p-4 bg-gradient-to-br from-amber-600/20 to-orange-600/20 border-2 border-amber-500 rounded-lg">
