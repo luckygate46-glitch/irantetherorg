@@ -4882,4 +4882,131 @@ async def export_deposits_csv(admin: User = Depends(get_current_admin)):
         headers={"Content-Disposition": f"attachment; filename=deposits_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"}
     )
 
+
+# ============================================================================
+# PRICE ALERTS SYSTEM
+# ============================================================================
+
+class PriceAlert(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    coin_symbol: str
+    coin_name: str
+    target_price: float  # in Toman
+    condition: str  # "above" or "below"
+    is_active: bool = True
+    triggered: bool = False
+    triggered_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+@api_router.post("/price-alerts")
+async def create_price_alert(
+    coin_symbol: str,
+    target_price: float,
+    condition: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Create a new price alert"""
+    if condition not in ["above", "below"]:
+        raise HTTPException(400, detail="شرط باید 'above' یا 'below' باشد")
+    
+    # Get coin info
+    coins = await get_all_coins()
+    coin = next((c for c in coins if c['symbol'] == coin_symbol), None)
+    
+    if not coin:
+        raise HTTPException(404, detail="ارز مورد نظر یافت نشد")
+    
+    alert = PriceAlert(
+        user_id=current_user.id,
+        coin_symbol=coin_symbol,
+        coin_name=coin.get('name', coin_symbol),
+        target_price=target_price,
+        condition=condition
+    )
+    
+    await db.price_alerts.insert_one(alert.dict())
+    
+    return {
+        "success": True,
+        "alert_id": alert.id,
+        "message": f"هشدار قیمت برای {coin_symbol} ثبت شد"
+    }
+
+@api_router.get("/price-alerts/my")
+async def get_my_alerts(current_user: User = Depends(get_current_user)):
+    """Get user's price alerts"""
+    alerts = await db.price_alerts.find({"user_id": current_user.id}).to_list(length=None)
+    return {"alerts": alerts}
+
+@api_router.delete("/price-alerts/{alert_id}")
+async def delete_price_alert(alert_id: str, current_user: User = Depends(get_current_user)):
+    """Delete a price alert"""
+    result = await db.price_alerts.delete_one({"id": alert_id, "user_id": current_user.id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(404, detail="هشدار یافت نشد")
+    
+    return {"success": True, "message": "هشدار حذف شد"}
+
+@api_router.post("/price-alerts/check")
+async def check_price_alerts():
+    """Background task to check and trigger alerts"""
+    # Get active alerts
+    alerts = await db.price_alerts.find({"is_active": True, "triggered": False}).to_list(length=None)
+    
+    if not alerts:
+        return {"checked": 0, "triggered": 0}
+    
+    # Get current prices
+    coins = await get_all_coins()
+    price_map = {coin['symbol']: coin['current_price'] for coin in coins}
+    
+    triggered_count = 0
+    
+    for alert in alerts:
+        current_price = price_map.get(alert['coin_symbol'])
+        if not current_price:
+            continue
+        
+        should_trigger = False
+        if alert['condition'] == 'above' and current_price >= alert['target_price']:
+            should_trigger = True
+        elif alert['condition'] == 'below' and current_price <= alert['target_price']:
+            should_trigger = True
+        
+        if should_trigger:
+            await db.price_alerts.update_one(
+                {"id": alert['id']},
+                {"$set": {
+                    "triggered": True,
+                    "triggered_at": datetime.now(timezone.utc),
+                    "is_active": False
+                }}
+            )
+            
+            # Create notification for user
+            await db.notifications.insert_one({
+                "id": str(uuid.uuid4()),
+                "user_id": alert['user_id'],
+                "type": "price_alert",
+                "title": f"🔔 هشدار قیمت {alert['coin_symbol']}",
+                "message": f"قیمت {alert['coin_name']} به {int(current_price):,} تومان رسید",
+                "data": {
+                    "coin_symbol": alert['coin_symbol'],
+                    "current_price": current_price,
+                    "target_price": alert['target_price']
+                },
+                "is_read": False,
+                "created_at": datetime.now(timezone.utc)
+            })
+            
+            triggered_count += 1
+    
+    return {
+        "checked": len(alerts),
+        "triggered": triggered_count
+    }
+
+
     client.close()
