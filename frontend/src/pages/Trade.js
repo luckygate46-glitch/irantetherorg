@@ -616,20 +616,24 @@ const Trade = ({ user, onLogout }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    آدرس کیف پول {selectedCoin?.symbol} 
-                    <span className="text-slate-500 text-xs mr-2">(اختیاری)</span>
+                  <label className="block text-sm font-medium mb-2 text-red-400">
+                    آدرس کیف پول {selectedCoin?.symbol} *
+                    <span className="text-slate-400 text-xs mr-2">(الزامی)</span>
                   </label>
                   <input
                     type="text"
                     value={walletAddress}
                     onChange={(e) => setWalletAddress(e.target.value)}
-                    placeholder={`آدرس کیف پول ذخیره شده در پروفایل استفاده می‌شود`}
-                    className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg text-left"
+                    placeholder={`آدرس کیف پول ${selectedCoin?.symbol} خود را وارد کنید`}
+                    className="w-full p-3 bg-slate-800 border border-red-700/50 rounded-lg text-left focus:border-red-500 focus:outline-none"
                     dir="ltr"
+                    required
                   />
-                  <div className="text-xs text-green-500 mt-1">
-                    💡 اگر خالی بگذارید، آدرس ذخیره شده در پروفایل استفاده می‌شود
+                  <div className="text-xs text-red-400 mt-1 flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                    ⚠️ وارد کردن آدرس کیف پول برای خرید الزامی است
                   </div>
                 </div>
                 <div className="text-sm text-slate-300 bg-slate-800/50 p-3 rounded-lg border border-slate-700">
