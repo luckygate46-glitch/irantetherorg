@@ -16,7 +16,7 @@ BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 TEST_USER_EMAIL = "testuser@example.com"
-TEST_USER_PASSWORD = "password123"
+TEST_USER_PASSWORD = "testpass123"
 
 class AuthBalanceTester:
     def __init__(self):
