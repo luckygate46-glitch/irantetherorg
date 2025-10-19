@@ -244,11 +244,15 @@ class ComprehensiveReviewTester:
                         usdt_wallet = wallet
                         break
                 
+                print(f"📊 Current wallets: {len(wallets)}")
+                for wallet in wallets:
+                    print(f"   - {wallet.get('symbol', 'N/A')}: {wallet.get('address', 'N/A')[:20]}... (verified: {wallet.get('verified', False)})")
+                
                 if not usdt_wallet:
                     # Add USDT wallet address
                     wallet_data = {
                         "symbol": "USDT",
-                        "address": "0xTest12345",
+                        "address": "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b1",
                         "label": "Test USDT Wallet"
                     }
                     add_wallet_response = await self.client.post(
@@ -264,7 +268,13 @@ class ComprehensiveReviewTester:
                         print(f"⚠️  Could not add USDT wallet: {add_wallet_response.status_code} - {add_wallet_response.text}")
                         # Try to continue anyway
                 else:
-                    print("✅ USDT wallet address already exists")
+                    print(f"✅ USDT wallet address already exists: {usdt_wallet.get('address', 'N/A')[:20]}... (verified: {usdt_wallet.get('verified', False)})")
+                    
+                    # If wallet exists but not verified, we might need to verify it
+                    if not usdt_wallet.get('verified', False):
+                        print("⚠️  USDT wallet exists but not verified - this might cause order creation to fail")
+            else:
+                print(f"⚠️  Could not get wallet addresses: {wallet_response.status_code}")
             
             # Create buy order for 100,000 TMN worth of USDT
             order_data = {
