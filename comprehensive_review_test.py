@@ -253,8 +253,13 @@ class ComprehensiveReviewTester:
                     )
                     if add_wallet_response.status_code == 200:
                         print("✅ USDT wallet address added")
+                        # Wait a moment for the wallet to be processed
+                        await asyncio.sleep(1)
                     else:
-                        print(f"⚠️  Could not add USDT wallet: {add_wallet_response.status_code}")
+                        print(f"⚠️  Could not add USDT wallet: {add_wallet_response.status_code} - {add_wallet_response.text}")
+                        # Try to continue anyway
+                else:
+                    print("✅ USDT wallet address already exists")
             
             # Create buy order for 100,000 TMN worth of USDT
             order_data = {
