@@ -5579,7 +5579,7 @@ async def get_user_notifications(
             .to_list(length=limit)
         
         total = await db.notifications.count_documents(query)
-        unread_count = await db.notifications.count_documents({'user_id': user['id'], 'is_read': False})
+        unread_count = await db.notifications.count_documents({'user_id': user.id, 'is_read': False})
         
         return {
             'notifications': notifications,
