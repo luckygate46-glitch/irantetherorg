@@ -444,12 +444,12 @@ class ComprehensiveReviewTester:
             })
 
     async def test_portfolio_holdings(self):
-        """Test 4: Portfolio/Holdings - GET /api/user/holdings"""
+        """Test 4: Portfolio/Holdings - GET /api/trading/holdings/my"""
         print("\n📊 Testing Portfolio/Holdings...")
         
         try:
             headers = {"Authorization": f"Bearer {self.user_token}"}
-            response = await self.client.get(f"{BACKEND_URL}/user/holdings", headers=headers)
+            response = await self.client.get(f"{BACKEND_URL}/trading/holdings/my", headers=headers)
             
             if response.status_code == 200:
                 data = response.json()
