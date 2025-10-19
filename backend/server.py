@@ -5603,7 +5603,7 @@ async def mark_notification_read(
     """
     try:
         result = await db.notifications.update_one(
-            {'id': notification_id, 'user_id': user['id']},
+            {'id': notification_id, 'user_id': user.id},
             {'$set': {'is_read': True}}
         )
         
