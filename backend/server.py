@@ -521,6 +521,55 @@ async def calculate_user_balance_from_transactions(user_id: str) -> dict:
         'transaction_count': len(transactions)
     }
 
+# ========================================
+# NOTIFICATION SYSTEM
+# ========================================
+
+async def create_notification(
+    user_id: str,
+    notification_type: str,  # 'order_approved', 'order_rejected', 'deposit_approved', etc.
+    title: str,
+    message: str,
+    reference_type: str = None,  # 'order', 'deposit', 'kyc'
+    reference_id: str = None,
+    data: dict = None
+) -> dict:
+    """
+    Create an in-app notification for a user
+    
+    Types:
+    - order_approved
+    - order_rejected
+    - deposit_approved
+    - deposit_rejected
+    - kyc_approved
+    - kyc_rejected
+    - price_alert
+    """
+    try:
+        notification = {
+            'id': str(uuid.uuid4()),
+            'user_id': user_id,
+            'type': notification_type,
+            'title': title,
+            'message': message,
+            'reference_type': reference_type,
+            'reference_id': reference_id,
+            'data': data or {},
+            'is_read': False,
+            'created_at': datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.notifications.insert_one(notification)
+        logger.info(f"✅ Notification created: {notification_type} for user {user_id}")
+        
+        return notification
+        
+    except Exception as e:
+        logger.error(f"❌ Error creating notification: {str(e)}")
+        # Don't fail the main operation if notification fails
+        return None
+
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
