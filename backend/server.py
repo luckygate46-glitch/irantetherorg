@@ -2629,6 +2629,32 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
     
     await db.trading_orders.insert_one(trading_order.dict())
     
+    # For buy orders, deduct balance using transaction system
+    if order_data.order_type == "buy":
+        try:
+            transaction = await record_transaction(
+                user_id=current_user.id,
+                transaction_type="order_buy",
+                amount_tmn=-order_data.amount_tmn,  # Negative for deduction
+                reference_type="order",
+                reference_id=trading_order.id,
+                description=f"خرید {order_data.coin_symbol} - در انتظار تایید ادمین",
+                created_by=current_user.id
+            )
+            
+            # Update order with transaction reference
+            await db.trading_orders.update_one(
+                {"id": trading_order.id},
+                {"$set": {"debit_transaction_id": transaction['id']}}
+            )
+            
+            logger.info(f"✅ Buy order created with transaction: {transaction['id']}")
+        except Exception as e:
+            logger.error(f"❌ Error recording order transaction: {str(e)}")
+            # Delete the order if transaction fails
+            await db.trading_orders.delete_one({"id": trading_order.id})
+            raise HTTPException(status_code=500, detail=f"خطا در ثبت سفارش: {str(e)}")
+    
     response_data = trading_order.dict()
     response_data["user_email"] = current_user.email
     response_data["user_name"] = current_user.full_name
