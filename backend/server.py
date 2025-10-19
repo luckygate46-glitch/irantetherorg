@@ -2570,13 +2570,6 @@ async def create_trading_order(order_data: TradingOrderCreate, current_user: Use
         if current_user.wallet_balance_tmn < order_data.amount_tmn:
             raise HTTPException(status_code=400, detail="موجودی کافی ندارید")
         
-        # IMMEDIATELY deduct balance from user wallet
-        await db.users.update_one(
-            {"id": current_user.id},
-            {"$inc": {"wallet_balance_tmn": -order_data.amount_tmn}}
-        )
-        logger.info(f"💰 Deducted {order_data.amount_tmn} from user {current_user.id}")
-        
         # Calculate how much crypto user will receive
         calculated_amount_crypto = order_data.amount_tmn / current_price_tmn
         total_value_tmn = order_data.amount_tmn
