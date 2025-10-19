@@ -125,9 +125,14 @@ class ComprehensiveReviewTester:
                             alt_data = alt_response.json()
                             self.user_token = alt_data["access_token"]
                             alt_user_info = alt_data["user"]
-                            print(f"✅ Alternative user login successful: {alt_user_info.get('full_name', 'Alt User')}")
+                                    print(f"✅ Alternative user login successful: {alt_user_info.get('full_name', 'Alt User')}")
                             print(f"   Balance: {alt_user_info.get('wallet_balance_tmn', 0):,.0f} TMN")
                             print(f"   KYC Level: {alt_user_info.get('kyc_level', 0)}")
+                            
+                            # Update user balance if needed
+                            if alt_user_info.get('wallet_balance_tmn', 0) < 1000000:
+                                await self.update_test_user_for_testing(alt_user_info.get('id'))
+                            
                             return True
                     
                     return False
