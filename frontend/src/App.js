@@ -159,6 +159,9 @@ function App() {
 
   return (
     <div className="App">
+      {/* Toast Notification Manager - Shows pretty popups when orders are approved */}
+      {user && <NotificationToastManager />}
+      
       <BrowserRouter>
         <Routes>
           <Route 
