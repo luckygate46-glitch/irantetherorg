@@ -5466,5 +5466,87 @@ async def get_user_transactions(
         logger.error(f"Error getting user transactions: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== NOTIFICATION ROUTES ====================
+
+@api_router.get("/user/notifications")
+async def get_user_notifications(
+    limit: int = 50,
+    offset: int = 0,
+    unread_only: bool = False,
+    user: User = Depends(get_current_user)
+):
+    """
+    Get user's notifications
+    """
+    try:
+        query = {'user_id': user['id']}
+        if unread_only:
+            query['is_read'] = False
+        
+        # Get notifications
+        notifications = await db.notifications.find(query) \
+            .sort('created_at', -1) \
+            .skip(offset) \
+            .limit(limit) \
+            .to_list(length=limit)
+        
+        total = await db.notifications.count_documents(query)
+        unread_count = await db.notifications.count_documents({'user_id': user['id'], 'is_read': False})
+        
+        return {
+            'notifications': notifications,
+            'total': total,
+            'unread_count': unread_count,
+            'limit': limit,
+            'offset': offset,
+            'has_more': (offset + limit) < total
+        }
+    except Exception as e:
+        logger.error(f"Error getting notifications: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.patch("/user/notifications/{notification_id}/read")
+async def mark_notification_read(
+    notification_id: str,
+    user: User = Depends(get_current_user)
+):
+    """
+    Mark a notification as read
+    """
+    try:
+        result = await db.notifications.update_one(
+            {'id': notification_id, 'user_id': user['id']},
+            {'$set': {'is_read': True}}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="اعلان یافت نشد")
+        
+        return {'message': 'اعلان به عنوان خوانده شده علامت گذاری شد'}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error marking notification as read: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.patch("/user/notifications/mark-all-read")
+async def mark_all_notifications_read(user: User = Depends(get_current_user)):
+    """
+    Mark all notifications as read
+    """
+    try:
+        result = await db.notifications.update_many(
+            {'user_id': user['id'], 'is_read': False},
+            {'$set': {'is_read': True}}
+        )
+        
+        return {
+            'message': f'{result.modified_count} اعلان به عنوان خوانده شده علامت گذاری شد',
+            'count': result.modified_count
+        }
+    except Exception as e:
+        logger.error(f"Error marking all notifications as read: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
     client.close()
