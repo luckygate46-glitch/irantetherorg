@@ -5534,11 +5534,19 @@ async def get_user_transactions(
             query['type'] = type
         
         # Get transactions
-        transactions = await db.transactions.find(query) \
+        transactions_raw = await db.transactions.find(query) \
             .sort('created_at', -1) \
             .skip(offset) \
             .limit(limit) \
             .to_list(length=limit)
+        
+        # Convert transactions to JSON-serializable format
+        transactions = []
+        for txn in transactions_raw:
+            # Remove MongoDB ObjectId and convert to dict
+            if '_id' in txn:
+                del txn['_id']
+            transactions.append(txn)
         
         total = await db.transactions.count_documents(query)
         
