@@ -5556,6 +5556,11 @@ async def get_user_transactions(
 
 # ==================== NOTIFICATION ROUTES ====================
 
+@api_router.get("/user/test-endpoint")
+async def test_endpoint():
+    """Test endpoint to verify registration"""
+    return {"message": "Test endpoint working"}
+
 @api_router.get("/user/notifications")
 async def get_user_notifications(
     limit: int = 50,
