@@ -264,14 +264,17 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
                 <p className="text-gray-400 text-xs truncate">{user?.full_name || 'کاربر'}</p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden shrink-0"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <X className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <NotificationBell />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden shrink-0"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
           
           {/* Wallet Balance with Refresh */}
