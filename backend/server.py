@@ -5624,7 +5624,7 @@ async def mark_all_notifications_read(user: User = Depends(get_current_user)):
     """
     try:
         result = await db.notifications.update_many(
-            {'user_id': user['id'], 'is_read': False},
+            {'user_id': user.id, 'is_read': False},
             {'$set': {'is_read': True}}
         )
         
