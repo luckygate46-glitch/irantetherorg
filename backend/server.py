@@ -5640,5 +5640,5 @@ async def mark_all_notifications_read(user: User = Depends(get_current_user)):
         logger.error(f"Error marking all notifications as read: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
-    client.close()
+# Include the router in the main app (must be at the end after all endpoints are defined)
+app.include_router(api_router)
