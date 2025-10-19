@@ -2968,6 +2968,38 @@ async def approve_trading_order(approval: TradingOrderApproval, admin: User = De
             {"id": approval.order_id},
             {"$set": {"status": "completed"}}
         )
+        
+        # Create notification for approval
+        await create_notification(
+            user_id=order["user_id"],
+            notification_type="order_approved",
+            title="✅ سفارش تایید شد",
+            message=f"سفارش {order['order_type']} {order['coin_symbol']} به مبلغ {order['amount_tmn']:,.0f} تومان تایید و تکمیل شد",
+            reference_type="order",
+            reference_id=order["id"],
+            data={
+                'order_type': order['order_type'],
+                'coin_symbol': order['coin_symbol'],
+                'amount_tmn': order['amount_tmn'],
+                'admin_note': approval.admin_note
+            }
+        )
+    else:
+        # Create notification for rejection
+        await create_notification(
+            user_id=order["user_id"],
+            notification_type="order_rejected",
+            title="❌ سفارش رد شد",
+            message=f"سفارش {order['order_type']} {order['coin_symbol']} به مبلغ {order['amount_tmn']:,.0f} تومان رد شد. {approval.admin_note or ''}",
+            reference_type="order",
+            reference_id=order["id"],
+            data={
+                'order_type': order['order_type'],
+                'coin_symbol': order['coin_symbol'],
+                'amount_tmn': order['amount_tmn'],
+                'reason': approval.admin_note
+            }
+        )
     
     return {"message": f"سفارش با موفقیت {new_status} شد"}
 
