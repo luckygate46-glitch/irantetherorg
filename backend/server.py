@@ -5567,7 +5567,7 @@ async def get_user_notifications(
     Get user's notifications
     """
     try:
-        query = {'user_id': user['id']}
+        query = {'user_id': user.id}
         if unread_only:
             query['is_read'] = False
         
