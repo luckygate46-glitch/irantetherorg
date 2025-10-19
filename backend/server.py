@@ -393,6 +393,134 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     hashed_bytes = hashed_password.encode('utf-8')
     return bcrypt.checkpw(password_bytes, hashed_bytes)
 
+# ========================================
+# TRANSACTION RECORDING SYSTEM (Critical for audit trail)
+# ========================================
+
+async def record_transaction(
+    user_id: str,
+    transaction_type: str,  # 'deposit', 'withdrawal', 'order_buy', 'order_sell', 'refund', 'admin_adjustment'
+    amount_tmn: float,
+    reference_type: str,  # 'deposit', 'order', 'admin_action'
+    reference_id: str,
+    description: str,
+    created_by: str,
+    ip_address: str = None,
+    admin_notes: str = None
+) -> dict:
+    """
+    Record a financial transaction with full audit trail.
+    This creates a permanent record of every balance change.
+    
+    Returns the transaction document
+    """
+    try:
+        # Get current balance
+        user = await db.users.find_one({'id': user_id})
+        if not user:
+            raise ValueError(f"User {user_id} not found")
+        
+        balance_before = user.get('wallet_balance_tmn', 0)
+        balance_after = balance_before + amount_tmn
+        
+        # Prevent negative balance
+        if balance_after < 0:
+            raise ValueError(f"Insufficient balance. Current: {balance_before}, Attempting: {amount_tmn}")
+        
+        # Create transaction record
+        transaction = {
+            'id': str(uuid.uuid4()),
+            'user_id': user_id,
+            'type': transaction_type,
+            'amount_tmn': amount_tmn,
+            'balance_before': balance_before,
+            'balance_after': balance_after,
+            
+            # Reference to source document
+            'reference_type': reference_type,
+            'reference_id': reference_id,
+            
+            # Metadata
+            'description': description,
+            'created_at': datetime.now(timezone.utc).isoformat(),
+            'created_by': created_by,
+            'ip_address': ip_address,
+            
+            # Status
+            'status': 'completed',
+            'reversed_by': None,
+            
+            # Admin notes (for adjustments)
+            'admin_notes': admin_notes
+        }
+        
+        # Insert transaction record
+        await db.transactions.insert_one(transaction)
+        
+        # Update user balance
+        await db.users.update_one(
+            {'id': user_id},
+            {
+                '$set': {
+                    'wallet_balance_tmn': balance_after,
+                    'updated_at': datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        logger.info(f"✅ Transaction recorded: {transaction_type} {amount_tmn} TMN for user {user_id}")
+        logger.info(f"   Balance: {balance_before} → {balance_after}")
+        
+        return transaction
+        
+    except Exception as e:
+        logger.error(f"❌ Error recording transaction: {str(e)}")
+        raise
+
+async def calculate_user_balance_from_transactions(user_id: str) -> dict:
+    """
+    Calculate user's balance from transaction history.
+    Used for verification and reconciliation.
+    
+    Returns dict with calculated balance and breakdown
+    """
+    transactions = await db.transactions.find({'user_id': user_id}).to_list(length=10000)
+    
+    calculated_balance = 0
+    breakdown = {
+        'deposits': 0,
+        'withdrawals': 0,
+        'order_buy': 0,
+        'order_sell': 0,
+        'refunds': 0,
+        'admin_adjustments': 0
+    }
+    
+    for txn in transactions:
+        amount = txn.get('amount_tmn', 0)
+        txn_type = txn.get('type', '')
+        
+        calculated_balance += amount
+        
+        if txn_type == 'deposit':
+            breakdown['deposits'] += amount
+        elif txn_type == 'withdrawal':
+            breakdown['withdrawals'] += amount
+        elif txn_type == 'order_buy':
+            breakdown['order_buy'] += amount
+        elif txn_type == 'order_sell':
+            breakdown['order_sell'] += amount
+        elif txn_type == 'refund':
+            breakdown['refunds'] += amount
+        elif txn_type == 'admin_adjustment':
+            breakdown['admin_adjustments'] += amount
+    
+    return {
+        'calculated_balance': calculated_balance,
+        'breakdown': breakdown,
+        'transaction_count': len(transactions)
+    }
+
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
