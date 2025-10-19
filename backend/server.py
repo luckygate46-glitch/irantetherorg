@@ -5136,5 +5136,241 @@ async def check_price_alerts():
         "triggered": triggered_count
     }
 
+# ==================== BALANCE MANAGEMENT & AUDIT ROUTES ====================
+
+@api_router.get("/admin/balance/overview")
+async def get_balance_overview(admin: User = Depends(get_current_admin)):
+    """
+    Get system-wide balance overview with verification
+    Shows total balances, deposits, orders, and detects discrepancies
+    """
+    try:
+        # Get all users
+        users = await db.users.find({}).to_list(length=10000)
+        total_user_balances = sum(u.get('wallet_balance_tmn', 0) for u in users)
+        
+        # Get all approved deposits
+        deposits = await db.deposits.find({'status': 'approved'}).to_list(length=10000)
+        total_deposits = sum(d.get('amount_tmn', 0) for d in deposits)
+        
+        # Get all completed buy orders
+        orders = await db.orders.find({
+            'order_type': 'buy',
+            'status': {'$in': ['confirmed', 'completed']}
+        }).to_list(length=10000)
+        total_spent = sum(o.get('amount_tmn', 0) for o in orders)
+        
+        # Get all transactions
+        transactions = await db.transactions.find({}).to_list(length=10000)
+        total_from_transactions = sum(t.get('amount_tmn', 0) for t in transactions)
+        
+        # Calculate expected balance
+        expected_total = total_deposits - total_spent
+        discrepancy = total_user_balances - expected_total
+        
+        return {
+            'total_users': len(users),
+            'total_user_balances': total_user_balances,
+            'total_deposits': total_deposits,
+            'total_deposits_count': len(deposits),
+            'total_spent_on_orders': total_spent,
+            'total_orders_count': len(orders),
+            'total_transactions': len(transactions),
+            'total_from_transactions': total_from_transactions,
+            'expected_total': expected_total,
+            'discrepancy': discrepancy,
+            'has_discrepancy': abs(discrepancy) > 1000,
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error in balance overview: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/balance/verify-all")
+async def verify_all_balances(admin: User = Depends(get_current_admin)):
+    """
+    Verify all user balances against transaction history
+    Returns list of discrepancies
+    """
+    try:
+        users = await db.users.find({}).to_list(length=10000)
+        discrepancies = []
+        verified_count = 0
+        
+        for user in users:
+            # Calculate expected balance from transactions
+            result = await calculate_user_balance_from_transactions(user['id'])
+            calculated_balance = result['calculated_balance']
+            actual_balance = user.get('wallet_balance_tmn', 0)
+            
+            # Allow 100 TMN rounding tolerance
+            if abs(calculated_balance - actual_balance) > 100:
+                discrepancies.append({
+                    'user_id': user['id'],
+                    'email': user.get('email', 'N/A'),
+                    'full_name': user.get('full_name', 'N/A'),
+                    'expected_balance': calculated_balance,
+                    'actual_balance': actual_balance,
+                    'difference': actual_balance - calculated_balance,
+                    'breakdown': result['breakdown'],
+                    'transaction_count': result['transaction_count']
+                })
+            else:
+                verified_count += 1
+        
+        return {
+            'total_users': len(users),
+            'verified_users': verified_count,
+            'users_with_discrepancy': len(discrepancies),
+            'discrepancies': discrepancies,
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error in verify balances: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class BalanceAdjustmentRequest(BaseModel):
+    user_id: str
+    amount: float  # Can be positive or negative
+    reason: str
+    notes: Optional[str] = None
+
+@api_router.post("/admin/balance/adjust")
+async def adjust_user_balance(
+    request: BalanceAdjustmentRequest,
+    admin: User = Depends(get_current_admin)
+):
+    """
+    Manually adjust user balance with full audit trail
+    Creates transaction record and logs admin action
+    """
+    try:
+        # Verify user exists
+        user = await db.users.find_one({'id': request.user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+        
+        # Record transaction
+        transaction = await record_transaction(
+            user_id=request.user_id,
+            transaction_type="admin_adjustment",
+            amount_tmn=request.amount,
+            reference_type="admin_action",
+            reference_id=str(uuid.uuid4()),
+            description=f"تصحیح موجودی توسط ادمین: {request.reason}",
+            created_by=admin['id'],
+            admin_notes=request.notes
+        )
+        
+        # Log admin action
+        admin_action = {
+            'id': str(uuid.uuid4()),
+            'admin_id': admin['id'],
+            'admin_email': admin.get('email', 'N/A'),
+            'action_type': 'adjust_balance',
+            'target_type': 'user',
+            'target_id': request.user_id,
+            'amount': request.amount,
+            'reason': request.reason,
+            'notes': request.notes,
+            'transaction_id': transaction['id'],
+            'created_at': datetime.now(timezone.utc).isoformat()
+        }
+        await db.admin_actions.insert_one(admin_action)
+        
+        # Get updated user
+        updated_user = await db.users.find_one({'id': request.user_id})
+        
+        return {
+            'success': True,
+            'message': 'موجودی با موفقیت تصحیح شد',
+            'transaction': transaction,
+            'new_balance': updated_user.get('wallet_balance_tmn', 0)
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error adjusting balance: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/balance/user/{user_id}")
+async def get_user_balance_details(
+    user_id: str,
+    admin: User = Depends(get_current_admin)
+):
+    """
+    Get detailed balance information for a specific user
+    Includes transaction history and calculated balance
+    """
+    try:
+        user = await db.users.find_one({'id': user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="کاربر یافت نشد")
+        
+        # Calculate from transactions
+        result = await calculate_user_balance_from_transactions(user_id)
+        
+        # Get recent transactions
+        transactions = await db.transactions.find({'user_id': user_id}) \
+            .sort('created_at', -1) \
+            .limit(50) \
+            .to_list(length=50)
+        
+        actual_balance = user.get('wallet_balance_tmn', 0)
+        calculated_balance = result['calculated_balance']
+        discrepancy = actual_balance - calculated_balance
+        
+        return {
+            'user_id': user_id,
+            'email': user.get('email', 'N/A'),
+            'full_name': user.get('full_name', 'N/A'),
+            'actual_balance': actual_balance,
+            'calculated_balance': calculated_balance,
+            'discrepancy': discrepancy,
+            'has_discrepancy': abs(discrepancy) > 100,
+            'breakdown': result['breakdown'],
+            'transaction_count': result['transaction_count'],
+            'recent_transactions': transactions
+        }
+    except Exception as e:
+        logger.error(f"Error getting user balance details: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/user/transactions")
+async def get_user_transactions(
+    limit: int = 50,
+    offset: int = 0,
+    type: Optional[str] = None,
+    user: User = Depends(get_current_user)
+):
+    """
+    Get user's transaction history
+    Users can see all their balance changes
+    """
+    try:
+        query = {'user_id': user['id']}
+        if type:
+            query['type'] = type
+        
+        # Get transactions
+        transactions = await db.transactions.find(query) \
+            .sort('created_at', -1) \
+            .skip(offset) \
+            .limit(limit) \
+            .to_list(length=limit)
+        
+        total = await db.transactions.count_documents(query)
+        
+        return {
+            'transactions': transactions,
+            'total': total,
+            'limit': limit,
+            'offset': offset,
+            'has_more': (offset + limit) < total
+        }
+    except Exception as e:
+        logger.error(f"Error getting user transactions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
     client.close()
