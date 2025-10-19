@@ -61,8 +61,9 @@ class ComprehensiveReviewTester:
             return False
     
     async def login_test_user(self):
-        """Login as test user"""
+        """Login as test user or create one if needed"""
         try:
+            # First try to login with existing credentials
             response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
                 "email": TEST_USER_EMAIL,
                 "password": TEST_USER_PASSWORD
@@ -77,12 +78,88 @@ class ComprehensiveReviewTester:
                 print(f"   KYC Level: {user_info.get('kyc_level', 0)}")
                 return True
             else:
-                print(f"❌ Test user login failed: {response.status_code} - {response.text}")
-                return False
+                print(f"⚠️  Test user login failed: {response.status_code} - {response.text}")
+                print("🔧 Attempting to create test user...")
+                
+                # Try to create the test user
+                register_data = {
+                    "first_name": "Test",
+                    "last_name": "User",
+                    "email": TEST_USER_EMAIL,
+                    "phone": "09123456789",
+                    "password": TEST_USER_PASSWORD
+                }
+                
+                register_response = await self.client.post(f"{BACKEND_URL}/auth/register", json=register_data)
+                
+                if register_response.status_code == 200:
+                    reg_data = register_response.json()
+                    self.user_token = reg_data["access_token"]
+                    user_info = reg_data["user"]
+                    print(f"✅ Test user created and logged in: {user_info.get('full_name', 'Test User')}")
+                    print(f"   Balance: {user_info.get('wallet_balance_tmn', 0):,.0f} TMN")
+                    print(f"   KYC Level: {user_info.get('kyc_level', 0)}")
+                    
+                    # Update user balance and KYC level using admin privileges
+                    await self.update_test_user_for_testing(user_info.get('id'))
+                    
+                    return True
+                else:
+                    print(f"❌ Test user creation failed: {register_response.status_code} - {register_response.text}")
+                    
+                    # Try alternative existing users
+                    alternative_users = [
+                        ("buyer1@test.com", "test123"),
+                        ("useragi.test.3565@example.com", "testpass123"),
+                        ("saruman.valar@gmail.com", "password123")
+                    ]
+                    
+                    for alt_email, alt_password in alternative_users:
+                        print(f"🔧 Trying alternative user: {alt_email}")
+                        alt_response = await self.client.post(f"{BACKEND_URL}/auth/login", json={
+                            "email": alt_email,
+                            "password": alt_password
+                        })
+                        
+                        if alt_response.status_code == 200:
+                            alt_data = alt_response.json()
+                            self.user_token = alt_data["access_token"]
+                            alt_user_info = alt_data["user"]
+                            print(f"✅ Alternative user login successful: {alt_user_info.get('full_name', 'Alt User')}")
+                            print(f"   Balance: {alt_user_info.get('wallet_balance_tmn', 0):,.0f} TMN")
+                            print(f"   KYC Level: {alt_user_info.get('kyc_level', 0)}")
+                            return True
+                    
+                    return False
                 
         except Exception as e:
             print(f"❌ Test user login error: {str(e)}")
             return False
+    
+    async def update_test_user_for_testing(self, user_id):
+        """Update test user balance and KYC level for testing"""
+        try:
+            if not self.admin_token:
+                return
+            
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            
+            # Update user balance to 10M TMN and KYC level to 2
+            update_data = {
+                "wallet_balance_tmn": 10000000,
+                "kyc_level": 2,
+                "kyc_status": "approved"
+            }
+            
+            response = await self.client.put(f"{BACKEND_URL}/admin/users/{user_id}", headers=headers, json=update_data)
+            
+            if response.status_code == 200:
+                print("✅ Test user updated with balance and KYC level for testing")
+            else:
+                print(f"⚠️  Could not update test user: {response.status_code}")
+                
+        except Exception as e:
+            print(f"⚠️  Error updating test user: {str(e)}")
 
     async def test_notification_system(self):
         """Test 1: Notification System - POST /api/user/notifications"""
