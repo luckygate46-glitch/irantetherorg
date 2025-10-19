@@ -1768,6 +1768,20 @@ async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_cu
         # Log the approval for debugging
         logger.info(f"KYC approved for user {approval.user_id}: level={approval.kyc_level}, status=approved")
         
+        # Create notification for user
+        await create_notification(
+            user_id=approval.user_id,
+            notification_type="kyc_approved",
+            title=f"✅ احراز هویت سطح {approval.kyc_level} تایید شد",
+            message=f"تبریک! احراز هویت شما تایید شد و اکنون می‌توانید از تمام امکانات سایت استفاده کنید",
+            reference_type="kyc",
+            reference_id=approval.user_id,
+            data={
+                'kyc_level': approval.kyc_level,
+                'admin_note': approval.admin_note
+            }
+        )
+        
         message = f"احراز هویت سطح {approval.kyc_level} تایید شد"
     else:
         await db.users.update_one(
@@ -1778,6 +1792,20 @@ async def approve_kyc(approval: KYCApprovalRequest, admin: User = Depends(get_cu
                 "updated_at": datetime.now(timezone.utc)
             }}
         )
+        
+        # Create notification for rejection
+        await create_notification(
+            user_id=approval.user_id,
+            notification_type="kyc_rejected",
+            title="❌ احراز هویت رد شد",
+            message=f"متأسفانه احراز هویت شما رد شد. {approval.admin_note or 'لطفاً مدارک معتبر ارسال کنید'}",
+            reference_type="kyc",
+            reference_id=approval.user_id,
+            data={
+                'reason': approval.admin_note
+            }
+        )
+        
         message = "احراز هویت رد شد"
     
     if approval.action == "approve":
