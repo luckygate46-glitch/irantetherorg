@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button.jsx';
 import { Badge } from '@/components/ui/badge.jsx';
+import NotificationBell from '../components/NotificationBell';
 import {
   User, Settings, CreditCard, Wallet, Shield, Bell,
   TrendingUp, History, PieChart, FileText, DollarSign, AlertTriangle,
