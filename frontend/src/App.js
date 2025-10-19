@@ -3,6 +3,7 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotificationToastManager from "./components/NotificationToastManager";
 import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/SimpleAuth";
 import Dashboard from "./pages/Dashboard";
