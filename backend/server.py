@@ -1688,6 +1688,20 @@ async def approve_deposit(approval: DepositApproval, admin: User = Depends(get_c
                 {"$set": {"transaction_id": transaction['id']}}
             )
             
+            # Create notification for user
+            await create_notification(
+                user_id=deposit["user_id"],
+                notification_type="deposit_approved",
+                title="✅ واریز تایید شد",
+                message=f"واریز {deposit['amount']:,.0f} تومان شما تایید شد و به کیف پول اضافه گردید",
+                reference_type="deposit",
+                reference_id=deposit["id"],
+                data={
+                    'amount': deposit['amount'],
+                    'transaction_id': transaction['id']
+                }
+            )
+            
         except Exception as e:
             logger.error(f"❌ Error recording deposit transaction: {str(e)}")
             # Rollback deposit status
@@ -1696,6 +1710,20 @@ async def approve_deposit(approval: DepositApproval, admin: User = Depends(get_c
                 {"$set": {"status": "pending"}}
             )
             raise HTTPException(status_code=500, detail=f"خطا در ثبت تراکنش: {str(e)}")
+    else:
+        # Create notification for rejection
+        await create_notification(
+            user_id=deposit["user_id"],
+            notification_type="deposit_rejected",
+            title="❌ واریز رد شد",
+            message=f"واریز {deposit['amount']:,.0f} تومان شما رد شد. {approval.admin_note or ''}",
+            reference_type="deposit",
+            reference_id=deposit["id"],
+            data={
+                'amount': deposit['amount'],
+                'reason': approval.admin_note
+            }
+        )
     
     return {"message": f"درخواست با موفقیت {new_status} شد"}
 
