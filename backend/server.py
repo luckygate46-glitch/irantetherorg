@@ -5062,8 +5062,7 @@ async def get_kyc_status(current_user: User = Depends(get_current_user)):
         logger.error(f"Error getting KYC status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Include the router in the main app
-app.include_router(api_router)
+# Router will be included at the end of the file
 
 app.add_middleware(
     CORSMiddleware,
