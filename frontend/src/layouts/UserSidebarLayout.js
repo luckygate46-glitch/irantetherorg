@@ -394,13 +394,16 @@ const UserSidebarLayout = ({ children, user, onLogout }) => {
         <div className="md:hidden bg-slate-800 border-b border-slate-700 p-4">
           <div className="flex items-center justify-between">
             <h1 className="text-white font-semibold">صرافی کریپتو ایران</h1>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="w-5 h-5" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <NotificationBell />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </div>
 
