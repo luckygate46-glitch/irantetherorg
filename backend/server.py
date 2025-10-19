@@ -5530,7 +5530,7 @@ async def get_user_transactions(
     Users can see all their balance changes
     """
     try:
-        query = {'user_id': user['id']}
+        query = {'user_id': user.id}
         if type:
             query['type'] = type
         
