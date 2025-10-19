@@ -5584,11 +5584,19 @@ async def get_user_notifications(
             query['is_read'] = False
         
         # Get notifications
-        notifications = await db.notifications.find(query) \
+        notifications_raw = await db.notifications.find(query) \
             .sort('created_at', -1) \
             .skip(offset) \
             .limit(limit) \
             .to_list(length=limit)
+        
+        # Convert notifications to JSON-serializable format
+        notifications = []
+        for notif in notifications_raw:
+            # Remove MongoDB ObjectId and convert to dict
+            if '_id' in notif:
+                del notif['_id']
+            notifications.append(notif)
         
         total = await db.notifications.count_documents(query)
         unread_count = await db.notifications.count_documents({'user_id': user.id, 'is_read': False})
