@@ -1611,16 +1611,42 @@ async def approve_deposit(approval: DepositApproval, admin: User = Depends(get_c
         {"$set": {
             "status": new_status,
             "admin_note": approval.admin_note,
+            "approved_by": admin['id'] if approval.action == "approve" else None,
+            "approved_at": datetime.now(timezone.utc).isoformat() if approval.action == "approve" else None,
             "updated_at": datetime.now(timezone.utc)
         }}
     )
     
-    # If approved, add balance to user wallet
+    # If approved, add balance to user wallet using transaction system
     if approval.action == "approve":
-        await db.users.update_one(
-            {"id": deposit["user_id"]},
-            {"$inc": {"wallet_balance_tmn": deposit["amount"]}}
-        )
+        try:
+            # Record transaction for audit trail
+            transaction = await record_transaction(
+                user_id=deposit["user_id"],
+                transaction_type="deposit",
+                amount_tmn=deposit["amount"],
+                reference_type="deposit",
+                reference_id=deposit["id"],
+                description=f"واریز کارت به کارت تایید شده",
+                created_by=admin['id']
+            )
+            
+            logger.info(f"✅ Deposit approved with transaction: {transaction['id']}")
+            
+            # Update deposit with transaction reference
+            await db.deposit_requests.update_one(
+                {"id": approval.deposit_id},
+                {"$set": {"transaction_id": transaction['id']}}
+            )
+            
+        except Exception as e:
+            logger.error(f"❌ Error recording deposit transaction: {str(e)}")
+            # Rollback deposit status
+            await db.deposit_requests.update_one(
+                {"id": approval.deposit_id},
+                {"$set": {"status": "pending"}}
+            )
+            raise HTTPException(status_code=500, detail=f"خطا در ثبت تراکنش: {str(e)}")
     
     return {"message": f"درخواست با موفقیت {new_status} شد"}
 
