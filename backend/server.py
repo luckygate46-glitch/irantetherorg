@@ -4516,7 +4516,7 @@ async def get_smart_trading_recommendation(
     coin_symbol: str,
     current_user: User = Depends(get_current_user)
 ):
-    """Get AI-powered smart trading recommendation for a coin"""
+    """Get REAL smart trading recommendation using mathematical analysis - NO EXTERNAL API"""
     try:
         # Get coin price data
         prices = await price_service.get_prices()
@@ -4538,33 +4538,19 @@ async def get_smart_trading_recommendation(
         # Get user holdings
         holdings = await db.trading_holdings.find({"user_id": current_user.id}).to_list(length=10)
         
-        # Try to get Smart Trading Assistant
-        try:
-            assistant = await get_smart_assistant()
-            
-            # Get recommendation from AI
-            recommendation = await assistant.get_trading_recommendation(
-                coin_symbol=coin_symbol,
-                current_price=current_price,
-                price_change_24h=price_change_24h,
-                user_balance=current_user.wallet_balance_tmn,
-                user_holdings=holdings
-            )
-            
-            return recommendation
-            
-        except Exception as ai_error:
-            # If AI service fails (no API key or other error), return mock recommendation
-            logger.warning(f"AI service unavailable, returning mock recommendation: {str(ai_error)}")
-            from smart_trading_ai import get_mock_trading_recommendation
-            
-            mock_recommendation = get_mock_trading_recommendation(
-                coin_symbol=coin_symbol,
-                current_price=current_price,
-                price_change_24h=price_change_24h
-            )
-            
-            return mock_recommendation
+        # Use REAL mathematical trading engine
+        from real_smart_trading import get_real_trading_engine
+        
+        engine = await get_real_trading_engine(db)
+        recommendation = await engine.get_real_trading_recommendation(
+            coin_symbol=coin_symbol,
+            current_price=current_price,
+            price_change_24h=price_change_24h,
+            user_balance=current_user.wallet_balance_tmn,
+            user_holdings=holdings
+        )
+        
+        return recommendation
         
     except HTTPException:
         raise
