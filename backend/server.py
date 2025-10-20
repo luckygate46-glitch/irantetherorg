@@ -1981,6 +1981,7 @@ class TradingOrderResponse(BaseModel):
     user_id: str
     user_email: Optional[str] = None
     user_name: Optional[str] = None
+    user_phone: Optional[str] = None
     order_type: str
     coin_symbol: str
     coin_id: str
@@ -1992,6 +1993,8 @@ class TradingOrderResponse(BaseModel):
     total_value_tmn: float
     status: str
     admin_note: Optional[str] = None
+    wallet_address: Optional[str] = None  # NEW: User's wallet to send crypto to
+    user_wallet_addresses: Optional[Dict] = None  # NEW: All user wallets
     created_at: datetime
     updated_at: datetime
 
