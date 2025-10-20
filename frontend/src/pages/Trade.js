@@ -25,6 +25,10 @@ const Trade = ({ user, onLogout }) => {
   const [targetCoin, setTargetCoin] = useState(null);
   const [walletAddress, setWalletAddress] = useState('');
   
+  // Order confirmation modal state
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [confirmationData, setConfirmationData] = useState(null);
+  
   // AI Recommendation states
   const [aiRecommendation, setAiRecommendation] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
