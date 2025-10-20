@@ -1,6 +1,10 @@
 """
 Advanced Admin Services - Core Infrastructure
 Provides comprehensive admin capabilities for the crypto exchange
+
+NOTE: This module is currently NOT IMPORTED in server.py and is UNUSED.
+It contains comprehensive admin service implementations that are not currently integrated.
+Consider removing or integrating into the main application.
 """
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional
