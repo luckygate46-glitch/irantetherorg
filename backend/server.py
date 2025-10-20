@@ -3690,25 +3690,21 @@ async def get_personal_recommendations(current_user: User = Depends(get_current_
 
 @api_router.get("/user/ai/portfolio-analysis")
 async def get_portfolio_analysis(current_user: User = Depends(get_current_user)):
-    """Get AI-powered portfolio analysis and optimization"""
+    """Get REAL portfolio analysis using mathematical calculations - NO EXTERNAL API"""
     try:
-        # Get user's portfolio
-        holdings = await db.user_holdings.find({"user_id": current_user.id}).to_list(None)
-        portfolio = {
-            'holdings': {holding.get('crypto_symbol', 'BTC'): holding.get('amount_tmn', 0) for holding in holdings}
-        }
+        # Use REAL portfolio analyzer
+        from real_portfolio_analysis import get_portfolio_analyzer
         
-        # Get historical data (mock for now)
-        historical_data = []  # Replace with real historical data
-        
-        # Analyze portfolio performance
-        analysis = await portfolio_manager.analyze_portfolio_performance(
-            current_user.id, portfolio, historical_data
+        analyzer = await get_portfolio_analyzer(db)
+        analysis = await analyzer.analyze_portfolio(
+            user_id=current_user.id,
+            user_balance=current_user.wallet_balance_tmn
         )
         
         return analysis
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error in portfolio analysis: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در تحلیل پورتفولیو: {str(e)}")
 
 @api_router.get("/user/ai/notifications")
 async def get_smart_notifications(current_user: User = Depends(get_current_user)):
