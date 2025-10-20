@@ -350,7 +350,7 @@ class BuyOrderDebugTester:
                 print("✅ BUY ORDER CREATION SUCCESSFUL!")
                 
                 order_id = data.get('order_id') or data.get('id')
-                calculated_usdt = data.get('calculated_crypto_amount', 0) or data.get('crypto_amount', 0)
+                calculated_usdt = data.get('calculated_crypto_amount', 0) or data.get('crypto_amount', 0) or data.get('amount_crypto', 0)
                 total_value = data.get('total_value_tmn', 0) or data.get('amount_tmn', 0)
                 status = data.get('status', 'unknown')
                 
