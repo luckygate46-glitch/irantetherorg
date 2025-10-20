@@ -131,10 +131,11 @@ const Trade = ({ user, onLogout }) => {
     } catch (error) {
       console.error('❌ Error fetching AI recommendation:', error);
       
-      // Check if it's a configuration error - hide AI panel if service is not configured
+      // Check if it's a configuration error
       if (error.response?.status === 503) {
-        console.log('ℹ️ AI service not configured - hiding AI panel');
-        setShowAiPanel(false); // Auto-hide the panel instead of showing error
+        console.log('ℹ️ AI service not configured');
+        setAiError('⚠️ سرویس هوش مصنوعی در حال حاضر غیرفعال است');
+        // Keep panel visible but show error message
       } else {
         setAiError('خطا در دریافت توصیه هوشمند');
       }
