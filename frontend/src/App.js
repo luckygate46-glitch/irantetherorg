@@ -254,6 +254,10 @@ function App() {
             element={user?.is_admin ? <AdminKYC user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
           <Route 
+            path="/admin/backup" 
+            element={user?.is_admin ? <AdminBackup user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          />
+          <Route 
             path="/admin/prices" 
             element={user?.is_admin ? <AdminPriceManager user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />} 
           />
