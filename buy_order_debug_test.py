@@ -60,12 +60,36 @@ class BuyOrderDebugTester:
     async def setup_test_user(self):
         """Create or setup test user similar to akbar ganji"""
         try:
-            # Try to create a test user similar to the reported user
+            # Try to use existing test user first
+            test_user_data = {
+                "email": "testuser@example.com",
+                "password": "testpass123"
+            }
+            
+            print(f"🔧 Trying existing test user: {test_user_data['email']}")
+            
+            # Try login first
+            login_response = await self.client.post(f"{BACKEND_URL}/auth/login", json=test_user_data)
+            
+            if login_response.status_code == 200:
+                login_data = login_response.json()
+                self.test_user_token = login_data["access_token"]
+                user_info = login_data["user"]
+                print(f"✅ Existing test user login successful: {user_info.get('full_name', 'Test User')}")
+                print(f"   User ID: {user_info.get('id')}")
+                print(f"   Balance: {user_info.get('wallet_balance_tmn', 0):,.0f} TMN")
+                print(f"   KYC Level: {user_info.get('kyc_level', 0)}")
+                
+                # Set up user with proper balance and KYC level using admin privileges
+                await self.setup_user_for_trading(user_info.get('id'))
+                return True
+            
+            # If existing user doesn't work, try to create a new one
             test_user_data = {
                 "first_name": "اکبر",
                 "last_name": "گنجی", 
-                "email": "akbar.ganji@test.com",
-                "phone": "09123456789",
+                "email": "akbar.ganji.test@example.com",
+                "phone": "09123456788",
                 "password": "testpass123"
             }
             
