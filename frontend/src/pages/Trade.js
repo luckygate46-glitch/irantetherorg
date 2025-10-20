@@ -804,6 +804,15 @@ const Trade = ({ user, onLogout }) => {
           </div>
         </div>
       </div>
+      
+      {/* Order Confirmation Modal */}
+      {showConfirmationModal && confirmationData && (
+        <OrderConfirmationModal
+          isOpen={showConfirmationModal}
+          onClose={() => setShowConfirmationModal(false)}
+          orderData={confirmationData}
+        />
+      )}
     </div>
   );
 };
