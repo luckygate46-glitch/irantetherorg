@@ -246,6 +246,98 @@ class DatabaseBackupManager:
         except Exception as e:
             print(f"❌ Error deleting backup: {e}")
             raise Exception(f"خطا در حذف پشتیبان: {str(e)}")
+    
+    async def restore_from_backup(self, backup_data: Dict) -> Dict:
+        """
+        Restore database from backup data
+        CAUTION: This will DELETE existing data and replace with backup
+        """
+        try:
+            result = {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "status": "started",
+                "collections_restored": [],
+                "collections_failed": [],
+                "total_documents_restored": 0
+            }
+            
+            # Validate backup structure
+            if "collections" not in backup_data:
+                raise Exception("Invalid backup format: 'collections' key not found")
+            
+            collections_data = backup_data.get("collections", {})
+            
+            for collection_name, collection_info in collections_data.items():
+                try:
+                    print(f"🔄 Restoring {collection_name}...")
+                    
+                    # Get documents from backup
+                    documents = collection_info.get("documents", [])
+                    
+                    if not documents:
+                        print(f"⚠️ No documents to restore in {collection_name}")
+                        continue
+                    
+                    # Get MongoDB collection
+                    collection = self.db[collection_name]
+                    
+                    # Delete existing data
+                    delete_result = await collection.delete_many({})
+                    print(f"   🗑️ Deleted {delete_result.deleted_count} existing documents")
+                    
+                    # Prepare documents for insertion
+                    docs_to_insert = []
+                    for doc in documents:
+                        # Remove _id if present (let MongoDB create new ones)
+                        cleaned_doc = {k: v for k, v in doc.items() if k != '_id'}
+                        
+                        # Convert ISO datetime strings back to datetime objects
+                        for key, value in cleaned_doc.items():
+                            if isinstance(value, str) and 'T' in value and ('+' in value or 'Z' in value):
+                                try:
+                                    # Try parsing as datetime
+                                    from dateutil import parser
+                                    cleaned_doc[key] = parser.parse(value)
+                                except:
+                                    # Keep as string if not valid datetime
+                                    pass
+                        
+                        docs_to_insert.append(cleaned_doc)
+                    
+                    # Insert documents
+                    if docs_to_insert:
+                        insert_result = await collection.insert_many(docs_to_insert)
+                        inserted_count = len(insert_result.inserted_ids)
+                        
+                        result["collections_restored"].append({
+                            "name": collection_name,
+                            "documents_restored": inserted_count
+                        })
+                        result["total_documents_restored"] += inserted_count
+                        
+                        print(f"   ✅ Restored {inserted_count} documents to {collection_name}")
+                    
+                except Exception as e:
+                    error_msg = f"Error restoring {collection_name}: {str(e)}"
+                    print(f"   ❌ {error_msg}")
+                    result["collections_failed"].append({
+                        "name": collection_name,
+                        "error": error_msg
+                    })
+            
+            result["status"] = "completed"
+            result["success"] = len(result["collections_failed"]) == 0
+            
+            print(f"\n✅ Restore completed:")
+            print(f"   - Collections restored: {len(result['collections_restored'])}")
+            print(f"   - Collections failed: {len(result['collections_failed'])}")
+            print(f"   - Total documents: {result['total_documents_restored']}")
+            
+            return result
+            
+        except Exception as e:
+            print(f"❌ Critical error in restore: {e}")
+            raise Exception(f"خطا در بازگردانی: {str(e)}")
 
 
 # Singleton instance
