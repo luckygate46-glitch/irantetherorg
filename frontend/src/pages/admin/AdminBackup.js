@@ -9,6 +9,8 @@ const AdminBackup = ({ user, onLogout }) => {
   const [backups, setBackups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   useEffect(() => {
     fetchStats();
