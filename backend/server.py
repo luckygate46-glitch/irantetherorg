@@ -5453,15 +5453,15 @@ async def adjust_user_balance(
             reference_type="admin_action",
             reference_id=str(uuid.uuid4()),
             description=f"تصحیح موجودی توسط ادمین: {request.reason}",
-            created_by=admin['id'],
+            created_by=admin.id,
             admin_notes=request.notes
         )
         
         # Log admin action
         admin_action = {
             'id': str(uuid.uuid4()),
-            'admin_id': admin['id'],
-            'admin_email': admin.get('email', 'N/A'),
+            'admin_id': admin.id,
+            'admin_email': admin.email or 'N/A',
             'action_type': 'adjust_balance',
             'target_type': 'user',
             'target_id': request.user_id,
