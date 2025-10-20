@@ -4537,19 +4537,33 @@ async def get_smart_trading_recommendation(
         # Get user holdings
         holdings = await db.trading_holdings.find({"user_id": current_user.id}).to_list(length=10)
         
-        # Get Smart Trading Assistant
-        assistant = await get_smart_assistant()
-        
-        # Get recommendation
-        recommendation = await assistant.get_trading_recommendation(
-            coin_symbol=coin_symbol,
-            current_price=current_price,
-            price_change_24h=price_change_24h,
-            user_balance=current_user.wallet_balance_tmn,
-            user_holdings=holdings
-        )
-        
-        return recommendation
+        # Try to get Smart Trading Assistant
+        try:
+            assistant = await get_smart_assistant()
+            
+            # Get recommendation from AI
+            recommendation = await assistant.get_trading_recommendation(
+                coin_symbol=coin_symbol,
+                current_price=current_price,
+                price_change_24h=price_change_24h,
+                user_balance=current_user.wallet_balance_tmn,
+                user_holdings=holdings
+            )
+            
+            return recommendation
+            
+        except Exception as ai_error:
+            # If AI service fails (no API key or other error), return mock recommendation
+            logger.warning(f"AI service unavailable, returning mock recommendation: {str(ai_error)}")
+            from smart_trading_ai import get_mock_trading_recommendation
+            
+            mock_recommendation = get_mock_trading_recommendation(
+                coin_symbol=coin_symbol,
+                current_price=current_price,
+                price_change_24h=price_change_24h
+            )
+            
+            return mock_recommendation
         
     except HTTPException:
         raise
