@@ -248,60 +248,32 @@ const Trade = ({ user, onLogout }) => {
         console.error('⚠️ Balance refresh failed:', refreshError);
       }
       
-      // Generate invoice/faktor
+      // Generate invoice/faktor data
       const orderId = response.data.order?.id || `ORD-${Date.now()}`;
       const orderDate = new Date().toLocaleDateString('fa-IR');
       const orderTime = new Date().toLocaleTimeString('fa-IR');
       
-      // Show detailed success message with faktor (invoice)
-      const successMsg = orderType === 'buy' 
-        ? `╔═══════════════════════════════╗
-║        🧾 فاکتور خرید        ║
-╚═══════════════════════════════╝
-
-✅ سفارش شما با موفقیت ثبت شد!
-
-📋 شماره سفارش: ${orderId}
-📅 تاریخ: ${orderDate}
-🕐 ساعت: ${orderTime}
-
-💰 مبلغ پرداختی: ${new Intl.NumberFormat('fa-IR').format(orderData.amount_tmn)} تومان
-🪙 ارز درخواستی: ${selectedCoin.symbol}
-📊 قیمت: ${new Intl.NumberFormat('fa-IR').format(selectedCoin.current_price)} تومان
-💎 مقدار تقریبی: ${(orderData.amount_tmn / selectedCoin.current_price).toFixed(8)} ${selectedCoin.symbol}
-
-✔️ مبلغ از موجودی شما کسر شد
-⏳ وضعیت: در انتظار تایید ادمین
-
-📌 مراحل بعدی:
-1️⃣ ادمین سفارش شما را بررسی می‌کند
-2️⃣ پس از تایید، ارز به کیف پول شما واریز می‌شود
-3️⃣ اعلان تایید به شما ارسال خواهد شد
-
-⏱️ زمان تقریبی: 1-24 ساعت
-
-💡 می‌توانید وضعیت سفارش را در بخش "سفارشات من" پیگیری کنید
-
-🙏 از صبر و شکیبایی شما سپاسگزاریم`
-        : orderType === 'sell'
-        ? `╔═══════════════════════════════╗
-║        🧾 فاکتور فروش        ║
-╚═══════════════════════════════╝
-
-✅ سفارش فروش شما با موفقیت ثبت شد!
-
-📋 شماره سفارش: ${orderId}
-📅 تاریخ: ${orderDate}
-
-💎 مقدار: ${orderData.amount_crypto} ${selectedCoin.symbol}
-💰 ارزش تقریبی: ${new Intl.NumberFormat('fa-IR').format(orderData.amount_crypto * selectedCoin.current_price)} تومان
-
-⏳ وضعیت: در انتظار تایید ادمین
-
-🙏 از صبر شما سپاسگزاریم`
-        : '✅ سفارش شما با موفقیت ثبت شد!';
-      
-      alert(successMsg);
+      // Prepare confirmation data for modal
+      if (orderType === 'buy') {
+        setConfirmationData({
+          orderId: orderId,
+          persianDate: orderDate,
+          orderTime: orderTime,
+          amount_tmn: orderData.amount_tmn,
+          coin_symbol: selectedCoin.symbol,
+          price_per_coin: selectedCoin.current_price,
+          amount_crypto: (orderData.amount_tmn / selectedCoin.current_price).toFixed(8),
+          transactionId: response.data.transaction?.id || 'N/A',
+          walletAddress: orderData.user_wallet_address
+        });
+        setShowConfirmationModal(true);
+      } else {
+        // For sell/trade orders, show simple alert (can be enhanced later)
+        const successMsg = orderType === 'sell'
+          ? `✅ سفارش فروش شما با موفقیت ثبت شد!\n\n📋 شماره سفارش: ${orderId}\n💎 مقدار: ${orderData.amount_crypto} ${selectedCoin.symbol}`
+          : '✅ سفارش شما با موفقیت ثبت شد!';
+        alert(successMsg);
+      }
       
       // Clear form and refresh data
       setBuyAmount('');
