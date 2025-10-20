@@ -183,6 +183,18 @@ export default function AdminDashboard({ user, onLogout }) {
                 <h3 className="text-white font-semibold mb-2">احراز هویت</h3>
                 <p className="text-sm text-slate-200">بررسی و تایید مدارک کاربران</p>
               </button>
+
+              <button
+                onClick={() => navigate('/admin/backup')}
+                className="p-6 bg-gradient-to-br from-emerald-800/50 to-teal-800/50 border border-emerald-700 rounded-lg hover:from-emerald-700/50 hover:to-teal-700/50 transition-all text-right"
+                data-testid="quick-action-backup"
+              >
+                <svg className="w-8 h-8 text-emerald-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <h3 className="text-white font-semibold mb-2">💾 پشتیبان‌گیری</h3>
+                <p className="text-sm text-slate-200">دانلود و مدیریت نسخه‌های پشتیبان دیتابیس</p>
+              </button>
             </div>
           </CardContent>
         </Card>
