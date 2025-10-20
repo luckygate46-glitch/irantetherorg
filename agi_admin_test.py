@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
+BACKEND_URL = "https://exchange-farsi.preview.emergentagent.com/api"
 ADMIN_CREDENTIALS = {
     "email": "admin",
     "password": "istari118"

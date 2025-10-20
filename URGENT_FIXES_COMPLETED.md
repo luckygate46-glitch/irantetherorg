@@ -122,7 +122,7 @@ setShowWalletWarning(true);
 
 1. **Go to Market Page:**
    ```
-   https://cryptotradera.preview.emergentagent.com/market
+   https://exchange-farsi.preview.emergentagent.com/market
    ```
 
 2. **Click "معامله" (Trade) button on any cryptocurrency (e.g., Tether/USDT)**

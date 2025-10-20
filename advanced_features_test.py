@@ -13,7 +13,7 @@ import sys
 import time
 
 # Configuration
-BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
+BACKEND_URL = "https://exchange-farsi.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 
@@ -626,7 +626,7 @@ from datetime import datetime
 import sys
 
 # Configuration
-BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
+BACKEND_URL = "https://exchange-farsi.preview.emergentagent.com/api"
 TEST_USER_EMAIL = "advanced.test.user@example.com"
 TEST_USER_PASSWORD = "testpass123"
 ADMIN_EMAIL = "admin"

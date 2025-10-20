@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Configuration
-BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
+BACKEND_URL = "https://exchange-farsi.preview.emergentagent.com/api"
 TEST_TIMEOUT = 30.0
 
 class AIIntegrationTester:

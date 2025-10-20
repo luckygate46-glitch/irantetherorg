@@ -9,7 +9,7 @@ import json
 import bcrypt
 
 # Configuration
-BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
+BACKEND_URL = "https://exchange-farsi.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin"
 ADMIN_PASSWORD = "istari118"
 

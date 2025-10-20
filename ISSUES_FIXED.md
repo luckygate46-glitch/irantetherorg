@@ -37,7 +37,7 @@ Balance: 5,000,000 TMN
 
 **API Test:**
 ```bash
-curl -X POST https://cryptotradera.preview.emergentagent.com/api/auth/login \
+curl -X POST https://exchange-farsi.preview.emergentagent.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "admin", "password": "istari118"}'
 ```
@@ -90,13 +90,13 @@ No changes needed - this is working as designed.
 **Backend API Verification:**
 ```bash
 # Admin login test
-curl -X POST https://cryptotradera.preview.emergentagent.com/api/auth/login \
+curl -X POST https://exchange-farsi.preview.emergentagent.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "admin", "password": "istari118"}'
 # Response: 200 OK with JWT token ✅
 
 # Test user login test
-curl -X POST https://cryptotradera.preview.emergentagent.com/api/auth/login \
+curl -X POST https://exchange-farsi.preview.emergentagent.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "testuser@example.com", "password": "password123"}'
 # Response: 200 OK with JWT token ✅

@@ -13,7 +13,7 @@ import sys
 import re
 
 # Configuration
-BACKEND_URL = "https://cryptotradera.preview.emergentagent.com/api"
+BACKEND_URL = "https://exchange-farsi.preview.emergentagent.com/api"
 TEST_USER_EMAIL = f"wallet.test.{datetime.now().strftime('%Y%m%d%H%M%S')}@example.com"
 TEST_USER_PASSWORD = "testpass123"
 ADMIN_EMAIL = "admin"

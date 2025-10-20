@@ -175,7 +175,7 @@ if (orderType === 'buy' && !walletAddress.trim()) {
 ## 🧪 Testing
 
 ### To Test:
-1. Go to: `https://cryptotradera.preview.emergentagent.com/market`
+1. Go to: `https://exchange-farsi.preview.emergentagent.com/market`
 2. Click "معامله" (Trade) on any cryptocurrency
 3. Verify: Page loads smoothly with NO blocking dialogs ✅
 4. Click "خرید" (Buy) tab
