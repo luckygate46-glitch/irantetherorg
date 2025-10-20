@@ -1,6 +1,10 @@
 """
 Admin Communication & Security Services
 Handles announcements, notifications, support tickets, fraud detection
+
+NOTE: This module is currently NOT IMPORTED in server.py and is UNUSED.
+It contains communication service implementations that are not currently integrated.
+Consider removing or integrating into the main application.
 """
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional
