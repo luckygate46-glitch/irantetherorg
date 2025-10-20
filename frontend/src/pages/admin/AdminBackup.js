@@ -107,6 +107,82 @@ const AdminBackup = ({ user, onLogout }) => {
     document.body.removeChild(link);
   };
 
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/json') {
+      setUploadedFile(file);
+    } else {
+      alert('لطفا یک فایل JSON انتخاب کنید');
+    }
+  };
+
+  const restoreFromBackup = async () => {
+    if (!uploadedFile) {
+      alert('لطفا ابتدا یک فایل بک‌آپ انتخاب کنید');
+      return;
+    }
+
+    const confirmMessage = `⚠️ هشدار: این عملیات تمام داده‌های فعلی را حذف کرده و با داده‌های بک‌آپ جایگزین می‌کند.
+
+آیا مطمئن هستید که می‌خواهید ادامه دهید؟
+
+این عملیات غیرقابل بازگشت است!`;
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    // Second confirmation
+    if (!window.confirm('آیا واقعا مطمئن هستید؟ تمام داده‌های فعلی حذف خواهند شد!')) {
+      return;
+    }
+
+    try {
+      setRestoring(true);
+
+      // Read file
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const backupData = JSON.parse(e.target.result);
+
+          // Validate backup structure
+          if (!backupData.collections) {
+            alert('فرمت فایل بک‌آپ نامعتبر است');
+            return;
+          }
+
+          // Send to server
+          const response = await axios.post(`${API}/admin/backup/restore`, backupData);
+
+          if (response.data.success) {
+            alert(`✅ بازگردانی با موفقیت انجام شد!\n\n` +
+              `کالکشن‌های بازگردانی شده: ${response.data.details.collections_restored.length}\n` +
+              `تعداد داده‌ها: ${response.data.details.total_documents_restored}`
+            );
+            
+            // Refresh stats
+            fetchStats();
+            setUploadedFile(null);
+          } else {
+            alert('خطا در بازگردانی: ' + JSON.stringify(response.data.details));
+          }
+        } catch (error) {
+          console.error('Error restoring:', error);
+          alert('خطا در بازگردانی: ' + (error.response?.data?.detail || error.message));
+        } finally {
+          setRestoring(false);
+        }
+      };
+
+      reader.readAsText(uploadedFile);
+    } catch (error) {
+      console.error('Error reading file:', error);
+      alert('خطا در خواندن فایل: ' + error.message);
+      setRestoring(false);
+    }
+  };
+
   const formatBytes = (bytes) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
