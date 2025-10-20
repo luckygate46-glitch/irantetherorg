@@ -224,7 +224,7 @@ const AdminBackup = ({ user, onLogout }) => {
 
       <div className="max-w-7xl mx-auto p-6">
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <button
             onClick={downloadFullDatabase}
             className="p-6 bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-xl transition-all transform hover:scale-105 shadow-lg"
@@ -253,6 +253,43 @@ const AdminBackup = ({ user, onLogout }) => {
             </div>
             <p className="text-blue-100 text-sm">ذخیره نسخه پشتیبان در سرور</p>
           </button>
+
+          <div className="p-6 bg-gradient-to-br from-orange-600 to-red-700 rounded-xl border-2 border-orange-500">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span className="text-xl font-bold">بازگردانی از بک‌آپ</span>
+            </div>
+            <p className="text-orange-100 text-sm mb-3">آپلود و بازگردانی دیتابیس</p>
+            
+            <div className="space-y-2">
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="backup-upload"
+                disabled={restoring}
+              />
+              <label
+                htmlFor="backup-upload"
+                className="block w-full px-4 py-2 bg-white text-orange-900 rounded-lg font-semibold text-center cursor-pointer hover:bg-orange-50 transition-colors"
+              >
+                {uploadedFile ? `📁 ${uploadedFile.name}` : '📂 انتخاب فایل بک‌آپ'}
+              </label>
+              
+              {uploadedFile && (
+                <button
+                  onClick={restoreFromBackup}
+                  disabled={restoring}
+                  className="w-full px-4 py-2 bg-orange-900 hover:bg-orange-800 disabled:bg-slate-700 rounded-lg font-bold text-white transition-colors"
+                >
+                  {restoring ? '⏳ در حال بازگردانی...' : '⚠️ بازگردانی دیتابیس'}
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Database Stats */}
