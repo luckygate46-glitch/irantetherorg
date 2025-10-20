@@ -75,6 +75,14 @@ const AdminOrders = ({ user, onLogout }) => {
     }
   };
 
+  const copyToClipboard = (text, label) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert(`✅ ${label} کپی شد: ${text}`);
+    }).catch(err => {
+      console.error('خطا در کپی:', err);
+    });
+  };
+
   const formatNumber = (num) => {
     return new Intl.NumberFormat('fa-IR').format(Math.round(num));
   };
