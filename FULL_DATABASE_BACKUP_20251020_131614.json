@@ -1,0 +1,178 @@
+{
+  "backup_metadata": {
+    "database_name": "crypto_exchange",
+    "database_type": "MongoDB",
+    "backup_timestamp": "2025-10-20T13:16:14.445644+00:00",
+    "backup_type": "FULL_COMPLETE_EXPORT",
+    "backup_version": "2.0",
+    "exported_by": "Admin Backup System"
+  },
+  "collections": {
+    "transactions": {
+      "document_count": 1,
+      "documents": [
+        {
+          "_id": "68f527e8ea734eca3e0ff633",
+          "id": "c8b07357-bb4b-491a-a923-3da3b252877c",
+          "user_id": "admin-user-001",
+          "type": "deposit",
+          "amount_tmn": 41000000,
+          "balance_before": 0,
+          "balance_after": 41000000,
+          "reference_type": "deposit",
+          "reference_id": "3f700b35-be44-4c6a-a783-2e98905ed5ba",
+          "description": "واریز کارت به کارت (بازیابی)",
+          "created_at": "2025-10-18T04:20:56.252173",
+          "created_by": "admin-user-001",
+          "status": "completed"
+        }
+      ],
+      "export_timestamp": "2025-10-20T13:16:14.459939+00:00"
+    },
+    "users": {
+      "document_count": 2,
+      "documents": [
+        {
+          "_id": "68f315a8c4d370a5998c2d3b",
+          "id": "admin-user-001",
+          "email": "admin",
+          "password_hash": "$2b$12$92z6czZCdsFGL3My0bNphurXJodgbjeMO/6fja2uDPm5tLIOxDKHO",
+          "first_name": "ادمین",
+          "last_name": "سیستم",
+          "full_name": "ادمین سیستم",
+          "phone": "09000000000",
+          "is_admin": true,
+          "is_phone_verified": true,
+          "kyc_level": 2,
+          "kyc_status": "approved",
+          "wallet_balance_tmn": 41000000,
+          "created_at": "2025-10-18T04:20:56.003834",
+          "updated_at": "2025-10-18T04:20:56.003844"
+        },
+        {
+          "_id": "68f315a8c4d370a5998c2d3c",
+          "id": "76fcf612-64ba-4121-aec2-e12257f7da1e",
+          "email": "testuser@example.com",
+          "password_hash": "$2b$12$DEqjMCkHI7q7rdzBnr0leurYkiZLdLcpY6SxhaYEcYZngg9Y90p16",
+          "first_name": "علی",
+          "last_name": "احمدی",
+          "full_name": "علی احمدی",
+          "phone": "09123456789",
+          "is_admin": false,
+          "is_phone_verified": true,
+          "kyc_level": 2,
+          "kyc_status": "approved",
+          "wallet_balance_tmn": 0,
+          "created_at": "2025-10-18T04:20:56.240413",
+          "updated_at": "2025-10-18T04:20:56.240419"
+        }
+      ],
+      "export_timestamp": "2025-10-20T13:16:14.466970+00:00"
+    },
+    "wallet_addresses": {
+      "document_count": 2,
+      "documents": [
+        {
+          "_id": "68f315a8c4d370a5998c2d3d",
+          "id": "c69f4dd7-a7bf-40cc-84dc-ea22b23123a5",
+          "user_id": "admin-user-001",
+          "coin_symbol": "USDT",
+          "coin_id": "tether",
+          "address": "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b1",
+          "verified": true,
+          "created_at": "2025-10-18T04:20:56.241688"
+        },
+        {
+          "_id": "68f62e12418afc7ca56967fe",
+          "id": "d5f56c21-abfd-49a4-89df-fbedfd78a4cc",
+          "user_id": "admin-user-001",
+          "coin_symbol": "BTC",
+          "coin_id": "bitcoin",
+          "address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+          "verified": true,
+          "created_at": "2025-10-20T12:41:54.647000"
+        }
+      ],
+      "export_timestamp": "2025-10-20T13:16:14.473797+00:00"
+    },
+    "trading_orders": {
+      "document_count": 2,
+      "documents": [
+        {
+          "_id": "68f62e12418afc7ca56967ff",
+          "id": "6a4e186f-34ac-4d75-82a9-7fa16ac70d8d",
+          "user_id": "admin-user-001",
+          "order_type": "buy",
+          "coin_symbol": "BTC",
+          "coin_id": "bitcoin",
+          "amount_crypto": 0.001,
+          "amount_tmn": 500000,
+          "price_at_order": 500000000,
+          "total_value_tmn": 500000,
+          "status": "pending",
+          "wallet_address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+          "created_at": "2025-10-20T12:41:54.652000",
+          "updated_at": "2025-10-20T12:41:54.652000"
+        },
+        {
+          "_id": "68f62e12418afc7ca5696800",
+          "id": "44a9bea8-cbc8-4414-a5bf-3221d509e27f",
+          "user_id": "admin-user-001",
+          "order_type": "buy",
+          "coin_symbol": "USDT",
+          "coin_id": "tether",
+          "amount_crypto": 100,
+          "amount_tmn": 700000,
+          "price_at_order": 7000,
+          "total_value_tmn": 700000,
+          "status": "pending",
+          "wallet_address": "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b1",
+          "created_at": "2025-10-20T12:41:54.676000",
+          "updated_at": "2025-10-20T12:41:54.676000"
+        }
+      ],
+      "export_timestamp": "2025-10-20T13:16:14.478716+00:00"
+    },
+    "notifications": {
+      "document_count": 1,
+      "documents": [
+        {
+          "_id": "68f54ef4bb1026a195a3fb61",
+          "id": "67f016d4-e82c-45d3-8fe2-9b5083ead7af",
+          "user_id": "admin-user-001",
+          "type": "order_approved",
+          "title": "✅ سفارش تایید شد (تست)",
+          "message": "این یک اعلان تستی است",
+          "reference_type": "order",
+          "reference_id": "test-order-123",
+          "data": {},
+          "is_read": false,
+          "created_at": "2025-10-19T20:49:56.073148+00:00"
+        }
+      ],
+      "export_timestamp": "2025-10-20T13:16:14.482717+00:00"
+    },
+    "deposits": {
+      "document_count": 1,
+      "documents": [
+        {
+          "_id": "68f315a8c4d370a5998c2d3e",
+          "id": "3f700b35-be44-4c6a-a783-2e98905ed5ba",
+          "user_id": "admin-user-001",
+          "amount_tmn": 41000000,
+          "status": "approved",
+          "deposit_type": "initial_balance",
+          "created_at": "2025-10-18T04:20:56.252173",
+          "approved_at": "2025-10-18T04:20:56.252176"
+        }
+      ],
+      "export_timestamp": "2025-10-20T13:16:14.486493+00:00"
+    }
+  },
+  "backup_summary": {
+    "total_collections": 6,
+    "total_documents": 9,
+    "successful_collections": 6,
+    "failed_collections": 0
+  }
+}
