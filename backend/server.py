@@ -1660,7 +1660,7 @@ async def approve_deposit(approval: DepositApproval, admin: User = Depends(get_c
         {"$set": {
             "status": new_status,
             "admin_note": approval.admin_note,
-            "approved_by": admin['id'] if approval.action == "approve" else None,
+            "approved_by": admin.id if approval.action == "approve" else None,
             "approved_at": datetime.now(timezone.utc).isoformat() if approval.action == "approve" else None,
             "updated_at": datetime.now(timezone.utc)
         }}
@@ -1677,7 +1677,7 @@ async def approve_deposit(approval: DepositApproval, admin: User = Depends(get_c
                 reference_type="deposit",
                 reference_id=deposit["id"],
                 description=f"واریز کارت به کارت تایید شده",
-                created_by=admin['id']
+                created_by=admin.id
             )
             
             logger.info(f"✅ Deposit approved with transaction: {transaction['id']}")
