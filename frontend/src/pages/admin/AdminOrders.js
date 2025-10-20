@@ -204,126 +204,176 @@ const AdminOrders = ({ user, onLogout }) => {
           </div>
         </div>
 
-        {/* Orders Table */}
-        <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-800">
-                <tr>
-                  <th className="px-4 py-3 text-right">کاربر</th>
-                  <th className="px-4 py-3 text-right">نوع</th>
-                  <th className="px-4 py-3 text-right">ارز</th>
-                  <th className="px-4 py-3 text-right">مقدار</th>
-                  <th className="px-4 py-3 text-right">ارزش (تومان)</th>
-                  <th className="px-4 py-3 text-right">وضعیت</th>
-                  <th className="px-4 py-3 text-right">تاریخ</th>
-                  <th className="px-4 py-3 text-right">عملیات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="px-4 py-8 text-center text-slate-200">
-                      هیچ سفارشی یافت نشد
-                    </td>
-                  </tr>
-                ) : (
-                  orders.map(order => (
-                    <tr key={order.id} className="border-t border-slate-800 hover:bg-slate-800/50">
-                      <td className="px-4 py-3">
-                        <div>
-                          <div className="font-semibold">{order.user_name || 'بدون نام'}</div>
-                          <div className="text-sm text-slate-200">{order.user_email}</div>
+        {/* Orders List */}
+        <div className="space-y-4">
+          {orders.length === 0 ? (
+            <div className="bg-slate-900 rounded-xl border border-slate-800 p-8 text-center text-slate-400">
+              هیچ سفارشی یافت نشد
+            </div>
+          ) : (
+            orders.map(order => (
+              <div key={order.id} className="bg-slate-900 rounded-xl border border-slate-800 p-6 hover:border-emerald-500/50 transition-all">
+                {/* Header Row */}
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className={`px-3 py-1 rounded-lg font-bold ${
+                        order.order_type === 'buy' ? 'bg-green-600 text-white' :
+                        order.order_type === 'sell' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'
+                      }`}>
+                        {getOrderTypeText(order.order_type)}
+                      </span>
+                      <span className={`px-3 py-1 rounded-lg ${getStatusColor(order.status)} text-white`}>
+                        {getStatusText(order.status)}
+                      </span>
+                      <span className="text-2xl font-bold text-white">{order.coin_symbol}</span>
+                    </div>
+                    <div className="text-slate-400 text-sm">
+                      {new Date(order.created_at).toLocaleDateString('fa-IR')} • {new Date(order.created_at).toLocaleTimeString('fa-IR')}
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <div className="text-2xl font-bold text-emerald-400">
+                      {formatNumber(order.total_value_tmn)} تومان
+                    </div>
+                    <div className="text-slate-400 text-sm">
+                      {order.amount_crypto && `${order.amount_crypto} ${order.coin_symbol}`}
+                    </div>
+                  </div>
+                </div>
+
+                {/* User Info & Wallet Section - PROMINENT */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {/* User Info */}
+                  <div className="bg-slate-800 rounded-lg p-4">
+                    <div className="text-xs text-slate-400 mb-2">📋 اطلاعات کاربر</div>
+                    <div className="text-white font-semibold mb-1">{order.user_name || 'بدون نام'}</div>
+                    <div className="text-slate-300 text-sm">{order.user_email}</div>
+                    {order.user_phone && (
+                      <div className="text-slate-300 text-sm mt-1">📱 {order.user_phone}</div>
+                    )}
+                  </div>
+
+                  {/* WALLET ADDRESS - MOST PROMINENT */}
+                  <div className="bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 border-2 border-emerald-500/50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs text-emerald-300 font-bold">💳 آدرس کیف پول کاربر ({order.coin_symbol})</div>
+                      {order.user_wallet_addresses && order.user_wallet_addresses[order.coin_symbol]?.verified && (
+                        <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded">✓ تایید شده</span>
+                      )}
+                    </div>
+                    {order.wallet_address ? (
+                      <div>
+                        <div className="bg-slate-900 rounded p-3 mb-2 font-mono text-sm text-emerald-300 break-all">
+                          {order.wallet_address}
                         </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          order.order_type === 'buy' ? 'bg-green-600' :
-                          order.order_type === 'sell' ? 'bg-red-600' : 'bg-blue-600'
-                        }`}>
-                          {getOrderTypeText(order.order_type)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div>
-                          <div className="font-semibold">{order.coin_symbol}</div>
-                          {order.target_coin_symbol && (
-                            <div className="text-sm text-slate-200">→ {order.target_coin_symbol}</div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div>
-                          {order.order_type === 'buy' ? (
-                            <div>{formatNumber(order.amount_tmn)} ت</div>
-                          ) : (
-                            <div>{order.amount_crypto} {order.coin_symbol}</div>
-                          )}
-                          {order.order_type === 'trade' && order.target_coin_symbol && (
-                            <div className="text-sm text-slate-200">
-                              → {((order.amount_crypto * order.price_at_order) / order.price_at_order).toFixed(8)} {order.target_coin_symbol}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="font-semibold">{formatNumber(order.total_value_tmn)}</div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded text-xs ${getStatusColor(order.status)}`}>
-                          {getStatusText(order.status)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="text-sm">
-                          {new Date(order.created_at).toLocaleDateString('fa-IR')}
-                        </div>
-                        <div className="text-xs text-slate-200">
-                          {new Date(order.created_at).toLocaleTimeString('fa-IR')}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        {order.status === 'pending' && (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleOrderAction(order.id, 'approve')}
-                              disabled={processingId === order.id}
-                              className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-slate-700 rounded text-xs transition-colors"
-                            >
-                              {processingId === order.id ? '...' : 'تایید'}
-                            </button>
-                            <button
-                              onClick={() => {
-                                const note = prompt('دلیل رد (اختیاری):');
-                                if (note !== null) {
-                                  handleOrderAction(order.id, 'reject', note);
-                                }
-                              }}
-                              disabled={processingId === order.id}
-                              className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:bg-slate-700 rounded text-xs transition-colors"
-                            >
-                              رد
-                            </button>
+                        <button
+                          onClick={() => copyToClipboard(order.wallet_address, 'آدرس کیف پول')}
+                          className="w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-semibold text-white transition-colors flex items-center justify-center gap-2"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                          کپی آدرس
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-yellow-400 text-sm">⚠️ کاربر آدرس کیف پول ثبت نکرده است</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* All User Wallets */}
+                {order.user_wallet_addresses && Object.keys(order.user_wallet_addresses).length > 0 && (
+                  <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
+                    <div className="text-xs text-slate-400 mb-3">🔑 تمام کیف پول‌های کاربر</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {Object.entries(order.user_wallet_addresses).map(([symbol, wallet]) => (
+                        <div key={symbol} className="bg-slate-900 rounded p-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-white font-semibold">{symbol}</span>
+                            {wallet.verified && (
+                              <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded">✓</span>
+                            )}
                           </div>
-                        )}
-                        {order.status !== 'pending' && (
-                          <span className="text-sm text-slate-200">
-                            {order.status === 'approved' ? 'تایید شده' :
-                             order.status === 'completed' ? 'تکمیل' : 'پردازش شده'}
-                          </span>
-                        )}
-                        {order.admin_note && (
-                          <div className="text-xs text-slate-200 mt-1">
-                            یادداشت: {order.admin_note}
+                          <div className="font-mono text-xs text-slate-300 break-all mb-2">
+                            {wallet.address}
                           </div>
-                        )}
-                      </td>
-                    </tr>
-                  ))
+                          <button
+                            onClick={() => copyToClipboard(wallet.address, `آدرس ${symbol}`)}
+                            className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+                          >
+                            📋 کپی
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </tbody>
-            </table>
-          </div>
+
+                {/* Order Details */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
+                  <div>
+                    <div className="text-slate-400">مقدار کریپتو</div>
+                    <div className="text-white font-semibold">{order.amount_crypto || 'N/A'}</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-400">مقدار تومان</div>
+                    <div className="text-white font-semibold">{formatNumber(order.amount_tmn || 0)}</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-400">قیمت واحد</div>
+                    <div className="text-white font-semibold">{formatNumber(order.price_at_order)}</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-400">شناسه سفارش</div>
+                    <div className="text-white font-mono text-xs">{order.id.substring(0, 8)}...</div>
+                  </div>
+                </div>
+
+                {/* Admin Note */}
+                {order.admin_note && (
+                  <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg p-3 mb-4">
+                    <div className="text-xs text-blue-300 mb-1">📝 یادداشت ادمین</div>
+                    <div className="text-white text-sm">{order.admin_note}</div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 items-center">
+                  {order.status === 'pending' ? (
+                    <>
+                      <button
+                        onClick={() => handleOrderAction(order.id, 'approve')}
+                        disabled={processingId === order.id}
+                        className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 rounded-lg font-bold text-white transition-colors"
+                      >
+                        {processingId === order.id ? '⏳ در حال پردازش...' : '✅ تایید و ارسال به کیف پول'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          const note = prompt('دلیل رد (اختیاری):');
+                          if (note !== null) {
+                            handleOrderAction(order.id, 'reject', note);
+                          }
+                        }}
+                        disabled={processingId === order.id}
+                        className="px-6 py-3 bg-red-600 hover:bg-red-500 disabled:bg-slate-700 rounded-lg font-bold text-white transition-colors"
+                      >
+                        ❌ رد
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex-1 text-center py-3 bg-slate-800 rounded-lg text-slate-400">
+                      {order.status === 'approved' && '✓ تایید شده - آماده ارسال'}
+                      {order.status === 'completed' && '✓ تکمیل شده'}
+                      {order.status === 'rejected' && '✗ رد شده'}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
