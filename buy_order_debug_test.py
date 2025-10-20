@@ -349,10 +349,13 @@ class BuyOrderDebugTester:
                 data = response.json()
                 print("✅ BUY ORDER CREATION SUCCESSFUL!")
                 
-                order_id = data.get('order_id')
-                calculated_usdt = data.get('calculated_crypto_amount', 0)
-                total_value = data.get('total_value_tmn', 0)
+                order_id = data.get('order_id') or data.get('id')
+                calculated_usdt = data.get('calculated_crypto_amount', 0) or data.get('crypto_amount', 0)
+                total_value = data.get('total_value_tmn', 0) or data.get('amount_tmn', 0)
                 status = data.get('status', 'unknown')
+                
+                # Print full response for debugging
+                print(f"📋 Full API Response: {json.dumps(data, indent=2, ensure_ascii=False)}")
                 
                 print(f"📊 Order ID: {order_id}")
                 print(f"📊 Calculated USDT: {calculated_usdt:.8f}")
