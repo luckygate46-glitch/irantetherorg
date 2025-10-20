@@ -3160,6 +3160,32 @@ async def download_backup_file(filename: str, admin: User = Depends(get_current_
         logger.error(f"Error downloading backup: {str(e)}")
         raise HTTPException(status_code=500, detail=f"خطا در دانلود: {str(e)}")
 
+@api_router.post("/admin/backup/restore")
+async def restore_database_from_backup(
+    backup_data: dict,
+    admin: User = Depends(get_current_admin)
+):
+    """
+    Restore database from backup JSON
+    CAUTION: This will DELETE existing data and replace with backup data
+    """
+    try:
+        from database_backup import get_backup_manager
+        
+        # Confirm admin really wants to do this
+        backup_manager = await get_backup_manager(db)
+        result = await backup_manager.restore_from_backup(backup_data)
+        
+        return {
+            "success": result.get("success", False),
+            "message": "بازگردانی با موفقیت انجام شد" if result.get("success") else "بازگردانی با خطا مواجه شد",
+            "details": result
+        }
+        
+    except Exception as e:
+        logger.error(f"Error restoring from backup: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در بازگردانی: {str(e)}")
+
 # ==================== AI ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats/extended")
