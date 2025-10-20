@@ -195,12 +195,16 @@ class BuyOrderDebugTester:
                 data = response.json()
                 print("✅ Crypto prices endpoint working")
                 
-                # Find USDT price
+                # Find USDT price - handle both dict and string formats
                 usdt_price = None
                 for crypto in data:
-                    if crypto.get('symbol') == 'USDT':
-                        usdt_price = crypto.get('price_tmn', 0)
-                        break
+                    if isinstance(crypto, dict):
+                        if crypto.get('symbol') == 'USDT':
+                            usdt_price = crypto.get('price_tmn', 0)
+                            break
+                    elif isinstance(crypto, str):
+                        # Handle string format if needed
+                        continue
                 
                 if usdt_price:
                     print(f"📊 Current USDT Price: {usdt_price:,.0f} TMN")
