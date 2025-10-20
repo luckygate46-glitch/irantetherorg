@@ -3010,6 +3010,110 @@ async def approve_order_alias(approval: TradingOrderApproval, admin: User = Depe
     """Approve or reject a trading order (alias route)"""
     return await approve_trading_order(approval, admin)
 
+# ==================== DATABASE BACKUP ROUTES ====================
+
+@api_router.get("/admin/backup/database")
+async def export_full_database(admin: User = Depends(get_current_admin)):
+    """Export complete database as JSON"""
+    try:
+        from database_backup import get_backup_manager
+        
+        backup_manager = await get_backup_manager(db)
+        backup_data = await backup_manager.get_full_database_export()
+        
+        return backup_data
+        
+    except Exception as e:
+        logger.error(f"Error exporting database: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در صادرات دیتابیس: {str(e)}")
+
+@api_router.post("/admin/backup/create")
+async def create_backup(admin: User = Depends(get_current_admin)):
+    """Create and save backup file to server"""
+    try:
+        from database_backup import get_backup_manager
+        
+        backup_manager = await get_backup_manager(db)
+        filepath = await backup_manager.create_backup_file()
+        
+        return {
+            "success": True,
+            "message": "نسخه پشتیبان با موفقیت ایجاد شد",
+            "filepath": filepath,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error creating backup: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در ایجاد نسخه پشتیبان: {str(e)}")
+
+@api_router.get("/admin/backup/list")
+async def list_backups(admin: User = Depends(get_current_admin)):
+    """Get list of all backup files"""
+    try:
+        from database_backup import get_backup_manager
+        
+        backup_manager = await get_backup_manager(db)
+        backups = await backup_manager.get_backup_list()
+        
+        return {
+            "success": True,
+            "backups": backups,
+            "count": len(backups)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error listing backups: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در دریافت لیست پشتیبان‌ها: {str(e)}")
+
+@api_router.get("/admin/backup/stats")
+async def get_database_stats(admin: User = Depends(get_current_admin)):
+    """Get database statistics"""
+    try:
+        from database_backup import get_backup_manager
+        
+        backup_manager = await get_backup_manager(db)
+        stats = await backup_manager.get_database_stats()
+        
+        return stats
+        
+    except Exception as e:
+        logger.error(f"Error getting database stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در دریافت آمار دیتابیس: {str(e)}")
+
+@api_router.delete("/admin/backup/{filename}")
+async def delete_backup(filename: str, admin: User = Depends(get_current_admin)):
+    """Delete a backup file"""
+    try:
+        from database_backup import get_backup_manager
+        
+        backup_manager = await get_backup_manager(db)
+        success = await backup_manager.delete_backup(filename)
+        
+        return {
+            "success": success,
+            "message": "نسخه پشتیبان با موفقیت حذف شد"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error deleting backup: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در حذف نسخه پشتیبان: {str(e)}")
+
+@api_router.get("/admin/backup/collection/{collection_name}")
+async def export_collection(collection_name: str, admin: User = Depends(get_current_admin)):
+    """Export single collection"""
+    try:
+        from database_backup import get_backup_manager
+        
+        backup_manager = await get_backup_manager(db)
+        collection_data = await backup_manager.get_collection_export(collection_name)
+        
+        return collection_data
+        
+    except Exception as e:
+        logger.error(f"Error exporting collection: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در صادرات کالکشن: {str(e)}")
+
 # ==================== AI ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats/extended")
