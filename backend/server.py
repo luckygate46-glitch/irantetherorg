@@ -3135,6 +3135,31 @@ async def export_collection(collection_name: str, admin: User = Depends(get_curr
         logger.error(f"Error exporting collection: {str(e)}")
         raise HTTPException(status_code=500, detail=f"خطا در صادرات کالکشن: {str(e)}")
 
+@api_router.get("/admin/backup/download/{filename}")
+async def download_backup_file(filename: str, admin: User = Depends(get_current_admin)):
+    """Download a backup file"""
+    try:
+        import os
+        from fastapi.responses import FileResponse
+        
+        backup_dir = "/app/backups"
+        filepath = os.path.join(backup_dir, filename)
+        
+        if not os.path.exists(filepath) or not filename.endswith('.json'):
+            raise HTTPException(status_code=404, detail="فایل یافت نشد")
+        
+        return FileResponse(
+            filepath,
+            media_type='application/json',
+            filename=filename
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading backup: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"خطا در دانلود: {str(e)}")
+
 # ==================== AI ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats/extended")
