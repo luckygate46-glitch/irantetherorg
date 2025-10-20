@@ -1,0 +1,110 @@
+{
+  "export_info": {
+    "timestamp": "2025-10-20T12:29:07.730875",
+    "database": "crypto_exchange",
+    "type": "full_export"
+  },
+  "collections": {
+    "transactions": {
+      "count": 1,
+      "documents": [
+        {
+          "id": "c8b07357-bb4b-491a-a923-3da3b252877c",
+          "user_id": "admin-user-001",
+          "type": "deposit",
+          "amount_tmn": 41000000,
+          "balance_before": 0,
+          "balance_after": 41000000,
+          "reference_type": "deposit",
+          "reference_id": "3f700b35-be44-4c6a-a783-2e98905ed5ba",
+          "description": "واریز کارت به کارت (بازیابی)",
+          "created_at": "2025-10-18T04:20:56.252173",
+          "created_by": "admin-user-001",
+          "status": "completed"
+        }
+      ]
+    },
+    "users": {
+      "count": 2,
+      "documents": [
+        {
+          "id": "admin-user-001",
+          "email": "admin",
+          "password_hash": "$2b$12$92z6czZCdsFGL3My0bNphurXJodgbjeMO/6fja2uDPm5tLIOxDKHO",
+          "first_name": "ادمین",
+          "last_name": "سیستم",
+          "full_name": "ادمین سیستم",
+          "phone": "09000000000",
+          "is_admin": true,
+          "is_phone_verified": true,
+          "kyc_level": 2,
+          "kyc_status": "approved",
+          "wallet_balance_tmn": 41000000,
+          "created_at": "2025-10-18T04:20:56.003834",
+          "updated_at": "2025-10-18T04:20:56.003844"
+        },
+        {
+          "id": "76fcf612-64ba-4121-aec2-e12257f7da1e",
+          "email": "testuser@example.com",
+          "password_hash": "$2b$12$DEqjMCkHI7q7rdzBnr0leurYkiZLdLcpY6SxhaYEcYZngg9Y90p16",
+          "first_name": "علی",
+          "last_name": "احمدی",
+          "full_name": "علی احمدی",
+          "phone": "09123456789",
+          "is_admin": false,
+          "is_phone_verified": true,
+          "kyc_level": 2,
+          "kyc_status": "approved",
+          "wallet_balance_tmn": 0,
+          "created_at": "2025-10-18T04:20:56.240413",
+          "updated_at": "2025-10-18T04:20:56.240419"
+        }
+      ]
+    },
+    "wallet_addresses": {
+      "count": 1,
+      "documents": [
+        {
+          "id": "c69f4dd7-a7bf-40cc-84dc-ea22b23123a5",
+          "user_id": "admin-user-001",
+          "coin_symbol": "USDT",
+          "coin_id": "tether",
+          "address": "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b1",
+          "verified": true,
+          "created_at": "2025-10-18T04:20:56.241688"
+        }
+      ]
+    },
+    "notifications": {
+      "count": 1,
+      "documents": [
+        {
+          "id": "67f016d4-e82c-45d3-8fe2-9b5083ead7af",
+          "user_id": "admin-user-001",
+          "type": "order_approved",
+          "title": "✅ سفارش تایید شد (تست)",
+          "message": "این یک اعلان تستی است",
+          "reference_type": "order",
+          "reference_id": "test-order-123",
+          "data": {},
+          "is_read": false,
+          "created_at": "2025-10-19T20:49:56.073148+00:00"
+        }
+      ]
+    },
+    "deposits": {
+      "count": 1,
+      "documents": [
+        {
+          "id": "3f700b35-be44-4c6a-a783-2e98905ed5ba",
+          "user_id": "admin-user-001",
+          "amount_tmn": 41000000,
+          "status": "approved",
+          "deposit_type": "initial_balance",
+          "created_at": "2025-10-18T04:20:56.252173",
+          "approved_at": "2025-10-18T04:20:56.252176"
+        }
+      ]
+    }
+  }
+}
