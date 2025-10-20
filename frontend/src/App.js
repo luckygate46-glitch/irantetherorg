@@ -17,6 +17,7 @@ import AdminCards from "./pages/admin/AdminCards";
 import AdminDeposits from "./pages/admin/AdminDeposits";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminKYC from "./pages/admin/AdminKYC";
+import AdminBackup from "./pages/admin/AdminBackup";
 import AdminDashboardAI from "./pages/admin/AdminDashboardAI";
 import AdminPriceManager from "./pages/admin/AdminPriceManager";
 import AdminTradingManager from "./pages/admin/AdminTradingManager";
