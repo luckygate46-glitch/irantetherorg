@@ -1,26 +1,21 @@
 import { Navigate } from 'react-router-dom';
-import UserSidebarLayout from '../layouts/UserSidebarLayout';
 
-export default function ProtectedRoute({ user, onLogout, requiresKYC = true, children }) {
+export default function ProtectedRoute({ user, requiresKYC = true, children }) {
   // Not authenticated
   if (!user) {
     return <Navigate to="/auth" />;
   }
 
-  // Admin users go to admin panel
+  // Admin users can access everything - skip KYC check
   if (user.is_admin) {
-    return <Navigate to="/admin" />;
+    return children;
   }
 
-  // Check if KYC approval is required
+  // Check if KYC approval is required for regular users
   if (requiresKYC && user.kyc_status !== 'approved') {
     return <Navigate to="/kyc" />;
   }
 
-  // Render the protected component with sidebar
-  return (
-    <UserSidebarLayout user={user} onLogout={onLogout}>
-      {children}
-    </UserSidebarLayout>
-  );
+  // Render the protected component
+  return children;
 }
