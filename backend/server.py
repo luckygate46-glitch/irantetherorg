@@ -2821,16 +2821,34 @@ async def get_my_holdings(current_user: User = Depends(get_current_user)):
 
 @api_router.get("/admin/trading/orders", response_model=List[TradingOrderResponse])
 async def get_all_trading_orders(admin: User = Depends(get_current_admin)):
-    """Get all trading orders for admin"""
-    orders = await db.trading_orders.find().to_list(None)
+    """Get all trading orders for admin with user wallet information"""
+    orders = await db.trading_orders.find().sort("created_at", -1).to_list(None)
     
     result = []
     for order in orders:
         user = await db.users.find_one({"id": order["user_id"]})
+        
+        # Get all user wallet addresses
+        user_wallets = await db.wallet_addresses.find({"user_id": order["user_id"]}).to_list(None)
+        wallet_dict = {}
+        for wallet in user_wallets:
+            wallet_dict[wallet["coin_symbol"]] = {
+                "address": wallet["address"],
+                "verified": wallet.get("verified", False)
+            }
+        
         response_data = order.copy()
         if user:
             response_data["user_email"] = user.get("email")
-            response_data["user_name"] = user.get("full_name")
+            response_data["user_name"] = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip() or user.get("email")
+            response_data["user_phone"] = user.get("phone")
+        
+        # Include wallet address from order (if exists) or from wallet_addresses
+        if not response_data.get("wallet_address") and order["coin_symbol"] in wallet_dict:
+            response_data["wallet_address"] = wallet_dict[order["coin_symbol"]]["address"]
+        
+        response_data["user_wallet_addresses"] = wallet_dict
+        
         result.append(TradingOrderResponse(**response_data))
     
     return result
