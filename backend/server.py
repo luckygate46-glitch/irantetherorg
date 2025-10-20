@@ -2832,7 +2832,7 @@ async def get_all_trading_orders(admin: User = Depends(get_current_admin)):
         user_wallets = await db.wallet_addresses.find({"user_id": order["user_id"]}).to_list(None)
         wallet_dict = {}
         for wallet in user_wallets:
-            wallet_dict[wallet["coin_symbol"]] = {
+            wallet_dict[wallet["symbol"]] = {
                 "address": wallet["address"],
                 "verified": wallet.get("verified", False)
             }
