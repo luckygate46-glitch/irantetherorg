@@ -239,3 +239,51 @@ class SmartTradingAssistant:
         except Exception as e:
             print(f"Error in chat_with_assistant: {str(e)}")
             return f"متأسفانه در حال حاضر نمی‌توانم به سوال شما پاسخ دهم. خطا: {str(e)}"
+
+def get_mock_trading_recommendation(coin_symbol: str, current_price: float, price_change_24h: float) -> Dict:
+    """
+    Return mock/demo trading recommendation when API key is not available
+    This provides a better UX than showing an error
+    """
+    # Determine trend
+    if price_change_24h > 2:
+        recommendation = "خرید"
+        confidence = "متوسط"
+        reasoning = f"قیمت {coin_symbol} در ۲۴ ساعت گذشته {price_change_24h:.2f}% رشد داشته و روند صعودی دارد. با توجه به حجم معاملات مناسب، این ارز پتانسیل رشد بیشتری دارد."
+        risk_level = "متوسط"
+        key_points = [
+            f"روند صعودی {price_change_24h:.2f}% در ۲۴ ساعت",
+            "حجم معاملات در حال افزایش",
+            "سیگنال‌های فنی مثبت"
+        ]
+    elif price_change_24h < -2:
+        recommendation = "نگهداری"
+        confidence = "متوسط"
+        reasoning = f"قیمت {coin_symbol} در ۲۴ ساعت گذشته {abs(price_change_24h):.2f}% کاهش داشته. توصیه می‌شود تا بازگشت روند، از ورود به معامله خودداری کنید."
+        risk_level = "زیاد"
+        key_points = [
+            f"روند نزولی {abs(price_change_24h):.2f}% در ۲۴ ساعت",
+            "نیاز به تثبیت قیمت",
+            "انتظار برای نقطه ورود مناسب"
+        ]
+    else:
+        recommendation = "نگهداری"
+        confidence = "پایین"
+        reasoning = f"بازار {coin_symbol} در حال حاضر در حالت خنثی قرار دارد. تغییرات قیمت جزئی است و سیگنال مشخصی برای خرید یا فروش وجود ندارد."
+        risk_level = "کم"
+        key_points = [
+            "بازار در حالت خنثی",
+            "نوسانات کم قیمت",
+            "انتظار برای سیگنال قوی‌تر"
+        ]
+    
+    return {
+        "recommendation": recommendation,
+        "confidence": confidence,
+        "reasoning": reasoning,
+        "suggested_amount": None,
+        "risk_level": risk_level,
+        "key_points": key_points,
+        "is_mock": True,  # Flag to indicate this is mock data
+        "note": "⚠️ این توصیه بر اساس الگوریتم ساده است. برای تحلیل دقیق‌تر، پیکربندی سرویس هوش مصنوعی لازم است."
+    }
