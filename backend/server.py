@@ -26,6 +26,11 @@ from ai_admin_services import fraud_detector, market_intelligence, system_intell
 from ai_user_services import personal_assistant, portfolio_manager, notification_system
 from advanced_ai_services import predictive_market_analysis, sentiment_analysis_engine, portfolio_optimizer
 from comprehensive_ai_services import get_ai_service
+# Rate limiting
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from rate_limiter import limiter, RATE_LIMITS, get_rate_limit_message
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
