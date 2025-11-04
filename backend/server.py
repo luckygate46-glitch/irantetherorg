@@ -107,6 +107,10 @@ APIR_API_KEY = os.environ.get('APIR_API_KEY', None)  # Must be set in environmen
 # Create the main app without a prefix
 app = FastAPI()
 
+# Add rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
