@@ -10,11 +10,14 @@ async def create_indexes():
     """Create all necessary indexes for optimal performance"""
     
     MONGO_URL = os.getenv('MONGO_URL', 'mongodb://localhost:27017/')
+    DB_NAME = os.getenv('DB_NAME', 'crypto_exchange')
+    
     client = AsyncIOMotorClient(MONGO_URL)
-    db = client.crypto_exchange
+    db = client[DB_NAME]  # Use environment variable for database name
     
     print("="*70)
     print("📊 CREATING DATABASE INDEXES")
+    print(f"🔗 Database: {DB_NAME}")
     print("="*70)
     
     indexes_created = []
